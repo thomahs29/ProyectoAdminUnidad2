@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { createUser, getUserByEmail } = require('../models/userModel');
+const { createUser, getUserByEmail, getAllUsers, getUserByRut} = require('../models/userModel');
 const dotenv = require('dotenv');
 
 dotenv.config({ path: "../../../.env" });
@@ -17,6 +17,14 @@ const registerUser = async (req, res) => {
     try {
         const { rut, nombre, email, password, role } = req.body;
 
+        //revisar formato del rut CONSTRAINT
+        // CONSTRAINT usuarios_rut_check CHECK (CHECK (((rut)::text ~ '^[0-9]{7,8}-[0-9Kk]$'::text)))
+        
+        const rutPattern = /^[0-9]{7,8}-[0-9Kk]$/;
+        if (!rutPattern.test(rut)) {
+            return res.status(400).json({ message: 'Invalid RUT format' });
+        }
+
         if (!rut || !nombre || !email || !password) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
@@ -24,6 +32,10 @@ const registerUser = async (req, res) => {
         const exitingUser = await getUserByEmail(email);
         if (exitingUser) {
             return res.status(409).json({ message: 'Email already in use' });
+        }
+        const exitingRut = await getUserByRut(rut);
+        if (exitingRut) {
+            return res.status(409).json({ message: 'RUT already in use' });
         }
 
         const newUser = await createUser({ rut, nombre, email, password, role });
@@ -70,7 +82,18 @@ const loginUser = async (req, res) => {
     }
 };
 
+const getUsers = async (req, res) => {
+    try {
+        const users = await getAllUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getUsers
 };

@@ -26,7 +26,29 @@ const getUserByEmail = async (email) => {
     return result.rows[0];
 };
 
+const getUserByRut = async (rut) => {
+    const result = await pool.query(
+        `SELECT u.id, u.rut, u.nombre, u.email, u.password_hash, r.name AS role
+            FROM usuarios u
+            JOIN roles r ON u.role_id = r.id
+            WHERE u.rut = $1`,
+        [rut]
+    );
+    return result.rows[0];
+}
+
+const getAllUsers = async () => {
+    const result = await pool.query(
+        `SELECT u.id, u.rut, u.nombre, u.email, r.name AS role
+         FROM usuarios u
+         JOIN roles r ON u.role_id = r.id`
+    );
+    return result.rows;
+};
+
 module.exports = {
     createUser,
-    getUserByEmail
+    getUserByEmail,
+    getAllUsers,
+    getUserByRut
 };
