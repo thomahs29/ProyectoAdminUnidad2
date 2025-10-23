@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Confirmacion from './pages/Confirmacion';
+import Documentos from './pages/Documentos';
 import Login from './pages/Login';
 import Reserva from './pages/Reserva';
-import Documentos from './pages/Documentos';
-import Confirmacion from './pages/Confirmacion';
 
 // Componente para proteger rutas
 const PrivateRoute = ({ children }) => {

@@ -1,8 +1,4 @@
-# Frontend - Sistema de Reservas de Licencias de Conducir
 
-## 🏛️ Municipalidad de Linares
-
-Sistema web para reservar horas de atención en el Departamento de Tránsito.
 
 ## 🚀 Tecnologías
 
@@ -90,22 +86,9 @@ El sistema usa JWT tokens almacenados en localStorage:
 - Todas las peticiones incluyen: `Authorization: Bearer <token>`
 - Error 401 → redirect a `/login`
 
-## 🎨 Diseño Responsive
 
-- ✅ Desktop (>968px)
-- ✅ Tablet (768px - 968px)
-- ✅ Mobile (<768px)
 
-## 📦 Scripts Disponibles
 
-| Comando | Descripción |
-|---------|-------------|
-| `npm run dev` | Dev server en puerto 3001 |
-| `npm run build` | Build de producción |
-| `npm run preview` | Preview del build |
-| `npm run lint` | Linter ESLint |
-
-## 🌐 Integración con Backend
 
 El frontend se comunica con el backend a través de:
 - Desarrollo: Proxy de Vite a `http://localhost:3000`
@@ -113,7 +96,6 @@ El frontend se comunica con el backend a través de:
 
 Todas las rutas de API comienzan con `/api`
 
-## ✨ Características
 
 - ✅ Validación de RUT chileno
 - ✅ Upload de archivos (PDF, JPG, PNG)
@@ -131,8 +113,6 @@ Todas las rutas de API comienzan con `/api`
 - CORS configurado
 - Sin datos sensibles en localStorage (solo token)
 
-## 📧 Contacto
 
-**Municipalidad de Linares**  
-Email: licencias@linares.cl  
-Teléfono: +56 9 1234 5678
+
+

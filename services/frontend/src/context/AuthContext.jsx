@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext();
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (rut, password) => {
     try {
-      const response = await api.post('/users/login', { email: rut, password });
+      const response = await api.post('/users/login', { rut, password });
       const { token, user: userData } = response.data;
       
       localStorage.setItem('token', token);
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.error || 'Error al iniciar sesión'
+        error: error.response?.data?.message || 'Error al iniciar sesión'
       };
     }
   };
