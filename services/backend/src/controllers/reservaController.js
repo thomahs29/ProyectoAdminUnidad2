@@ -1,4 +1,6 @@
 const { createReserva, getReservasByUsuario, getReservas, anularReserva } = require('../models/reservaModel');
+const { sendEmailAsync, tplReservaAnulada, tplReservaCreada } = require('../services/mailService');
+const pool = require('../config/db');
 
 const reservar = async (req, res) => {
     try {
@@ -10,6 +12,28 @@ const reservar = async (req, res) => {
         }
 
         const reserva = await createReserva({ usuario_id, tramite_id, fecha, hora, observaciones });
+
+        // Enviar correo de confirmación de reserva
+
+        try {
+            const { user, tramite } = await getUserAndTramite({ usuario_id, tramite_id });
+            if(user?.email) {
+                sendEmailAsync({
+                    to: user.email,
+                    subject: "Confirmación de reserva - Municipalidad de Linares",
+                    html: tplReservaCreada({
+                        nombre: user.nombre,
+                        fecha,
+                        hora,
+                        tramite: tramite?.nombre || 'Tramite'
+                    })
+                });
+            }
+            console.log("Correo de confirmación enviado a:", user.email);
+        } catch (emailError) {
+            console.error("Error al enviar correo de confirmación:", emailError);
+        }
+
         res.status(201).json({
             msg: "Reserva creada correctamente.",
             reserva,
@@ -51,6 +75,27 @@ const cancelarReserva = async (req, res) => {
             return res.status(404).json({ message: 'Reserva no encontrada' });
         }
 
+        // Enviar correo de anulación de reserva
+
+        try {
+            const { user, tramite } = await getUserAndTramite({ usuario_id, tramite_id: reserva.tramite_id });
+            if(user?.email) {
+                sendEmailAsync({
+                    to: user.email,
+                    subject: "Anulación de reserva - Municipalidad de Linares",
+                    html: tplReservaAnulada({
+                        nombre: user.nombre,
+                        fecha: reserva.fecha,
+                        hora: reserva.hora,
+                        tramite: tramite?.nombre || 'Tramite'
+                    })
+                });
+            }
+            console.log("Correo de anulación enviado a:", user.email);
+        } catch (emailError) {
+            console.error("Error al enviar correo de anulación:", emailError);
+        }
+
         res.status(200).json({
             message: 'Reserva cancelada correctamente',
             reserva,
@@ -59,6 +104,12 @@ const cancelarReserva = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Error al cancelar la reserva' });
     }
+};
+
+const getUserAndTramite = async ({ usuario_id, tramite_id }) => {
+  const u = await pool.query(`SELECT nombre, email FROM usuarios WHERE id = $1`, [usuario_id]);
+  const t = await pool.query(`SELECT nombre FROM tramites WHERE id = $1`, [tramite_id]);
+  return { user: u.rows[0], tramite: t.rows[0] };
 };
 
 module.exports = {
