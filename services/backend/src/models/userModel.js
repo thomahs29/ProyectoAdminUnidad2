@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 
-const createUser = async ({ rut, nombre, email, password, role = "ciudadano" }) => {
+const createUser = async ({ rut, nombre, email, password, role }) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
