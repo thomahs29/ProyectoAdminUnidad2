@@ -22,6 +22,26 @@ const verifyToken = (req, res, next) => {
     }
 };
 
+const verifyRole = (rolesPermitidos = []) => {
+    return (req, res, next) => {
+        try {
+            const { role } = req.user;
+
+            console.log("User role:", role);
+
+            if (!rolesPermitidos.includes(role)) {
+                return res.status(403).json({ message: 'Access denied: insufficient permissions' });
+            }
+
+            next();
+        } catch (error) {
+            console.error("Error verifying role:", error);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+};
+
 module.exports = {
-    verifyToken
+    verifyToken,
+    verifyRole
 };
