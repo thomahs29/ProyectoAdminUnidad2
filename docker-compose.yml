@@ -1,0 +1,70 @@
+services:
+  postgres-master:
+    image: postgres:15-alpine
+    container_name: postgres-master
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    networks:
+      - database-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+      - ./infrastructure/database/master.conf:/etc/postgresql/postgresql.conf
+      - ./infrastructure/database/pg_hba.conf:/etc/postgresql/pg_hba.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-replica:
+    image: postgres:15-alpine
+    container_name: postgres-replica
+    restart: unless-stopped
+    networks:
+      - database-network
+    volumes:
+      - postgres-replica-data:/var/lib/postgresql/data
+      - ./scripts/init-replica.sh:/docker-entrypoint-initdb.d/init-replica.sh
+
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+
+  redis-cache:
+    image: redis:7-alpine
+    container_name: redis-cache
+    restart: unless-stopped
+    networks:
+      - database-network
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  database-network:
+    driver: bridge
+  frontend-network:
+    driver: bridge
+  backend-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  postgres-replica-data:
+  redis-data:
