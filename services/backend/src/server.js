@@ -32,11 +32,8 @@ app.use('/api/documentos', documentoRoutes);
 
 // Middleware de error global
 app.use((err, req, res, next) => {
-    console.error('[ERROR GLOBAL]', err);
-    res.status(500).json({ 
-        message: 'Internal server error', 
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined 
-    });
+    console.error('[ERROR]', err);
+    res.status(500).json({ message: 'Internal server error', error: err.message });
 });
 
 app.listen(PORT, () => {
