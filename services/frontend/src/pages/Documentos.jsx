@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 import './Documentos.css';
 
 const Documentos = () => {
@@ -11,7 +12,16 @@ const Documentos = () => {
   ]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [reserva, setReserva] = useState(null);
   const navigate = useNavigate();
+
+  // Obtener datos de la última reserva
+  useEffect(() => {
+    const ultimaReserva = localStorage.getItem('ultimaReserva');
+    if (ultimaReserva) {
+      setReserva(JSON.parse(ultimaReserva));
+    }
+  }, []);
 
   const handleFileChange = (id, e) => {
     const file = e.target.files[0];
@@ -86,26 +96,32 @@ const Documentos = () => {
     setLoading(true);
 
     try {
-      // Crear FormData para enviar archivos
-      const formData = new FormData();
-      
-      documentos.forEach(doc => {
+      if (!reserva || !reserva.id) {
+        setErrors({ general: 'No se encontró la reserva. Por favor, cree una reserva primero.' });
+        return;
+      }
+
+      // Subir cada documento
+      for (const doc of documentos) {
         if (doc.archivo) {
-          formData.append('documentos', doc.archivo);
-          formData.append('nombres', doc.nombre);
+          const formDataUpload = new FormData();
+          formDataUpload.append('documento', doc.archivo);
+          formDataUpload.append('reserva_id', reserva.id);
+
+          try {
+            await api.post('/documentos/upload', formDataUpload, {
+              headers: { 'Content-Type': 'multipart/form-data' }
+            });
+          } catch (uploadError) {
+            console.error(`Error al subir ${doc.nombre}:`, uploadError);
+            throw uploadError;
+          }
         }
-      });
-
-      // TODO: Llamada real a API cuando esté implementado
-      // await api.post('/documentos', formData, {
-      //   headers: { 'Content-Type': 'multipart/form-data' }
-      // });
-
-      // Simular guardado
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      }
 
       // Guardar info en localStorage
       localStorage.setItem('documentosCargados', JSON.stringify({
+        reserva_id: reserva.id,
         documentos: documentos.filter(d => d.archivo).map(d => ({
           nombre: d.nombre,
           archivo: d.archivo.name,
