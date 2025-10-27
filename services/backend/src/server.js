@@ -17,11 +17,23 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Middleware para logs
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    next();
+});
+
 app.use('/api/users', userRoutes);
 app.use('/api/reservas', reservaRoutes);
 app.use('/api/tramites', tramiteRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/documentos', documentoRoutes);
+
+// Middleware de error global
+app.use((err, req, res, next) => {
+    console.error('[ERROR]', err);
+    res.status(500).json({ message: 'Internal server error', error: err.message });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

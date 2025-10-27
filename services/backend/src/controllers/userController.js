@@ -73,7 +73,7 @@ const loginUser = async (req, res) => {
         const token = genToken(user);
         res.status(200).json({
             msg: "Login exitoso.",
-            user: { id: user.id, nombre: user.nombre, email: user.email, role: user.role },
+            user: { id: user.id, nombre: user.nombre, email: user.email, rut: user.rut, role: user.role },
             token,
         });
     } catch (error) {
