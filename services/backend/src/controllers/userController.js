@@ -57,17 +57,17 @@ const loginUser = async (req, res) => {
         const { rut, password } = req.body;
 
         if (!rut || !password) {
-            return res.status(400).json({ message: 'Missing RUT or password' });
+            return res.status(400).json({ message: 'Missing rut or password' });
         }
 
         const user = await getUserByRut(rut);
         if (!user) {
-            return res.status(401).json({ message: 'Invalid RUT or password' });
+            return res.status(401).json({ message: 'Invalid rut or password' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password_hash);
         if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid RUT or password' });
+            return res.status(401).json({ message: 'Invalid rut or password' });
         }
 
         const token = genToken(user);
