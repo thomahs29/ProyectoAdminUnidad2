@@ -35,3 +35,7 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 .pnpm-debug.log*
+
+# Uploads (ignorar contenido pero mantener carpeta)
+services/backend/src/uploads/documents/*
+!services/backend/src/uploads/documents/.gitkeep
