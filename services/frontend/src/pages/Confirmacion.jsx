@@ -5,6 +5,9 @@ import './Confirmacion.css';
 const Confirmacion = () => {
   const [reserva, setReserva] = useState(null);
   const [documentos, setDocumentos] = useState([]);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [motivoCancelacion, setMotivoCancelacion] = useState('');
+  const [loadingCancel, setLoadingCancel] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +30,38 @@ const Confirmacion = () => {
 
   const handleVolverInicio = () => {
     navigate('/');
+  };
+
+  const handleCancelarReserva = async () => {
+    if (!motivoCancelacion.trim()) {
+      alert('Por favor, ingrese un motivo para la cancelación');
+      return;
+    }
+
+    setLoadingCancel(true);
+
+    try {
+      // Guardar cancelación en localStorage
+      localStorage.setItem('cancelacionReserva', JSON.stringify({
+        reserva_id: reserva.id,
+        motivo: motivoCancelacion,
+        fecha_cancelacion: new Date().toISOString(),
+        reserva_original: reserva
+      }));
+
+      // Limpiar localStorage
+      localStorage.removeItem('ultimaReserva');
+      localStorage.removeItem('documentosCargados');
+
+      // Mostrar confirmación y redirigir
+      alert('Reserva cancelada exitosamente');
+      navigate('/');
+    } catch (error) {
+      console.error('Error al cancelar:', error);
+      alert('Error al cancelar la reserva');
+    } finally {
+      setLoadingCancel(false);
+    }
   };
 
   const tiposTramiteLabel = {
@@ -70,7 +105,7 @@ const Confirmacion = () => {
               <div className="detail-item">
                 <span className="detail-label">Tipo de Trámite:</span>
                 <span className="detail-value">
-                  {tiposTramiteLabel[reserva.tipoTramite] || reserva.tipoTramite}
+                  {reserva.tramite_nombre || tiposTramiteLabel[reserva.tipoTramite] || reserva.tipoTramite}
                 </span>
               </div>
               <div className="detail-item">
@@ -129,6 +164,13 @@ const Confirmacion = () => {
             <button onClick={handleNuevaReserva} className="btn btn-outline">
               Nueva Reserva
             </button>
+            <button 
+              onClick={() => setShowCancelModal(true)} 
+              className="btn btn-danger"
+              style={{ backgroundColor: '#dc3545' }}
+            >
+              ❌ Cancelar Reserva
+            </button>
           </div>
         </div>
 
@@ -178,6 +220,67 @@ const Confirmacion = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de Cancelación */}
+      {showCancelModal && (
+        <div className="modal-overlay" onClick={() => setShowCancelModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>⚠️ Cancelar Reserva</h2>
+              <button 
+                className="modal-close" 
+                onClick={() => setShowCancelModal(false)}
+                style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              <p><strong>¿Está seguro de que desea cancelar esta reserva?</strong></p>
+              <p>Deberá proporcionar un motivo justificado para la cancelación.</p>
+              
+              <div className="form-group" style={{ marginTop: '20px' }}>
+                <label htmlFor="motivo"><strong>Motivo de cancelación *</strong></label>
+                <textarea
+                  id="motivo"
+                  value={motivoCancelacion}
+                  onChange={(e) => setMotivoCancelacion(e.target.value)}
+                  placeholder="Ej: Problema de salud, cambio de planes, falta de documentos, etc."
+                  rows="4"
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '4px',
+                    border: '1px solid #ddd',
+                    fontFamily: 'inherit',
+                    fontSize: '14px'
+                  }}
+                  disabled={loadingCancel}
+                />
+              </div>
+            </div>
+            
+            <div className="modal-footer" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => setShowCancelModal(false)}
+                disabled={loadingCancel}
+              >
+                No, Mantener Reserva
+              </button>
+              <button 
+                className="btn btn-danger"
+                onClick={handleCancelarReserva}
+                disabled={loadingCancel || !motivoCancelacion.trim()}
+                style={{ backgroundColor: '#dc3545' }}
+              >
+                {loadingCancel ? 'Cancelando...' : 'Sí, Cancelar Reserva'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -96,9 +96,13 @@ const Reserva = () => {
         observaciones: formData.observaciones
       });
       
+      // Obtener el nombre del trámite seleccionado
+      const tramiteSeleccionado = tramites.find(t => t.id == formData.tramite_id);
+      
       // Guardar datos de la reserva en localStorage
       localStorage.setItem('ultimaReserva', JSON.stringify({
         ...response.data.reserva,
+        tramite_nombre: tramiteSeleccionado?.nombre || 'Sin especificar',
         fecha: new Date(formData.fecha).toLocaleDateString('es-CL'),
         timestamp: new Date().toISOString()
       }));
