@@ -10,7 +10,8 @@ const tramiteRoutes = require("./routes/tramiteRoutes.js");
 const testRoutes = require("./routes/testRoutes.js");
 const documentoRoutes = require("./routes/documentoRoutes.js");
 
-dotenv.config({ path: path.join(__dirname, '.env') });
+// Cargar variables de entorno desde la raíz del proyecto
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
