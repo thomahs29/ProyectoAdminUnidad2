@@ -23,10 +23,15 @@
 hs_err_pid*
 replay_pid*
 
-# Environment variables
+# Environment variables - NEVER COMMIT THESE FILES
+**/.env
+**/.env.local
+**/.env.*.local
 .env
 .env.local
 .env.*.local
+services/backend/src/.env
+services/frontend/.env
 
 # Node.js
 node_modules/

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext();
@@ -37,9 +37,22 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
+      console.error('Login error:', error);
+      let errorMessage = 'Error al iniciar sesión';
+      
+      if (error.response?.status === 400) {
+        errorMessage = 'RUT o contraseña incorrectos';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'RUT o contraseña incorrectos';
+      } else if (error.response?.status === 500) {
+        errorMessage = 'Error del servidor. Por favor intenta más tarde';
+      } else if (error.message === 'Network Error') {
+        errorMessage = 'Error de conexión. Verifica que el servidor esté activo';
+      }
+      
       return {
         success: false,
-        error: error.response?.data?.error || 'Error al iniciar sesión'
+        error: error.response?.data?.message || error.response?.data?.error || errorMessage
       };
     }
   };

@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Reserva.css';
 
 const Reserva = () => {
   const [formData, setFormData] = useState({
-    tipoTramite: '',
+    tramite_id: '',
     fecha: '',
     hora: '',
     observaciones: ''
@@ -13,15 +14,34 @@ const Reserva = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [horasDisponibles, setHorasDisponibles] = useState([]);
+  const [tramites, setTramites] = useState([]);
+  const [loadingTramites, setLoadingTramites] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const tiposTramite = [
-    { value: 'primer_otorgamiento', label: 'Primer Otorgamiento' },
-    { value: 'renovacion', label: 'Renovación' },
-    { value: 'duplicado', label: 'Duplicado' },
-    { value: 'canje', label: 'Canje' },
-    { value: 'cambio_clase', label: 'Cambio de Clase' }
-  ];
+  // Redirigir si es funcionario o admin
+  useEffect(() => {
+    if (user && (user.role === 'funcionario' || user.role === 'admin')) {
+      navigate('/funcionario', { replace: true });
+    }
+  }, [user, navigate]);
+
+  // Obtener trámites del backend
+  useEffect(() => {
+    const fetchTramites = async () => {
+      try {
+        const response = await api.get('/tramites');
+        setTramites(response.data);
+      } catch (error) {
+        console.error('Error al obtener trámites:', error);
+        setErrors({ general: 'Error al cargar los tipos de trámite' });
+      } finally {
+        setLoadingTramites(false);
+      }
+    };
+
+    fetchTramites();
+  }, []);
 
   // Generar horas disponibles (08:00 - 17:00)
   useEffect(() => {
@@ -50,8 +70,8 @@ const Reserva = () => {
     const newErrors = {};
     const today = new Date().toISOString().split('T')[0];
 
-    if (!formData.tipoTramite) {
-      newErrors.tipoTramite = 'Debe seleccionar un tipo de trámite';
+    if (!formData.tramite_id) {
+      newErrors.tramite_id = 'Debe seleccionar un tipo de trámite';
     }
 
     if (!formData.fecha) {
@@ -78,19 +98,27 @@ const Reserva = () => {
     setLoading(true);
 
     try {
-      // TODO: Llamada real a API cuando esté implementado el backend
-      await api.post('/reservas', formData);
+      const response = await api.post('/reservas/reservar', {
+        tramite_id: formData.tramite_id,
+        fecha: formData.fecha,
+        hora: formData.hora,
+        observaciones: formData.observaciones
+      });
       
-      // Guardar datos en localStorage temporalmente
+      // Obtener el nombre del trámite seleccionado
+      const tramiteSeleccionado = tramites.find(t => t.id == formData.tramite_id);
+      
+      // Guardar datos de la reserva en localStorage
       localStorage.setItem('ultimaReserva', JSON.stringify({
-        ...formData,
+        ...response.data.reserva,
+        tramite_nombre: tramiteSeleccionado?.nombre || 'Sin especificar',
         fecha: new Date(formData.fecha).toLocaleDateString('es-CL'),
         timestamp: new Date().toISOString()
       }));
 
       navigate('/documentos');
     } catch (error) {
-      setErrors({ general: error.response?.data?.error || 'Error al crear la reserva' });
+      setErrors({ general: error.response?.data?.message || error.response?.data?.error || 'Error al crear la reserva' });
     } finally {
       setLoading(false);
     }
@@ -116,23 +144,23 @@ const Reserva = () => {
         <div className="card">
           <form onSubmit={handleSubmit} className="reserva-form">
             <div className="input-group">
-              <label htmlFor="tipoTramite">Tipo de Trámite / Licencia *</label>
+              <label htmlFor="tramite_id">Tipo de Trámite / Licencia *</label>
               <select
-                id="tipoTramite"
-                name="tipoTramite"
-                value={formData.tipoTramite}
+                id="tramite_id"
+                name="tramite_id"
+                value={formData.tramite_id}
                 onChange={handleChange}
-                className={errors.tipoTramite ? 'input-error' : ''}
-                disabled={loading}
+                className={errors.tramite_id ? 'input-error' : ''}
+                disabled={loading || loadingTramites}
               >
                 <option value="">Seleccione un tipo de trámite</option>
-                {tiposTramite.map(tipo => (
-                  <option key={tipo.value} value={tipo.value}>
-                    {tipo.label}
+                {tramites.map(tramite => (
+                  <option key={tramite.id} value={tramite.id}>
+                    {tramite.nombre}
                   </option>
                 ))}
               </select>
-              {errors.tipoTramite && <span className="error-message">{errors.tipoTramite}</span>}
+              {errors.tramite_id && <span className="error-message">{errors.tramite_id}</span>}
             </div>
 
             <div className="form-row">
