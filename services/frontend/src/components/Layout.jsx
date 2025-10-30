@@ -36,15 +36,38 @@ const Layout = ({ children }) => {
         <nav className="nav">
           <div className="container">
             <ul className="nav-links">
-              <li>
-                <Link to="/reserva">📅 Reservar Hora</Link>
-              </li>
-              <li>
-                <Link to="/documentos">📎 Subir Documentos</Link>
-              </li>
-              <li>
-                <Link to="/confirmacion">✅ Mis Reservas</Link>
-              </li>
+              {/* Menú para Ciudadanos */}
+              {user?.role === 'ciudadano' && (
+                <>
+                  <li>
+                    <Link to="/reserva">📅 Reservar Hora</Link>
+                  </li>
+                  <li>
+                    <Link to="/documentos">📎 Subir Documentos</Link>
+                  </li>
+                  <li>
+                    <Link to="/confirmacion">✅ Mis Reservas</Link>
+                  </li>
+                </>
+              )}
+              
+              {/* Menú para Funcionarios */}
+              {user?.role === 'funcionario' && (
+                <>
+                  <li>
+                    <Link to="/funcionario">👨‍💼 Panel de Funcionario</Link>
+                  </li>
+                </>
+              )}
+              
+              {/* Menú para Administradores */}
+              {user?.role === 'admin' && (
+                <>
+                  <li>
+                    <Link to="/funcionario">👨‍💼 Panel de Funcionario</Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </nav>

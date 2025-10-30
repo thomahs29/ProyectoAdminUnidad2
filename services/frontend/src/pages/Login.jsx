@@ -84,7 +84,19 @@ const Login = () => {
       const result = await login(rut, password);
       
       if (result.success) {
-        navigate('/reserva');
+        // Obtener el usuario del contexto después del login
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const userData = JSON.parse(storedUser);
+          // Redirigir según el rol
+          if (userData.role === 'funcionario' || userData.role === 'admin') {
+            navigate('/funcionario');
+          } else {
+            navigate('/reserva');
+          }
+        } else {
+          navigate('/reserva');
+        }
       } else {
         setGeneralError(result.error);
       }

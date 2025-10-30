@@ -4,11 +4,12 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Confirmacion from './pages/Confirmacion';
 import Documentos from './pages/Documentos';
 import Login from './pages/Login';
+import PanelFuncionario from './pages/PanelFuncionario';
 import Reserva from './pages/Reserva';
 
 // Componente para proteger rutas
-const PrivateRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+const PrivateRoute = ({ children, requiredRole = null }) => {
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -23,7 +24,42 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  // Verificar rol si se requiere
+  if (requiredRole && user?.role !== requiredRole) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+};
+
+// Componente para redirigir según el rol del usuario
+const RoleBasedRedirect = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh' 
+      }}>
+        <div className="loading"></div>
+      </div>
+    );
+  }
+
+  // Redirigir según el rol del usuario
+  if (user?.role === 'funcionario' || user?.role === 'admin') {
+    return <Navigate to="/funcionario" replace />;
+  }
+
+  // Por defecto, ciudadano
+  return <Navigate to="/reserva" replace />;
 };
 
 function App() {
@@ -39,9 +75,7 @@ function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Layout>
-                  <Navigate to="/reserva" />
-                </Layout>
+                <RoleBasedRedirect />
               </PrivateRoute>
             }
           />
@@ -71,6 +105,16 @@ function App() {
               <PrivateRoute>
                 <Layout>
                   <Confirmacion />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/funcionario"
+            element={
+              <PrivateRoute requiredRole="funcionario">
+                <Layout>
+                  <PanelFuncionario />
                 </Layout>
               </PrivateRoute>
             }

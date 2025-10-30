@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Reserva.css';
 
@@ -16,6 +17,14 @@ const Reserva = () => {
   const [tramites, setTramites] = useState([]);
   const [loadingTramites, setLoadingTramites] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Redirigir si es funcionario o admin
+  useEffect(() => {
+    if (user && (user.role === 'funcionario' || user.role === 'admin')) {
+      navigate('/funcionario', { replace: true });
+    }
+  }, [user, navigate]);
 
   // Obtener trámites del backend
   useEffect(() => {
