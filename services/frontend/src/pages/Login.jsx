@@ -89,7 +89,9 @@ const Login = () => {
         if (storedUser) {
           const userData = JSON.parse(storedUser);
           // Redirigir según el rol
-          if (userData.role === 'funcionario' || userData.role === 'admin') {
+          if (userData.role === 'admin') {
+            navigate('/admin');
+          } else if (userData.role === 'funcionario') {
             navigate('/funcionario');
           } else {
             navigate('/reserva');
