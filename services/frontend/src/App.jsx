@@ -5,6 +5,7 @@ import Confirmacion from './pages/Confirmacion';
 import Documentos from './pages/Documentos';
 import Login from './pages/Login';
 import PanelFuncionario from './pages/PanelFuncionario';
+import PanelAdministrador from './pages/PanelAdministrador';
 import Reserva from './pages/Reserva';
 
 // Componente para proteger rutas
@@ -54,7 +55,11 @@ const RoleBasedRedirect = () => {
   }
 
   // Redirigir según el rol del usuario
-  if (user?.role === 'funcionario' || user?.role === 'admin') {
+  if (user?.role === 'admin') {
+    return <Navigate to="/admin" replace />;
+  }
+
+  if (user?.role === 'funcionario') {
     return <Navigate to="/funcionario" replace />;
   }
 
@@ -115,6 +120,16 @@ function App() {
               <PrivateRoute requiredRole="funcionario">
                 <Layout>
                   <PanelFuncionario />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute requiredRole="admin">
+                <Layout>
+                  <PanelAdministrador />
                 </Layout>
               </PrivateRoute>
             }

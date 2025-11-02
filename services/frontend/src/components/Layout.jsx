@@ -55,7 +55,7 @@ const Layout = ({ children }) => {
               {user?.role === 'funcionario' && (
                 <>
                   <li>
-                    <Link to="/funcionario">👨‍💼 Panel de Funcionario</Link>
+                    <Link to="/funcionario">� Panel de Funcionario</Link>
                   </li>
                 </>
               )}
@@ -64,7 +64,7 @@ const Layout = ({ children }) => {
               {user?.role === 'admin' && (
                 <>
                   <li>
-                    <Link to="/funcionario">👨‍💼 Panel de Funcionario</Link>
+                    <Link to="/admin">🏛️ Panel de Administrador</Link>
                   </li>
                 </>
               )}
