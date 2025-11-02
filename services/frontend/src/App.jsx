@@ -4,8 +4,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Confirmacion from './pages/Confirmacion';
 import Documentos from './pages/Documentos';
 import Login from './pages/Login';
-import PanelFuncionario from './pages/PanelFuncionario';
 import PanelAdministrador from './pages/PanelAdministrador';
+import PanelFuncionario from './pages/PanelFuncionario';
 import Reserva from './pages/Reserva';
 
 // Componente para proteger rutas
@@ -18,9 +18,13 @@ const PrivateRoute = ({ children, requiredRole = null }) => {
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
-        minHeight: '100vh' 
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        flexDirection: 'column',
+        gap: '15px'
       }}>
         <div className="loading"></div>
+        <p style={{ color: 'white', fontSize: '1em', fontWeight: '500' }}>Cargando...</p>
       </div>
     );
   }
@@ -47,9 +51,13 @@ const RoleBasedRedirect = () => {
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
-        minHeight: '100vh' 
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        flexDirection: 'column',
+        gap: '15px'
       }}>
         <div className="loading"></div>
+        <p style={{ color: 'white', fontSize: '1em', fontWeight: '500' }}>Cargando...</p>
       </div>
     );
   }
