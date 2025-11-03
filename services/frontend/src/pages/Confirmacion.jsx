@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 import './Confirmacion.css';
 
 const Confirmacion = () => {
@@ -41,24 +42,23 @@ const Confirmacion = () => {
     setLoadingCancel(true);
 
     try {
-      // Guardar cancelación en localStorage
-      localStorage.setItem('cancelacionReserva', JSON.stringify({
-        reserva_id: reserva.id,
-        motivo: motivoCancelacion,
-        fecha_cancelacion: new Date().toISOString(),
-        reserva_original: reserva
-      }));
+      // Enviar cancelación al backend con el motivo
+      const response = await api.put(`/reservas/anular/${reserva.id}`, {
+        motivo: motivoCancelacion
+      });
 
-      // Limpiar localStorage
-      localStorage.removeItem('ultimaReserva');
-      localStorage.removeItem('documentosCargados');
+      if (response.status === 200) {
+        // Limpiar localStorage
+        localStorage.removeItem('ultimaReserva');
+        localStorage.removeItem('documentosCargados');
 
-      // Mostrar confirmación y redirigir
-      alert('Reserva cancelada exitosamente');
-      navigate('/');
+        // Mostrar confirmación y redirigir
+        alert('✅ Reserva cancelada exitosamente. Se ha enviado un correo de confirmación.');
+        navigate('/');
+      }
     } catch (error) {
       console.error('Error al cancelar:', error);
-      alert('Error al cancelar la reserva');
+      alert('❌ Error al cancelar la reserva: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoadingCancel(false);
     }

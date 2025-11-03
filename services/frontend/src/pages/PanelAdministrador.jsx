@@ -453,18 +453,20 @@ const PanelAdministrador = () => {
               
               {notificacionForm.enviarA === 'especifico' && (
                 <div className="form-group">
-                  <label>Seleccionar RUT:</label>
+                  <label>Seleccionar Contribuyente:</label>
                   <select 
                     value={notificacionForm.usuarioEspecifico}
                     onChange={(e) => setNotificacionForm({...notificacionForm, usuarioEspecifico: e.target.value})}
+                    className="form-select"
                   >
-                    <option value="">-- Selecciona un usuario --</option>
-                    {/* Obtener usuarios únicos */}
+                    <option value="">-- Elige un contribuyente --</option>
                     {Array.from(new Map(
-                      reservas.map(r => [r.rut, {rut: r.rut, usuario: r.usuario}])
-                    ).values()).map(user => (
+                      reservas.map(r => [r.rut, {rut: r.rut, usuario: r.usuario, email: r.email}])
+                    ).values())
+                    .sort((a, b) => a.usuario.localeCompare(b.usuario))
+                    .map(user => (
                       <option key={user.rut} value={user.rut}>
-                        {user.usuario} ({user.rut})
+                        {user.usuario} - {user.rut}
                       </option>
                     ))}
                   </select>

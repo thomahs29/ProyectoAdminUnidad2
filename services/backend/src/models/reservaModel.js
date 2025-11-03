@@ -3,7 +3,7 @@ const pool = require('../config/db');
 const createReserva = async ({ usuario_id, tramite_id, fecha, hora, observaciones }) => {
     
     const checkHorario = await pool.query(
-        `SELECT * FROM reservas WHERE fecha = $1 AND hora = $2 AND estado != 'cancelada'`,
+        `SELECT * FROM reservas WHERE fecha = $1 AND hora = $2 AND estado NOT IN ('anulada', 'completada')`,
         [fecha, hora]
     );
 

@@ -14,9 +14,6 @@ const PanelFuncionario = () => {
   useEffect(() => {
     const fetchReservas = async () => {
       try {
-        setLoading(true);
-        setError(null);
-        
         const response = await api.get('/reservas/all');
         const reservasData = Array.isArray(response.data) ? response.data : response.data.reservas || [];
         setReservas(reservasData);
@@ -34,17 +31,50 @@ const PanelFuncionario = () => {
           }
         }
         setDocumentosMap(docsMap);
+        setLoading(false);
         
       } catch (error) {
         console.error('Error al obtener reservas:', error);
         setError('Error al cargar las reservas');
-      } finally {
         setLoading(false);
       }
     };
 
+    // Carga inicial
+    setLoading(true);
     fetchReservas();
+
+    // Recargar cuando la pestaña se vuelve visible
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('📍 Pestaña visible, recargando...');
+        fetchReservas();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Limpiar al desmontar
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [user]);
+
+  // Función para recargar manualmente
+  const recargarReservas = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get('/reservas/all');
+      const reservasData = Array.isArray(response.data) ? response.data : response.data.reservas || [];
+      setReservas(reservasData);
+      alert('✅ Reservas recargadas');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al recargar');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const descargarDocumento = async (doc) => {
     try {
@@ -88,10 +118,14 @@ const PanelFuncionario = () => {
 
       if (response.status === 200) {
         alert(`✅ Hora aprobada para ${reserva.usuario}. Correo enviado al ciudadano.`);
-        // Actualizar el estado localmente sin recargar
-        setReservas(reservas.map(r => 
-          r.id === reservaId ? { ...r, estado: 'confirmada' } : r
-        ));
+        // Recargar las reservas del servidor para obtener los datos actualizados
+        try {
+          const reloadResponse = await api.get('/reservas/all');
+          const reservasData = Array.isArray(reloadResponse.data) ? reloadResponse.data : reloadResponse.data.reservas || [];
+          setReservas(reservasData);
+        } catch (reloadError) {
+          console.error('Error al recargar reservas:', reloadError);
+        }
       }
     } catch (error) {
       console.error('Error al aprobar:', error);
@@ -118,10 +152,14 @@ const PanelFuncionario = () => {
 
       if (response.status === 200) {
         alert(`❌ Hora rechazada para ${reserva.usuario}. Correo enviado al ciudadano.`);
-        // Actualizar el estado localmente sin recargar
-        setReservas(reservas.map(r => 
-          r.id === reservaId ? { ...r, estado: 'anulada' } : r
-        ));
+        // Recargar las reservas del servidor para obtener los datos actualizados
+        try {
+          const reloadResponse = await api.get('/reservas/all');
+          const reservasData = Array.isArray(reloadResponse.data) ? reloadResponse.data : reloadResponse.data.reservas || [];
+          setReservas(reservasData);
+        } catch (reloadError) {
+          console.error('Error al recargar reservas:', reloadError);
+        }
       }
     } catch (error) {
       console.error('Error al rechazar:', error);
@@ -133,6 +171,12 @@ const PanelFuncionario = () => {
     if (activeTab === 'pendientes') {
       return reservas.filter(r => r.estado === 'pendiente');
     }
+    if (activeTab === 'confirmadas') {
+      return reservas.filter(r => r.estado === 'confirmada');
+    }
+    if (activeTab === 'anuladas') {
+      return reservas.filter(r => r.estado === 'anulada');
+    }
     return reservas;
   };
 
@@ -142,7 +186,16 @@ const PanelFuncionario = () => {
 
   return (
     <div className="panel-funcionario">
-      <h1>� Panel de Funcionario</h1>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+        <h1>🏛️ Panel de Funcionario</h1>
+        <button 
+          onClick={recargarReservas}
+          className="btn btn-primary"
+          style={{padding: '8px 16px', fontSize: '14px'}}
+        >
+          🔄 Recargar
+        </button>
+      </div>
       
       {error && <div className="alert alert-danger">{error}</div>}
 
@@ -155,10 +208,22 @@ const PanelFuncionario = () => {
           ⏳ Pendientes ({reservas.filter(r => r.estado === 'pendiente').length})
         </button>
         <button 
+          className={`tab-btn ${activeTab === 'confirmadas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('confirmadas')}
+        >
+          ✅ Confirmadas ({reservas.filter(r => r.estado === 'confirmada').length})
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'anuladas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('anuladas')}
+        >
+          ❌ Anuladas/Canceladas ({reservas.filter(r => r.estado === 'anulada').length})
+        </button>
+        <button 
           className={`tab-btn ${activeTab === 'todas' ? 'active' : ''}`}
           onClick={() => setActiveTab('todas')}
         >
-          � Todas ({reservas.length})
+          📋 Todas ({reservas.length})
         </button>
       </div>
 

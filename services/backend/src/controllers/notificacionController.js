@@ -16,16 +16,14 @@ const enviarNotificacionMasiva = async (req, res) => {
 
         console.log(`Enviando ${tipo} a ${destinatarios.length} destinatarios`);
 
-        // Enviar email a cada destinatario con delay para respetar límites de Mailtrap
+        // Enviar email a cada destinatario
         let enviados = 0;
-        for (let idx = 0; idx < destinatarios.length; idx++) {
-            const destinatario = destinatarios[idx];
-            
-            console.log(`[${idx + 1}/${destinatarios.length}] Enviando a: ${destinatario.email} - ${destinatario.nombre}`);
+        destinatarios.forEach((destinatario, idx) => {
+            console.log(`[${idx + 1}] Enviando a: ${destinatario.email} - ${destinatario.nombre}`);
             
             if (!destinatario.email) {
                 console.warn(`⚠️ Destinatario sin email: ${destinatario.nombre}`);
-                continue;
+                return;
             }
 
             const htmlContent = generarHTMLNotificacion(tipo, mensaje, destinatario.nombre);
@@ -37,12 +35,7 @@ const enviarNotificacionMasiva = async (req, res) => {
             });
             
             enviados++;
-            
-            // Agregar delay de 1 segundo entre cada email (para respetar límites de Mailtrap)
-            if (idx < destinatarios.length - 1) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
-        }
+        });
 
         res.status(200).json({
             message: `Notificación enviada a ${enviados} contribuyente(s)`,
