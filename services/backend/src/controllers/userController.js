@@ -54,26 +54,26 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { rut, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Missing email or password' });
+        if (!rut || !password) {
+            return res.status(400).json({ message: 'Missing rut or password' });
         }
 
-        const user = await getUserByEmail(email);
+        const user = await getUserByRut(rut);
         if (!user) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+            return res.status(401).json({ message: 'Invalid rut or password' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password_hash);
         if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+            return res.status(401).json({ message: 'Invalid rut or password' });
         }
 
         const token = genToken(user);
         res.status(200).json({
             msg: "Login exitoso.",
-            user: { id: user.id, nombre: user.nombre, email: user.email, role: user.role },
+            user: { id: user.id, nombre: user.nombre, email: user.email, rut: user.rut, role: user.role },
             token,
         });
     } catch (error) {
