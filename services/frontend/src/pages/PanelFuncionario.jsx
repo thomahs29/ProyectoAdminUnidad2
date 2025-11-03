@@ -88,8 +88,10 @@ const PanelFuncionario = () => {
 
       if (response.status === 200) {
         alert(`✅ Hora aprobada para ${reserva.usuario}. Correo enviado al ciudadano.`);
-        // Recargar reservas
-        window.location.reload();
+        // Actualizar el estado localmente sin recargar
+        setReservas(reservas.map(r => 
+          r.id === reservaId ? { ...r, estado: 'confirmada' } : r
+        ));
       }
     } catch (error) {
       console.error('Error al aprobar:', error);
@@ -116,7 +118,10 @@ const PanelFuncionario = () => {
 
       if (response.status === 200) {
         alert(`❌ Hora rechazada para ${reserva.usuario}. Correo enviado al ciudadano.`);
-        window.location.reload();
+        // Actualizar el estado localmente sin recargar
+        setReservas(reservas.map(r => 
+          r.id === reservaId ? { ...r, estado: 'anulada' } : r
+        ));
       }
     } catch (error) {
       console.error('Error al rechazar:', error);
