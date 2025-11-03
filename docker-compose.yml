@@ -92,6 +92,36 @@ services:
           cpus: '0.2'
           memory: 128M
 
+  postgres-master:
+    image: postgres:15-alpine
+    container_name: postgres-master
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    networks:
+      - database-network
+      - backend-network
+    volumes:
+      - postgres-master-data:/var/lib/postgresql/data
+      - ./infrastructure/database/initdb:/docker-entrypoint-initdb.d:ro
+      - ./infrastructure/database/master.conf:/etc/postgresql/postgresql.conf:ro
+      - ./infrastructure/database/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./services/backend
@@ -177,3 +207,4 @@ volumes:
   redis-data:
   prometheus-data:
   grafana-data:
+  postgres-master-data:
