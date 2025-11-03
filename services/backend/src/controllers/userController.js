@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { createUser, getUserByEmail, getAllUsers, getUserByRut} = require('../models/userModel');
 const dotenv = require('dotenv');
+const redisClient = require('../config/redis');
 
 dotenv.config({ path: "../../../.env" });
 
@@ -71,6 +72,9 @@ const loginUser = async (req, res) => {
         }
 
         const token = genToken(user);
+
+        await redisClient.setEx(`user_token_${user.id}`, 3600, token); // Guardar token en Redis por 1 hora
+        
         res.status(200).json({
             msg: "Login exitoso.",
             user: { id: user.id, nombre: user.nombre, email: user.email, rut: user.rut, role: user.role },

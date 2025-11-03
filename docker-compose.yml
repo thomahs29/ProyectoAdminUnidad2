@@ -117,6 +117,7 @@ services:
     networks:
       - backend-network
       - monitoring-network
+      - database-network
     ports:
       - "3000:3000"
     deploy:

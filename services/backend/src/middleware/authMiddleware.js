@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const redisClient = require('../config/redis');
 
 dotenv.config({ path: "../../../.env" });
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
 
@@ -12,6 +13,12 @@ const verifyToken = (req, res, next) => {
         }
 
         const token = authHeader.split(' ')[1];
+
+        const cachedToken = await redisClient.get(`user_token_${req.user.id}`);
+
+        if (!cachedToken || cachedToken !== token) {
+            return res.status(401).json({ msg: "Token inválido o expirado" });
+        }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
