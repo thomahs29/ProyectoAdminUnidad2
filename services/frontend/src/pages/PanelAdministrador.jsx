@@ -124,7 +124,7 @@ const PanelAdministrador = () => {
     }
   };
 
-  if (loading) return <div className="panel-admin loading">Cargando...</div>;
+  if (loading) return null;
 
   return (
     <div className="panel-admin">

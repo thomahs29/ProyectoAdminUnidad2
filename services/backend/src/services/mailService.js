@@ -38,6 +38,33 @@ const tplReservaAnulada = ({ nombre, fecha, hora, tramite }) =>
      <p>Si fue un error, puedes reservar nuevamente desde la plataforma.</p>`
 );
 
+const tplReservaAprobada = ({ nombre, fecha, hora, tramite }) =>
+  layout(
+    "Reserva aprobada",
+    `<p>Hola <b>${nombre}</b>,</p>
+     <p>Tu reserva ha sido <b>aprobada</b> exitosamente.</p>
+     <ul>
+       <li><b>Trámite:</b> ${tramite}</li>
+       <li><b>Fecha:</b> ${fecha}</li>
+       <li><b>Hora:</b> ${hora}</li>
+     </ul>
+     <p>Te esperamos en la Municipalidad de Linares. Recuerda traer tus documentos requeridos.</p>`
+);
+
+const tplReservaRechazada = ({ nombre, fecha, hora, tramite, motivo }) =>
+  layout(
+    "Reserva rechazada",
+    `<p>Hola <b>${nombre}</b>,</p>
+     <p>Tu reserva ha sido <b>rechazada</b>.</p>
+     <ul>
+       <li><b>Trámite:</b> ${tramite}</li>
+       <li><b>Fecha:</b> ${fecha}</li>
+       <li><b>Hora:</b> ${hora}</li>
+       <li><b>Motivo:</b> ${motivo || 'No especificado'}</li>
+     </ul>
+     <p>Puedes intentar reservar nuevamente con otra fecha u hora desde la plataforma.</p>`
+);
+
 const sendEmail = async ({ to, subject, html, text }) => {
   const info = await transporter.sendMail({
     ...MAIL_DEFAULTS,
@@ -55,4 +82,4 @@ const sendEmailAsync = (args) => {
     });
 }
 
-module.exports = { sendEmail, tplReservaCreada, tplReservaAnulada, sendEmailAsync };
+module.exports = { sendEmail, tplReservaCreada, tplReservaAnulada, tplReservaAprobada, tplReservaRechazada, sendEmailAsync };
