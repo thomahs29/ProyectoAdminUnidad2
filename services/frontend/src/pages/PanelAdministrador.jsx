@@ -20,6 +20,15 @@ const PanelAdministrador = () => {
   const [activeTab, setActiveTab] = useState('reservas');
   const [estadisticas, setEstadisticas] = useState(null);
   const [licenciasMasSolicitadas, setLicenciasMasSolicitadas] = useState([]);
+  
+  // Estado para notificaciones
+  const [notificacionForm, setNotificacionForm] = useState({
+    tipo: 'general',
+    mensaje: '',
+    enviarA: 'todos',
+    usuarioEspecifico: ''
+  });
+  const [enviandoNotificacion, setEnviandoNotificacion] = useState(false);
 
   // Cargar reservas y datos
   useEffect(() => {
@@ -111,16 +120,78 @@ const PanelAdministrador = () => {
     window.URL.revokeObjectURL(url);
   };
 
-  // Enviar notificación
-  const enviarNotificacion = async (reservaId) => {
+  // Enviar notificación masiva
+  const enviarNotificacionMasiva = async () => {
     try {
-      const mensaje = prompt('¿Cuál es el mensaje de notificación?');
-      if (!mensaje) return;
+      if (!notificacionForm.mensaje.trim()) {
+        alert('Por favor ingresa un mensaje');
+        return;
+      }
+
+      setEnviandoNotificacion(true);
+
+      // Determinar a quién enviar
+      let destinatarios = [];
       
-      // Aquí iría la lógica para enviar notificación
-      alert(`Notificación enviada: ${mensaje}`);
+      if (notificacionForm.enviarA === 'todos') {
+        // Todos los usuarios
+        destinatarios = reservas.map(r => ({
+          email: r.email,
+          nombre: r.usuario,
+          rut: r.rut
+        }));
+      } else if (notificacionForm.enviarA === 'pendientes') {
+        // Solo los que tienen reservas pendientes
+        const usuariosPendientes = new Set();
+        reservas
+          .filter(r => r.estado === 'pendiente')
+          .forEach(r => {
+            usuariosPendientes.add(JSON.stringify({
+              email: r.email,
+              nombre: r.usuario,
+              rut: r.rut
+            }));
+          });
+        destinatarios = Array.from(usuariosPendientes).map(u => JSON.parse(u));
+      } else if (notificacionForm.enviarA === 'especifico' && notificacionForm.usuarioEspecifico) {
+        // Usuario específico
+        const usuario = reservas.find(r => r.rut === notificacionForm.usuarioEspecifico);
+        if (usuario) {
+          destinatarios = [{
+            email: usuario.email,
+            nombre: usuario.usuario,
+            rut: usuario.rut
+          }];
+        }
+      }
+
+      if (destinatarios.length === 0) {
+        alert('No hay destinatarios seleccionados');
+        setEnviandoNotificacion(false);
+        return;
+      }
+
+      // Enviar al backend
+      const response = await api.post('/notificaciones/enviar', {
+        tipo: notificacionForm.tipo,
+        mensaje: notificacionForm.mensaje,
+        destinatarios: destinatarios
+      });
+
+      if (response.status === 200) {
+        alert(`✅ Notificación enviada a ${destinatarios.length} contribuyente(s)`);
+        setNotificacionForm({
+          tipo: 'general',
+          mensaje: '',
+          enviarA: 'todos',
+          usuarioEspecifico: ''
+        });
+      }
     } catch (error) {
       console.error('Error al enviar notificación:', error);
+      alert('Error al enviar la notificación');
+    } finally {
+      setEnviandoNotificacion(false);
     }
   };
 
@@ -324,8 +395,10 @@ const PanelAdministrador = () => {
           <div className="notificacion-form">
             <div className="form-group">
               <label>Seleccionar Tipo de Notificación:</label>
-              <select>
-                <option value="">-- Selecciona --</option>
+              <select 
+                value={notificacionForm.tipo}
+                onChange={(e) => setNotificacionForm({...notificacionForm, tipo: e.target.value})}
+              >
                 <option value="documentos_faltantes">Documentos Faltantes</option>
                 <option value="hora_confirmada">Hora Confirmada</option>
                 <option value="recordatorio">Recordatorio de Cita</option>
@@ -338,6 +411,8 @@ const PanelAdministrador = () => {
               <textarea 
                 placeholder="Escribe el mensaje de la notificación..."
                 rows="5"
+                value={notificacionForm.mensaje}
+                onChange={(e) => setNotificacionForm({...notificacionForm, mensaje: e.target.value})}
               />
             </div>
             
@@ -345,22 +420,66 @@ const PanelAdministrador = () => {
               <label>Enviar a:</label>
               <div className="radio-options">
                 <label>
-                  <input type="radio" name="enviar_a" value="todos" defaultChecked />
+                  <input 
+                    type="radio" 
+                    name="enviar_a" 
+                    value="todos" 
+                    checked={notificacionForm.enviarA === 'todos'}
+                    onChange={(e) => setNotificacionForm({...notificacionForm, enviarA: e.target.value})}
+                  />
                   Todos los Contribuyentes
                 </label>
                 <label>
-                  <input type="radio" name="enviar_a" value="pendientes" />
+                  <input 
+                    type="radio" 
+                    name="enviar_a" 
+                    value="pendientes"
+                    checked={notificacionForm.enviarA === 'pendientes'}
+                    onChange={(e) => setNotificacionForm({...notificacionForm, enviarA: e.target.value})}
+                  />
                   Solo Reservas Pendientes
                 </label>
                 <label>
-                  <input type="radio" name="enviar_a" value="especifico" />
+                  <input 
+                    type="radio" 
+                    name="enviar_a" 
+                    value="especifico"
+                    checked={notificacionForm.enviarA === 'especifico'}
+                    onChange={(e) => setNotificacionForm({...notificacionForm, enviarA: e.target.value})}
+                  />
                   Contribuyente Específico
                 </label>
               </div>
+              
+              {notificacionForm.enviarA === 'especifico' && (
+                <div className="form-group">
+                  <label>Seleccionar Contribuyente:</label>
+                  <select 
+                    value={notificacionForm.usuarioEspecifico}
+                    onChange={(e) => setNotificacionForm({...notificacionForm, usuarioEspecifico: e.target.value})}
+                    className="form-select"
+                  >
+                    <option value="">-- Elige un contribuyente --</option>
+                    {Array.from(new Map(
+                      reservas.map(r => [r.rut, {rut: r.rut, usuario: r.usuario, email: r.email}])
+                    ).values())
+                    .sort((a, b) => a.usuario.localeCompare(b.usuario))
+                    .map(user => (
+                      <option key={user.rut} value={user.rut}>
+                        {user.usuario} - {user.rut}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
             
-            <button className="btn btn-primary btn-lg">
-              📧 Enviar Notificación
+            <button 
+              className="btn btn-primary btn-lg"
+              onClick={enviarNotificacionMasiva}
+              disabled={enviandoNotificacion}
+            >
+              {enviandoNotificacion ? 'Enviando...' : '📧 Enviar Notificación'}
             </button>
           </div>
         </div>

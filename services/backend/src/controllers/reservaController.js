@@ -69,14 +69,30 @@ const cancelarReserva = async (req, res) => {
     try {
         const usuario_id = req.user.id;
         const { id } = req.params;
+        const { motivo } = req.body;
 
-        const reserva = await anularReserva(id, usuario_id);
-        if (!reserva) {
+        console.log('===== CANCELAR RESERVA =====');
+        console.log('usuario_id:', usuario_id);
+        console.log('reserva_id:', id);
+        console.log('motivo:', motivo);
+
+        // Cambiar estado a 'anulada' (cancelación por ciudadano)
+        const result = await pool.query(
+            `UPDATE reservas
+            SET estado = 'anulada', observaciones = $3
+            WHERE id = $1 AND usuario_id = $2
+            RETURNING *`,
+            [id, usuario_id, motivo || 'Sin motivo especificado']
+        );
+
+        if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Reserva no encontrada' });
         }
 
-        // Enviar correo de anulación de reserva
+        const reserva = result.rows[0];
+        console.log('Reserva actualizada:', reserva);
 
+        // Enviar correo de anulación de reserva
         try {
             const { user, tramite } = await getUserAndTramite({ usuario_id, tramite_id: reserva.tramite_id });
             if(user?.email) {
@@ -91,7 +107,7 @@ const cancelarReserva = async (req, res) => {
                     })
                 });
             }
-            console.log("Correo de anulación enviado a:", user.email);
+            console.log("Correo de anulación enviado a:", user?.email);
         } catch (emailError) {
             console.error("Error al enviar correo de anulación:", emailError);
         }
@@ -101,8 +117,9 @@ const cancelarReserva = async (req, res) => {
             reserva,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error al cancelar la reserva' });
+        console.error('❌ Error en cancelarReserva:', error.message);
+        console.error('Stack:', error.stack);
+        res.status(500).json({ message: 'Error al cancelar la reserva', error: error.message });
     }
 };
 

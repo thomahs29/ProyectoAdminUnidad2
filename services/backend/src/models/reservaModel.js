@@ -3,7 +3,7 @@ const pool = require('../config/db');
 const createReserva = async ({ usuario_id, tramite_id, fecha, hora, observaciones }) => {
     
     const checkHorario = await pool.query(
-        `SELECT * FROM reservas WHERE fecha = $1 AND hora = $2 AND estado != 'cancelada'`,
+        `SELECT * FROM reservas WHERE fecha = $1 AND hora = $2 AND estado NOT IN ('anulada', 'completada')`,
         [fecha, hora]
     );
 
@@ -35,7 +35,7 @@ const getReservasByUsuario = async (usuario_id) => {
 
 const getReservas = async () => {
     const result = await pool.query(
-        `SELECT r.id, u.nombre AS usuario, u.rut, t.nombre AS tramite, r.fecha, r.hora, r.estado, r.observaciones
+        `SELECT r.id, u.nombre AS usuario, u.rut, u.email, t.nombre AS tramite, r.fecha, r.hora, r.estado, r.observaciones
         FROM reservas r
         JOIN usuarios u ON r.usuario_id = u.id
         JOIN tramites t ON r.tramite_id = t.id
