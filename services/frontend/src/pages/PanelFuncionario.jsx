@@ -76,7 +76,21 @@ const PanelFuncionario = () => {
 
   const aprobarHora = async (reservaId) => {
     try {
-      alert(`Hora aprobada para reserva #${reservaId}. Correo enviado al ciudadano.`);
+      // Encontrar la reserva para obtener datos
+      const reserva = reservas.find(r => r.id === reservaId);
+      if (!reserva) {
+        alert('Reserva no encontrada');
+        return;
+      }
+
+      // Llamar al endpoint del backend para aprobar
+      const response = await api.put(`/reservas/aprobar/${reservaId}`);
+
+      if (response.status === 200) {
+        alert(`✅ Hora aprobada para ${reserva.usuario}. Correo enviado al ciudadano.`);
+        // Recargar reservas
+        window.location.reload();
+      }
     } catch (error) {
       console.error('Error al aprobar:', error);
       alert('Error al aprobar la hora');
@@ -88,7 +102,22 @@ const PanelFuncionario = () => {
       const motivo = prompt('¿Cuál es el motivo del rechazo?');
       if (!motivo) return;
       
-      alert(`Hora rechazada para reserva #${reservaId}. Correo enviado al ciudadano.`);
+      // Encontrar la reserva
+      const reserva = reservas.find(r => r.id === reservaId);
+      if (!reserva) {
+        alert('Reserva no encontrada');
+        return;
+      }
+
+      // Llamar al endpoint para rechazar
+      const response = await api.put(`/reservas/rechazar/${reservaId}`, {
+        motivo: motivo
+      });
+
+      if (response.status === 200) {
+        alert(`❌ Hora rechazada para ${reserva.usuario}. Correo enviado al ciudadano.`);
+        window.location.reload();
+      }
     } catch (error) {
       console.error('Error al rechazar:', error);
       alert('Error al rechazar la hora');
@@ -104,7 +133,7 @@ const PanelFuncionario = () => {
 
   const reservasFiltradas = filtrarReservas();
 
-  if (loading) return <div className="panel-funcionario loading">Cargando...</div>;
+  if (loading) return null;
 
   return (
     <div className="panel-funcionario">
