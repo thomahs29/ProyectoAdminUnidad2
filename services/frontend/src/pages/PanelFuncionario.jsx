@@ -187,7 +187,7 @@ const PanelFuncionario = () => {
   return (
     <div className="panel-funcionario">
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
-        <h1>🏛️ Panel de Funcionario</h1>
+        <h1>Panel de Funcionario</h1>
         <button 
           onClick={recargarReservas}
           className="btn btn-primary"

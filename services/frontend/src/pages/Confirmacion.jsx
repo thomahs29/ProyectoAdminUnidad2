@@ -202,7 +202,6 @@ const Confirmacion = () => {
             <ul>
               <li>Guarde el número de confirmación de su correo</li>
               <li>Si no puede asistir, cancele con anticipación</li>
-              <li>Máximo 2 reprogramaciones permitidas</li>
               <li>Llegue puntual a su cita</li>
             </ul>
           </div>

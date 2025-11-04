@@ -43,10 +43,7 @@ const Layout = ({ children }) => {
                     <Link to="/reserva">📅 Reservar Hora</Link>
                   </li>
                   <li>
-                    <Link to="/documentos">📎 Subir Documentos</Link>
-                  </li>
-                  <li>
-                    <Link to="/confirmacion">✅ Mis Reservas</Link>
+                    <Link to="/confirmacion">Ultima Reserva</Link>
                   </li>
                 </>
               )}
@@ -55,7 +52,7 @@ const Layout = ({ children }) => {
               {user?.role === 'funcionario' && (
                 <>
                   <li>
-                    <Link to="/funcionario">� Panel de Funcionario</Link>
+                    <Link to="/funcionario">Panel de Funcionario</Link>
                   </li>
                 </>
               )}
