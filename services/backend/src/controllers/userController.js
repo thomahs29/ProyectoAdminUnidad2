@@ -73,7 +73,7 @@ const loginUser = async (req, res) => {
 
         const token = genToken(user);
 
-        await redisClient.setEx(`user_token_${user.id}`, 3600, token); // Guardar token en Redis por 1 hora
+        await redisClient.set(`user_token_${user.id}`, token, 'EX', 3600);
         
         res.status(200).json({
             msg: "Login exitoso.",

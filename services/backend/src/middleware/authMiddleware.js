@@ -14,13 +14,13 @@ const verifyToken = async (req, res, next) => {
 
         const token = authHeader.split(' ')[1];
 
-        const cachedToken = await redisClient.get(`user_token_${req.user.id}`);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        if (!cachedToken || cachedToken !== token) {
-            return res.status(401).json({ msg: "Token inválido o expirado" });
+        const stored = await redisClient.get(`user_token_${decoded.id}`);
+        if (!stored || stored !== token) {
+            return res.status(401).json({ message: 'Invalid or expired session' });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
     } catch (error) {
