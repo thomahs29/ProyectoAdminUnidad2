@@ -10,6 +10,7 @@ const tramiteRoutes = require("./routes/tramiteRoutes.js");
 const testRoutes = require("./routes/testRoutes.js");
 const documentoRoutes = require("./routes/documentoRoutes.js");
 const notificacionRoutes = require("./routes/notificacionRoutes.js");
+const aiRoutes = require("./routes/aiRoutes.js");
 
 // Cargar variables de entorno desde la raíz del proyecto
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
@@ -37,6 +38,7 @@ app.use('/api/tramites', tramiteRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/documentos', documentoRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Middleware de error global
 app.use((err, req, res, next) => {
