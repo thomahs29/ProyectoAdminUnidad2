@@ -148,6 +148,8 @@ services:
       - backend-network
       - monitoring-network
       - database-network
+    volumes:
+      - backend-uploads:/app/uploads
     ports:
       - "3000:3000"
     deploy:
@@ -208,3 +210,4 @@ volumes:
   prometheus-data:
   grafana-data:
   postgres-master-data:
+  backend-uploads:
