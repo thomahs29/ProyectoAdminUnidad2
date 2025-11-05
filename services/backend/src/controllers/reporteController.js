@@ -127,8 +127,16 @@ const genReporteTramites = async (req, res) => {
             res.download(tempPath, (err) => {
                 if (err) console.error("Error al descargar PDF:", err);
                 fs.unlinkSync(tempPath);
+            
             });
         });
+
+        res.on("close", () => {
+            if (fs.existsSync(tempPath)) {
+                fs.unlinkSync(tempPath);
+            }
+        });
+        
     } catch (error) {
         console.error('Error generating report:', error);
         res.status(500).json({ message: 'Internal server error' });
