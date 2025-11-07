@@ -141,6 +141,7 @@ services:
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - MAIL_FROM=${MAIL_FROM}
       - MAIL_REPLY_TO=${MAIL_REPLY_TO}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       redis-cache:
         condition: service_healthy
