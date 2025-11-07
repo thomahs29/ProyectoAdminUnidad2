@@ -191,7 +191,7 @@ const aprobarReserva = async (req, res) => {
             reserva: resultado
         });
     } catch (error) {
-        console.error('❌ Error en aprobarReserva:', error.message);
+        console.error('Error en aprobarReserva:', error.message);
         console.error('Stack:', error.stack);
         res.status(500).json({ message: 'Error al aprobar la reserva', error: error.message });
     }
@@ -260,7 +260,7 @@ const rechazarReserva = async (req, res) => {
             reserva: resultado
         });
     } catch (error) {
-        console.error('❌ Error en rechazarReserva:', error.message);
+        console.error('Error en rechazarReserva:', error.message);
         console.error('Stack:', error.stack);
         res.status(500).json({ message: 'Error al rechazar la reserva', error: error.message });
     }
