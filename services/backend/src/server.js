@@ -11,6 +11,8 @@ const testRoutes = require("./routes/testRoutes.js");
 const documentoRoutes = require("./routes/documentoRoutes.js");
 const notificacionRoutes = require("./routes/notificacionRoutes.js");
 const aiRoutes = require("./routes/aiRoutes.js");
+const municipalesRoutes = require("./routes/municipalesRoutes.js");
+const { inicializarDatos } = require("./models/municipalesModel.js");
 
 // Cargar variables de entorno desde la raíz del proyecto
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
@@ -39,6 +41,7 @@ app.use('/api/tests', testRoutes);
 app.use('/api/documentos', documentoRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/municipales', municipalesRoutes);
 
 // Middleware de error global
 app.use((err, req, res, next) => {
@@ -52,4 +55,5 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     db.testDBConnection();
+    inicializarDatos();
 });
