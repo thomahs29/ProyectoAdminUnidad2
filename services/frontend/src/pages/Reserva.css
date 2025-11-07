@@ -75,6 +75,17 @@
   font-weight: bold;
 }
 
+.ai-chat-card {
+  margin-top: 1.5rem;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.ai-chat-card .ai-chat-container {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 @media (max-width: 968px) {
   .reserva-container {
     grid-template-columns: 1fr;

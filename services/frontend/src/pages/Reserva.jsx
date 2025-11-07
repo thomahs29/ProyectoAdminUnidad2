@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AIChat from '../components/AIChat';
 import api from '../services/api';
 import './Reserva.css';
 
@@ -265,6 +266,10 @@ const Reserva = () => {
               <li>Certificado de Escuela de Conductores</li>
               <li>Declaraciones Juradas (si aplica)</li>
             </ul>
+          </div>
+
+          <div className="card ai-chat-card">
+            <AIChat />
           </div>
         </div>
       </div>
