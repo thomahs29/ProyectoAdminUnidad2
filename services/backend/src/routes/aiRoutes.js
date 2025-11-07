@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { verifyToken } = require('../middleware/authMiddleware');
 const {
     chat,
     vencimientos,
@@ -10,10 +11,10 @@ const {
 
 /**
  * POST /api/ai/chat
- * Procesar pregunta y obtener respuesta de IA
+ * Procesar pregunta y obtener respuesta de IA (requiere autenticación)
  * Body: { pregunta: string }
  */
-router.post('/chat', chat);
+router.post('/chat', verifyToken, chat);
 
 /**
  * POST /api/ai/vencimientos
