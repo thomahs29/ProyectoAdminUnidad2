@@ -45,6 +45,9 @@ const Layout = ({ children }) => {
                   <li>
                     <Link to="/confirmacion">Ultima Reserva</Link>
                   </li>
+                  <li>
+                    <Link to="/mis-datos-municipales">📋 Mis Datos Municipales</Link>
+                  </li>
                 </>
               )}
               

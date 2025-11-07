@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import PanelAdministrador from './pages/PanelAdministrador';
 import PanelFuncionario from './pages/PanelFuncionario';
 import Reserva from './pages/Reserva';
+import MisDatosMunicipales from './pages/MisDatosMunicipales';
 
 // Componente para proteger rutas
 const PrivateRoute = ({ children, requiredRole = null }) => {
@@ -118,6 +119,16 @@ function App() {
               <PrivateRoute>
                 <Layout>
                   <Confirmacion />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/mis-datos-municipales"
+            element={
+              <PrivateRoute>
+                <Layout>
+                  <MisDatosMunicipales />
                 </Layout>
               </PrivateRoute>
             }
