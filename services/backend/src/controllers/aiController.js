@@ -14,16 +14,16 @@ const chat = async (req, res) => {
     try {
         const { pregunta } = req.body;
         const usuarioId = req.user?.id; // ID del usuario autenticado (si existe)
+        const rut = req.user?.rut; // RUT del usuario autenticado
 
         if (!pregunta) {
             return res.status(400).json({ error: 'La pregunta es requerida' });
         }
 
-        const respuesta = await chatWithAI(pregunta, usuarioId);
+        const respuesta = await chatWithAI(pregunta, usuarioId, rut);
 
         res.status(200).json(respuesta);
     } catch (error) {
-        console.error('Error en chat controller:', error.message);
         res.status(500).json({ error: 'Error al procesar la pregunta', detalle: error.message });
     }
 };

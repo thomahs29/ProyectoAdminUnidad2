@@ -88,8 +88,12 @@ export default function AIChat() {
         setCargando(true);
 
         try {
-            // Si es una FAQ con respuesta preformulada, mostrarla
-            if (typeof faq === 'object' && faq.respuesta) {
+            // Verificar si la pregunta es específicamente sobre vencimiento/expiración de licencia
+            const esPrefiuntaLicencia = /vence|vencimiento|expiración|caducid|cuándo vence|cuándo expira/i.test(preguntaTexto);
+            
+            // Si es pregunta sobre licencia, SIEMPRE ir al backend
+            // Si es otra FAQ, mostrar respuesta preformulada
+            if (!esPrefiuntaLicencia && typeof faq === 'object' && faq.respuesta) {
                 const nuevoRespuesta = {
                     id: mensajes.length + 2,
                     tipo: 'bot',
@@ -98,7 +102,7 @@ export default function AIChat() {
                 };
                 setMensajes((prev) => [...prev, nuevoRespuesta]);
             } else {
-                // Si es una sugerencia, enviar a la IA
+                // Ir al backend para procesar
                 const respuesta = await enviarPregunta(preguntaTexto);
                 const nuevoRespuesta = {
                     id: mensajes.length + 2,
@@ -123,7 +127,7 @@ export default function AIChat() {
     return (
         <div className="ai-chat-container">
             <div className="ai-chat-header">
-                <h2>🤖 Asistente IA - Licencias de Conducir</h2>
+                <h2> Preguntas sobre Licencias de Conducir</h2>
                 <p>Resuelve tus dudas sobre trámites y licencias</p>
             </div>
 
@@ -133,9 +137,6 @@ export default function AIChat() {
                         <div className="mensaje-contenido">
                             {msg.contenido}
                         </div>
-                        {msg.modelo && (
-                            <span className="modelo-info">Modelo: {msg.modelo}</span>
-                        )}
                     </div>
                 ))}
 

@@ -1,6 +1,6 @@
-import axios from 'axios';
+import api from './api';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:3000';
 
 /**
  * Enviar pregunta a la IA
@@ -9,12 +9,11 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
  */
 export const enviarPregunta = async (pregunta) => {
     try {
-        const response = await axios.post(`${API_BASE}/ai/chat`, {
+        const response = await api.post('/ai/chat', {
             pregunta,
         });
         return response.data;
     } catch (error) {
-        console.error('Error al enviar pregunta:', error);
         throw error;
     }
 };
@@ -25,10 +24,9 @@ export const enviarPregunta = async (pregunta) => {
  */
 export const obtenerFAQs = async () => {
     try {
-        const response = await axios.get(`${API_BASE}/ai/faq`);
+        const response = await api.get('/ai/faq');
         return response.data.faqs;
     } catch (error) {
-        console.error('Error al obtener FAQs:', error);
         throw error;
     }
 };
@@ -40,12 +38,11 @@ export const obtenerFAQs = async () => {
  */
 export const obtenerSugerencias = async (contexto = 'general') => {
     try {
-        const response = await axios.get(`${API_BASE}/ai/sugerencias`, {
+        const response = await api.get('/ai/sugerencias', {
             params: { contexto },
         });
         return response.data.preguntas;
     } catch (error) {
-        console.error('Error al obtener sugerencias:', error);
         throw error;
     }
 };
@@ -57,12 +54,11 @@ export const obtenerSugerencias = async (contexto = 'general') => {
  */
 export const detectarVencimientos = async (diasAnticipacion = 30) => {
     try {
-        const response = await axios.post(`${API_BASE}/ai/vencimientos`, {
+        const response = await api.post('/ai/vencimientos', {
             diasAnticipacion,
         });
         return response.data.recordatorios;
     } catch (error) {
-        console.error('Error al detectar vencimientos:', error);
         throw error;
     }
 };
@@ -74,10 +70,9 @@ export const detectarVencimientos = async (diasAnticipacion = 30) => {
  */
 export const obtenerHistorial = async (limite = 10) => {
     try {
-        const response = await axios.get(`${API_BASE}/ai/historial?limite=${limite}`);
+        const response = await api.get(`/ai/historial?limite=${limite}`);
         return response.data.conversaciones;
     } catch (error) {
-        console.error('Error al obtener historial:', error);
         throw error;
     }
 };
