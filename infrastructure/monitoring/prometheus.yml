@@ -1,15 +1,74 @@
 global:
   scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+  external_labels:
+    env: "prod"
+
+rule_files:
+  - /etc/prometheus/alert_rules.yml
 
 scrape_configs:
-  - job_name: 'prometheus'
+  # Prometheus
+  - job_name: prometheus
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ["prometheus:9090"]
 
-  - job_name: 'backend'
+  # cAdvisor: métricas por contenedor
+  - job_name: cadvisor
     static_configs:
-      - targets: ['backend:3000']
+      - targets: ["cadvisor:8080"]
 
-  - job_name: 'redis'
+  # Node exporter: métricas del host
+  - job_name: node-exporter
     static_configs:
-      - targets: ['redis-cache:6379']
+      - targets: ["node-exporter:9100"]
+
+  # Redis
+  - job_name: redis
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+        labels:
+          instance: "redis-cache:6379"
+
+  # Postgres (master)
+  - job_name: postgres-master
+    static_configs:
+      - targets: ["postgres-master-exporter:9187"]
+
+  # Postgres (replica)
+  - job_name: postgres-replica
+    static_configs:
+      - targets: ["postgres-replica-exporter:9187"]
+
+  # Backend HTTP /health con blackbox
+  - job_name: blackbox-backend
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://backend:3000/api/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  # Frontend HTTP /
+  - job_name: blackbox-frontend
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://frontend/
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115

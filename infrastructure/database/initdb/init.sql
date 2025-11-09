@@ -98,3 +98,17 @@ CREATE TABLE IF NOT EXISTS documentos (
   peso_mb NUMERIC(6,2),
   subido_en TIMESTAMPTZ DEFAULT now()
 );
+
+
+-- usuario solo-lectura para el exporter
+CREATE ROLE metrics WITH LOGIN PASSWORD 'metrics_password';
+
+-- permisos estándar para métricas
+GRANT pg_monitor TO metrics;           -- incluye lecturas a vistas de stats
+GRANT pg_read_all_stats TO metrics;    -- extra (no siempre necesario)
+
+-- para ver el estado de las réplicas desde el master
+GRANT SELECT ON pg_stat_replication TO metrics;
+
+-- (opcional) por si quieres stats detalladas por consultas
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements;

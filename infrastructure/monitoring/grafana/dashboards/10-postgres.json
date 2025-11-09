@@ -1,0 +1,110 @@
+{
+  "uid": "pg-main",
+  "title": "PostgreSQL (master & replica)",
+  "schemaVersion": 39,
+  "version": 2,
+  "tags": ["postgres"],
+  "time": { "from": "now-6h", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "job",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(pg_up, job)",
+        "includeAll": true,
+        "allValue": ".*",
+        "refresh": 1
+      },
+      {
+        "name": "db",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(pg_stat_database_numbackends, datname)",
+        "includeAll": true,
+        "allValue": ".*",
+        "refresh": 1
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Exporter UP",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "sum(pg_up{job=~\"$job\"})", "refId": "A" }]
+    },
+    {
+      "type": "stat",
+      "title": "Replication Lag (MB)",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "megabytes" } },
+      "targets": [{ "expr": "max(pg_replication_lag_bytes{job=~\"$job\"}) / 1024 / 1024", "refId": "A" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Connections",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (datname,instance) (pg_stat_database_numbackends{datname=~\"$db\",job=~\"$job\"})",
+          "legendFormat": "{{instance}} {{datname}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "TPS (commits + rollbacks)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(pg_stat_database_xact_commit{datname=~\"$db\",job=~\"$job\"}[5m]) + rate(pg_stat_database_xact_rollback{datname=~\"$db\",job=~\"$job\"}[5m])",
+          "legendFormat": "{{instance}} {{datname}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "WAL files synced (bgwriter)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(pg_stat_bgwriter_buffers_checkpoint[5m])",
+          "legendFormat": "buffers checkpoint",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Replication Lag por réplica (MB)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "megabytes" } },
+      "targets": [
+        {
+          "expr": "pg_replication_lag_bytes{job=~\"$job\"} / 1024 / 1024",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Replication Lag (MB / s)",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "targets": [
+        { "expr": "max((pg_replication_lag_bytes{job=~\"$job\"} / 1024 / 1024)) OR max(pg_replication_lag{job=~\"$job\"})", "refId": "A" }
+      ]
+    }
+  ]
+}
