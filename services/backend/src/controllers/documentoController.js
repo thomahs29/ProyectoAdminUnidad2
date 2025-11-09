@@ -1,10 +1,18 @@
 const { saveDocumento, getDocumentosByReserva } = require('../models/documentoModel');
 const path = require('path');
 const fs = require('fs');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(process.cwd(), 'uploads', 'documents');
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const uploadDocumento = async (req, res) => {
     try {
         const { reserva_id } = req.body;
+        const file = req.file;
+
         if (!req.file) {
             return res.status(400).json({ error: 'No se ha subido ningún archivo' });
         }
@@ -12,14 +20,14 @@ const uploadDocumento = async (req, res) => {
             return res.status(400).json({ error: 'Falta el ID de la reserva' });
         }
 
-        const file = req.file;
-        const ruta = path.join('uploads', 'documents', file.filename);
-        const peso = (file.size / (1024 * 1024)).toFixed(2);
+        const storedFilename = file.filename;
+        const ruta = path.posix.join('uploads', 'documents', storedFilename);
+        const peso = Number((file.size / (1024 * 1024)).toFixed(2));
 
         const doc = await saveDocumento({
             reserva_id,
             nombre_archivo: file.originalname,
-            ruta_archivo: ruta,
+            ruta_archivo: storedFilename,
             tipo_mime: file.mimetype,
             peso_mb: peso
         });
@@ -46,8 +54,12 @@ const downloadDocumento = async (req, res) => {
     try {
         const { nombre } = req.params;
 
-        // Ruta absoluta hacia la carpeta uploads/documentos
-        const filePath = path.join(__dirname, "../uploads/documents", nombre);
+        const safeName = path.basename(nombre);
+        const filePath = path.join(UPLOADS_DIR, safeName);
+        
+        console.log('requested filename:', nombre);
+        console.log('safe filename:', safeName);
+        console.log("Intentando descargar archivo:", filePath);
 
         // Verificamos si el archivo existe
         if (!fs.existsSync(filePath)) {
@@ -55,10 +67,10 @@ const downloadDocumento = async (req, res) => {
         }
 
         // Devuelve el archivo al cliente
-        res.download(filePath, (err) => {
+        res.download(filePath, safeName, (err) => {
             if (err) {
-            console.error("Error al enviar archivo:", err.message);
-            res.status(500).json({ error: "Error al descargar el archivo" });
+                console.error("Error al enviar archivo:", err.message);
+                res.status(500).json({ error: "Error al descargar el archivo" });
             }
         });
     } catch (error) {
