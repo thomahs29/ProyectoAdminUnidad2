@@ -1,40 +1,6 @@
 const db = require('../config/db');
 
 /**
- * Crear tabla datos_municipales si no existe
- */
-const crearTablaMunicipales = async () => {
-    const query = `
-        CREATE TABLE IF NOT EXISTS datos_municipales (
-            id SERIAL PRIMARY KEY,
-            rut VARCHAR(12) UNIQUE NOT NULL,
-            nombre VARCHAR(100),
-            
-            licencia_numero VARCHAR(50),
-            licencia_fecha_vencimiento DATE,
-            licencia_estado VARCHAR(50),
-            
-            patente_numero VARCHAR(50),
-            patente_estado VARCHAR(50),
-            
-            permiso_estado VARCHAR(50),
-            
-            juzgado_estado VARCHAR(50),
-            
-            aseo_estado VARCHAR(50),
-            
-            creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    `;
-    
-    try {
-        await db.query(query);
-    } catch (error) {
-        console.error('Error creando tabla datos_municipales:', error.message);
-    }
-};
-
-/**
  * Buscar datos municipales por RUT
  */
 const obtenerPorRUT = async (rut) => {
@@ -159,7 +125,6 @@ const inicializarDatos = async () => {
 };
 
 module.exports = {
-    crearTablaMunicipales,
     obtenerPorRUT,
     guardar,
     generarDatosSimulados,

@@ -1,13 +1,13 @@
-import api from './api';
+import { aiApi } from './api';
 
 /**
- * Enviar pregunta a la IA (endpoint del backend)
+ * Enviar pregunta a la IA (servicio independiente en puerto 3001)
  * @param {string} pregunta - La pregunta del usuario
  * @returns {Promise<object>} Respuesta de la IA
  */
 export const enviarPregunta = async (pregunta) => {
     try {
-        const response = await api.post('/ai/chat', {
+        const response = await aiApi.post('/chat', {
             pregunta,
         });
         return response.data;
@@ -22,7 +22,7 @@ export const enviarPregunta = async (pregunta) => {
  */
 export const obtenerFAQs = async () => {
     try {
-        const response = await api.get('/ai/faq');
+        const response = await aiApi.get('/faq');
         return response.data.faqs;
     } catch (error) {
         throw error;
@@ -36,7 +36,7 @@ export const obtenerFAQs = async () => {
  */
 export const obtenerSugerencias = async (contexto = 'general') => {
     try {
-        const response = await api.get('/ai/sugerencias', {
+        const response = await aiApi.get('/sugerencias', {
             params: { contexto },
         });
         return response.data.preguntas;
@@ -52,7 +52,7 @@ export const obtenerSugerencias = async (contexto = 'general') => {
  */
 export const detectarVencimientos = async (diasAnticipacion = 30) => {
     try {
-        const response = await api.post('/ai/vencimientos', {
+        const response = await aiApi.post('/vencimientos', {
             diasAnticipacion,
         });
         return response.data.recordatorios;
@@ -68,7 +68,7 @@ export const detectarVencimientos = async (diasAnticipacion = 30) => {
  */
 export const obtenerHistorial = async (limite = 10) => {
     try {
-        const response = await api.get(`/ai/historial?limite=${limite}`);
+        const response = await aiApi.get(`/historial?limite=${limite}`);
         return response.data.conversaciones;
     } catch (error) {
         throw error;

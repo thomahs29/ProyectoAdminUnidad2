@@ -126,3 +126,77 @@ CREATE TABLE IF NOT EXISTS documentos (
   peso_mb NUMERIC(6,2),
   subido_en TIMESTAMPTZ DEFAULT now()
 );
+
+-- tabla ia_faqs (preguntas frecuentes para la IA)
+CREATE TABLE IF NOT EXISTS ia_faqs (
+  id SERIAL PRIMARY KEY,
+  pregunta TEXT NOT NULL UNIQUE,
+  respuesta TEXT NOT NULL,
+  categoria VARCHAR(50),
+  palabras_clave TEXT[],
+  activa BOOLEAN DEFAULT TRUE,
+  creada_en TIMESTAMPTZ DEFAULT now(),
+  actualizada_en TIMESTAMPTZ DEFAULT now()
+);
+
+-- Insertar FAQs de ejemplo
+INSERT INTO ia_faqs (pregunta, respuesta, categoria, palabras_clave)
+VALUES
+('¿Cómo solicito una licencia de conducir?', 
+ 'Para solicitar una licencia de conducir debe:
+ 1. Acudir a la municipalidad con su cédula de identidad
+ 2. Presentar certificado médico
+ 3. Pasar examen psicotécnico
+ 4. Realizar examen de manejo
+ El trámite toma aproximadamente 30 días.',
+ 'licencia',
+ ARRAY['licencia', 'solicitar', 'conducir', 'documento']),
+
+('¿Cuáles son los requisitos para renovar mi licencia?',
+ 'Para renovar su licencia de conducir necesita:
+ 1. Licencia anterior (vigente o vencida hace menos de 3 años)
+ 2. Cédula de identidad vigente
+ 3. Certificado médico actualizado
+ 4. Pagar los aranceles municipales
+ La renovación es más rápida que una solicitud nueva.',
+ 'renovacion',
+ ARRAY['renovar', 'licencia', 'vencida', 'requisitos']),
+
+('¿Cuál es el costo de una licencia de conducir?',
+ 'El costo de una licencia de conducir depende del tipo:
+ - Licencia nueva Clase B: $50.000
+ - Renovación Clase B: $35.000
+ - Licencia Clase C: $40.000
+ Estos valores pueden variar. Consulte en la municipalidad.',
+ 'costos',
+ ARRAY['costo', 'precio', 'aranceles', 'licencia', 'pagar']),
+
+('¿Cuáles son los horarios de atención de la municipalidad?',
+ 'Horarios de atención:
+ - Lunes a viernes: 08:00 - 17:00
+ - Sábados: 09:00 - 13:00
+ - Domingos y festivos: CERRADO
+ Ubicación: Calle Principal 123, Linares',
+ 'horarios',
+ ARRAY['horario', 'atención', 'abierto', 'cerrado', 'municipalidad']),
+
+('¿Cómo agendo una cita para trámite?',
+ 'Para agendar una cita:
+ 1. Ingrese a nuestro portal online
+ 2. Seleccione el tipo de trámite
+ 3. Elija fecha y hora disponible
+ 4. Confirme con su RUT y correo
+ Las citas deben realizarse con al menos 24 horas de anticipación.',
+ 'reservas',
+ ARRAY['cita', 'reserva', 'agendar', 'hora', 'fecha'])
+ON CONFLICT DO NOTHING;
+
+-- Tabla de historial de conversaciones con la IA
+CREATE TABLE IF NOT EXISTS ia_conversaciones (
+    id SERIAL PRIMARY KEY,
+    usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+    pregunta TEXT NOT NULL,
+    respuesta TEXT NOT NULL,
+    modelo VARCHAR(50),
+    creado_en TIMESTAMP DEFAULT NOW()
+);
