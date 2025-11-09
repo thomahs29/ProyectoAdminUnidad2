@@ -177,6 +177,8 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    volumes:
+      - backend-uploads:/app/uploads
     env_file:
       - .env
     networks:
@@ -189,6 +191,8 @@ services:
       context: ./services/backend
       dockerfile: Dockerfile
     container_name: proyecto-backend-2
+    volumes:
+      - backend-uploads:/app/uploads
     depends_on:
       backend:
         condition: service_healthy
