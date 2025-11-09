@@ -122,6 +122,45 @@ services:
       timeout: 5s
       retries: 5
 
+  postgres-replica:
+    image: postgres:15-alpine
+    container_name: postgres-replica
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}     # no se usa para conectarse al master; sirve si promueves la réplica
+      POSTGRES_DB: ${DB_NAME}
+      REPL_PASSWORD: ${REPL_PASSWORD}
+      REPL_USER: replicator
+      MASTER_HOST: postgres-master
+      MASTER_PORT: 5432
+      REPL_SLOT_NAME: replica1               # cámbialo si creas más réplicas
+      PGDATA: /var/lib/postgresql/data
+      PGPASSWORD: ${DB_PASSWORD}
+    networks:
+      - database-network
+    volumes:
+      - postgres-replica-data:/var/lib/postgresql/data
+      - ./infrastructure/database/replica/replica-entrypoint.sh:/usr/local/bin/replica-entrypoint.sh:ro
+    entrypoint: ["sh", "/usr/local/bin/replica-entrypoint.sh"]
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      # Devuelve 't' si la instancia está en recuperación (standby)
+      test: ["CMD-SHELL", "psql -U ${DB_USER} -d ${DB_NAME} -tAc \"SELECT pg_is_in_recovery();\" | grep -q t"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
   backend:
     build:
       context: ./services/backend
@@ -190,10 +229,11 @@ services:
           cpus: '0.3'
           memory: 256M
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 30s
 
 networks:
   frontend-network:
@@ -211,4 +251,5 @@ volumes:
   prometheus-data:
   grafana-data:
   postgres-master-data:
+  postgres-replica-data:
   backend-uploads:
