@@ -151,9 +151,11 @@ const crearOActualizar = async (rut, nombre) => {
 
 /**
  * Inicializar tabla y datos de prueba
+ * Nota: La tabla datos_municipales ya es creada en init.sql durante la inicialización de la BD
  */
 const inicializarDatos = async () => {
-    await crearTablaMunicipales();
+    // La tabla se crea en init.sql, no es necesario crearla aquí
+    console.log('Tabla datos_municipales ya fue creada en init.sql');
 };
 
 module.exports = {

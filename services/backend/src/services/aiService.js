@@ -311,7 +311,7 @@ const guardarConversacion = async (usuarioId, pregunta, respuesta, modelo = 'gpt
         await pool.query(`
             CREATE TABLE IF NOT EXISTS ia_conversaciones (
                 id SERIAL PRIMARY KEY,
-                usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+                usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
                 pregunta TEXT NOT NULL,
                 respuesta TEXT NOT NULL,
                 modelo VARCHAR(50),

@@ -55,6 +55,34 @@ VALUES
   (SELECT id FROM roles WHERE name = 'admin'))
 ON CONFLICT DO NOTHING;
 
+-- tabla datos_municipales (información ciudadana: licencias, patentes, etc)
+CREATE TABLE IF NOT EXISTS datos_municipales (
+  id SERIAL PRIMARY KEY,
+  rut VARCHAR(12) UNIQUE NOT NULL,
+  nombre VARCHAR(100),
+  
+  licencia_numero VARCHAR(50),
+  licencia_fecha_vencimiento DATE,
+  licencia_estado VARCHAR(50),
+  
+  patente_numero VARCHAR(50),
+  patente_estado VARCHAR(50),
+  
+  permiso_estado VARCHAR(50),
+  
+  juzgado_estado VARCHAR(50),
+  
+  aseo_estado VARCHAR(50),
+  
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insertar datos de prueba para datos_municipales
+INSERT INTO datos_municipales (rut, nombre, licencia_numero, licencia_fecha_vencimiento, licencia_estado, patente_numero, patente_estado, permiso_estado, juzgado_estado, aseo_estado)
+VALUES
+('11111111-1', 'Usuario Ciudadano', 'LIC-1762721594474-9797', '2026-03-17', 'al_día', 'FT-64', 'al_día', 'con_deuda', 'al_día', 'al_día')
+ON CONFLICT DO NOTHING;
+
 -- tabla tramites
 CREATE TABLE IF NOT EXISTS tramites (
   id SERIAL PRIMARY KEY,

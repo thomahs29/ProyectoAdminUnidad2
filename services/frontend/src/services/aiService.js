@@ -1,9 +1,7 @@
 import api from './api';
 
-const API_BASE = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:3000';
-
 /**
- * Enviar pregunta a la IA
+ * Enviar pregunta a la IA (endpoint del backend)
  * @param {string} pregunta - La pregunta del usuario
  * @returns {Promise<object>} Respuesta de la IA
  */
