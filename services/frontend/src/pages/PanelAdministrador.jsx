@@ -125,10 +125,11 @@ const PanelAdministrador = () => {
     try {
       const hoy = new Date();
       const hace30Dias = new Date(hoy.getTime() - 30*24*60*60*1000);
+      const en30Dias = new Date(hoy.getTime() + 30*24*60*60*1000);
       
       const formatDate = (date) => date.toISOString().split('T')[0];
       const fechaInicio = formatDate(hace30Dias);
-      const fechaFin = formatDate(hoy);
+      const fechaFin = formatDate(en30Dias);
       
       const token = localStorage.getItem('token');
       console.log('Token en localStorage:', token ? 'Existe' : 'NO existe');
@@ -166,10 +167,11 @@ const PanelAdministrador = () => {
     try {
       const hoy = new Date();
       const hace30Dias = new Date(hoy.getTime() - 30*24*60*60*1000);
+      const en30Dias = new Date(hoy.getTime() + 30*24*60*60*1000);
       
       const formatDate = (date) => date.toISOString().split('T')[0];
       const fechaInicio = formatDate(hace30Dias);
-      const fechaFin = formatDate(hoy);
+      const fechaFin = formatDate(en30Dias);
       
       console.log('Descargando PDF:', fechaInicio, fechaFin);
       
@@ -250,7 +252,7 @@ const PanelAdministrador = () => {
       });
 
       if (response.status === 200) {
-        alert(`✅ Notificación enviada a ${destinatarios.length} contribuyente(s)`);
+        alert(`Notificación enviada a ${destinatarios.length} contribuyente(s)`);
         setNotificacionForm({
           tipo: 'general',
           mensaje: '',
@@ -363,9 +365,6 @@ const PanelAdministrador = () => {
               className="btn btn-secondary"
             >
               Limpiar Filtros
-            </button>
-            <button onClick={exportarCSV} className="btn btn-primary">
-              📥 Exportar a CSV
             </button>
           </div>
 

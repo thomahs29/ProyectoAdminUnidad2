@@ -251,7 +251,7 @@ services:
       context: ./services/frontend
       dockerfile: Dockerfile
     container_name: proyecto-frontend
-    restart: unless-stopped
+    restart: unless-stopped 
     depends_on:
       backend:
         condition: service_healthy
