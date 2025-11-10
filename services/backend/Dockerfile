@@ -23,7 +23,7 @@ ENV PYTHON=/usr/bin/python3
 COPY src/package*.json ./
 
 # Instalar dependencias de producción
-RUN npm install --omit=dev
+RUN npm install --build-from-source
 
 # Copiar el código fuente
 COPY src/ ./
