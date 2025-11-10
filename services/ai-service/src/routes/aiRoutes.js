@@ -4,31 +4,19 @@ const aiController = require('../controllers/aiController');
 
 /**
  * POST /api/ai/chat
- * Enviar pregunta a la IA
+ * Enviar pregunta a la IA y obtener respuesta
  */
 router.post('/chat', aiController.chat);
 
 /**
  * GET /api/ai/faq
- * Obtener todas las preguntas frecuentes
+ * Obtener preguntas sugeridas
  */
 router.get('/faq', aiController.faq);
 
 /**
- * GET /api/ai/faq/:id
- * Obtener FAQ específico
- */
-router.get('/faq/:id', aiController.obtenerFAQPorId);
-
-/**
- * GET /api/ai/buscar
- * Buscar FAQs por término
- */
-router.get('/buscar', aiController.buscar);
-
-/**
  * GET /api/ai/historial
- * Obtener historial de conversaciones
+ * Obtener historial de conversaciones del usuario
  */
 router.get('/historial', aiController.historial);
 

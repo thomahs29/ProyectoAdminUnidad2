@@ -1,48 +1,14 @@
 const pool = require('../config/db');
 
-// Obtener FAQs
+// Obtener preguntas sugeridas (FAQs como sugerencias)
 const obtenerFAQs = async () => {
   try {
     const result = await pool.query(
-      'SELECT id, pregunta, respuesta, categoria FROM ia_faqs WHERE activa = true ORDER BY categoria, pregunta'
+      'SELECT id, pregunta, categoria FROM ia_faqs WHERE activa = true ORDER BY categoria, pregunta'
     );
     return result.rows;
   } catch (error) {
-    console.error('Error obteniendo FAQs:', error);
-    throw error;
-  }
-};
-
-// Obtener FAQ por ID
-const obtenerFAQPorId = async (id) => {
-  try {
-    const result = await pool.query(
-      'SELECT id, pregunta, respuesta, categoria FROM ia_faqs WHERE id = $1 AND activa = true',
-      [id]
-    );
-    return result.rows[0] || null;
-  } catch (error) {
-    console.error('Error obteniendo FAQ:', error);
-    throw error;
-  }
-};
-
-// Buscar FAQs por palabras clave
-const buscarFAQs = async (termino) => {
-  try {
-    const result = await pool.query(
-      `SELECT id, pregunta, respuesta, categoria FROM ia_faqs 
-       WHERE activa = true AND (
-         pregunta ILIKE $1 OR 
-         respuesta ILIKE $1 OR 
-         palabras_clave @> ARRAY[$2]
-       )
-       ORDER BY categoria, pregunta`,
-      [`%${termino}%`, termino.toLowerCase()]
-    );
-    return result.rows;
-  } catch (error) {
-    console.error('Error buscando FAQs:', error);
+    console.error('Error obteniendo sugerencias:', error);
     throw error;
   }
 };
@@ -69,6 +35,12 @@ const obtenerDatosMunicipalesPorRUT = async (rut) => {
 // Guardar conversación en historial
 const guardarConversacion = async (usuarioId, pregunta, respuesta, modelo) => {
   try {
+    // Solo guardar si usuarioId es válido y es UUID
+    if (!usuarioId || usuarioId === 'undefined') {
+      console.warn('⚠️  No se guarda conversación: usuarioId inválido');
+      return null;
+    }
+
     const result = await pool.query(
       `INSERT INTO ia_conversaciones (usuario_id, pregunta, respuesta, modelo)
        VALUES ($1, $2, $3, $4)
@@ -77,8 +49,9 @@ const guardarConversacion = async (usuarioId, pregunta, respuesta, modelo) => {
     );
     return result.rows[0];
   } catch (error) {
-    console.error('Error guardando conversación:', error);
-    throw error;
+    console.error('Error guardando conversación:', error.message);
+    // No fallar la respuesta si no se guarda el historial
+    return null;
   }
 };
 
@@ -102,8 +75,6 @@ const obtenerHistorial = async (usuarioId, limite = 10) => {
 
 module.exports = {
   obtenerFAQs,
-  obtenerFAQPorId,
-  buscarFAQs,
   obtenerDatosMunicipalesPorRUT,
   guardarConversacion,
   obtenerHistorial,

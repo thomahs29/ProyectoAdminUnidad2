@@ -7,57 +7,39 @@ import { aiApi } from './api';
  */
 export const enviarPregunta = async (pregunta) => {
     try {
+        console.log('📤 [Frontend] Enviando pregunta a IA Service:', pregunta);
+        console.log('📍 [Frontend] URL objetivo: http://localhost:3001/api/ai/chat');
+        
         const response = await aiApi.post('/chat', {
             pregunta,
         });
+        
+        console.log('✅ [Frontend] Respuesta recibida:', response.data);
         return response.data;
     } catch (error) {
+        console.error('❌ [Frontend] Error enviando pregunta:', error);
+        console.error('   Mensaje:', error.message);
+        console.error('   Status:', error.response?.status);
+        console.error('   Data:', error.response?.data);
         throw error;
     }
 };
 
 /**
- * Obtener preguntas frecuentes
- * @returns {Promise<array>} Lista de FAQs
+ * Obtener preguntas sugeridas
+ * @returns {Promise<array>} Lista de preguntas sugeridas
  */
 export const obtenerFAQs = async () => {
     try {
+        console.log('📥 [Frontend] Obteniendo FAQs desde IA Service...');
         const response = await aiApi.get('/faq');
+        console.log('✅ [Frontend] FAQs recibidas:', response.data);
         return response.data.faqs;
     } catch (error) {
-        throw error;
-    }
-};
-
-/**
- * Obtener preguntas sugeridas según el contexto de la página
- * @param {string} contexto - Tipo de contexto: 'reserva', 'documentos', 'licencia', 'general'
- * @returns {Promise<array>} Lista de preguntas sugeridas
- */
-export const obtenerSugerencias = async (contexto = 'general') => {
-    try {
-        const response = await aiApi.get('/sugerencias', {
-            params: { contexto },
-        });
-        return response.data.preguntas;
-    } catch (error) {
-        throw error;
-    }
-};
-
-/**
- * Detectar licencias próximas a vencer
- * @param {number} diasAnticipacion - Días previos al vencimiento (default: 30)
- * @returns {Promise<array>} Lista de licencias con recordatorios
- */
-export const detectarVencimientos = async (diasAnticipacion = 30) => {
-    try {
-        const response = await aiApi.post('/vencimientos', {
-            diasAnticipacion,
-        });
-        return response.data.recordatorios;
-    } catch (error) {
-        throw error;
+        console.error('❌ [Frontend] Error obteniendo FAQs:', error);
+        console.error('   Mensaje:', error.message);
+        console.error('   Status:', error.response?.status);
+        return []; // Retornar array vacío para que UI no se rompa
     }
 };
 

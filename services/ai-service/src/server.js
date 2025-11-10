@@ -24,6 +24,17 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Endpoint de diagnóstico (sin autenticación)
+app.get('/api/ai/test', (req, res) => {
+  console.log('✅ Test endpoint llamado - Servicio responde correctamente');
+  res.status(200).json({ 
+    message: '✅ AI Service conectado correctamente',
+    timestamp: new Date().toISOString(),
+    geminiConfigured: !!process.env.GEMINI_API_KEY,
+    port: PORT
+  });
+});
+
 // Middleware para logs
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);

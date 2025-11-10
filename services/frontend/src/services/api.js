@@ -10,13 +10,18 @@ const api = axios.create({
   }
 });
 
-// Cliente para el AI Service (servicio independiente en puerto 3001)
+// Cliente para el AI Service (ahora a través del API Gateway)
+// En desarrollo: usa localhost:3001 directamente
+// En producción: usa /api/ai (ruta en nginx)
 const aiApi = axios.create({
-  baseURL: 'http://localhost:3001/api/ai',
+  baseURL: import.meta.env.DEV ? 'http://localhost:3001/api/ai' : '/api/ai',
   headers: {
     'Content-Type': 'application/json'
   }
 });
+
+console.log('🔧 [API Config] Ambiente:', import.meta.env.DEV ? 'desarrollo' : 'producción');
+console.log('🔧 [API Config] aiApi baseURL:', aiApi.defaults.baseURL);
 
 // Interceptor para agregar token JWT al backend
 api.interceptors.request.use(

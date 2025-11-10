@@ -1,20 +1,19 @@
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const dotenv = require('dotenv');
 const path = require('path');
 const aiModel = require('../models/aiModel');
 
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-let openai = null;
+let genAI = null;
 
-// Inicializar OpenAI si hay API key
-if (process.env.OPENAI_API_KEY) {
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  console.log('✅ OpenAI API inicializado');
+// Inicializar Google Generative AI si hay API key
+if (process.env.GEMINI_API_KEY) {
+  // La API key de Google AI Studio se usa directamente
+  genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  console.log('✅ Google Generative AI (Gemini) inicializado con API key:', process.env.GEMINI_API_KEY.substring(0, 10) + '...');
 } else {
-  console.warn('⚠️  OPENAI_API_KEY no configurada. Usando modo simulado.');
+  console.error('❌ GEMINI_API_KEY no configurada. El servicio no funcionará.');
 }
 
 /**
@@ -26,11 +25,15 @@ const procesarPregunta = async (pregunta, usuarioId, rut) => {
       throw new Error('La pregunta no puede estar vacía');
     }
 
+    console.log(`\n📨 NUEVA PREGUNTA RECIBIDA: "${pregunta}"`);
+    console.log(`📌 Usuario ID: ${usuarioId}, RUT: ${rut}`);
+
     let respuesta;
     let modelo = 'gpt-3.5-turbo';
 
     // Detectar si es pregunta sobre vencimiento de licencia
     const esPreguntaVencimiento = /vence|vencimiento|expiración|caducid|cuándo vence|cuándo expira/i.test(pregunta);
+    console.log(`🔍 ¿Es pregunta sobre vencimiento? ${esPreguntaVencimiento}`);
 
     if (esPreguntaVencimiento && rut) {
       try {
@@ -64,39 +67,15 @@ const procesarPregunta = async (pregunta, usuarioId, rut) => {
         }
       } catch (error) {
         console.error('Error consultando datos municipales:', error);
-        respuesta = generarRespuestaSimulada(pregunta);
-        modelo = 'simulado-fallback';
+        respuesta = await generarRespuestaConIA(pregunta);
+        modelo = 'gemini-2.0-flash-exp';
       }
     } else {
-      // Intentar con OpenAI
-      if (openai) {
-        try {
-          console.log('🔄 Llamando a OpenAI API...');
-          const systemPrompt = `Eres un asistente de atención al ciudadano de la Municipalidad de Linares, especializado en licencias de conducir y trámites municipales. 
-Proporciona respuestas claras, concisas y útiles. Cuando no sepas algo específico, sugiere contactar directamente con la municipalidad.`;
-
-          const aiResponse = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: pregunta }
-            ],
-            max_tokens: 500,
-            temperature: 0.7,
-          });
-
-          respuesta = aiResponse.choices[0].message.content;
-          modelo = 'gpt-3.5-turbo';
-        } catch (openaiError) {
-          console.error('Error con OpenAI:', openaiError.message);
-          respuesta = generarRespuestaSimulada(pregunta);
-          modelo = 'simulado-fallback';
-        }
-      } else {
-        // Usar respuestas simuladas
-        respuesta = generarRespuestaSimulada(pregunta);
-        modelo = 'simulado';
-      }
+      // Usar Gemini para cualquier otra pregunta
+      console.log('🧠 Intentando usar Gemini para responder...');
+      respuesta = await generarRespuestaConIA(pregunta);
+      modelo = genAI ? 'gemini-2.0-flash-exp' : 'error-no-api';
+      console.log(`✅ Modelo usado: ${modelo}`);
     }
 
     // Guardar conversación
@@ -120,49 +99,60 @@ Proporciona respuestas claras, concisas y útiles. Cuando no sepas algo específ
   }
 };
 
+
 /**
- * Generar respuestas simuladas
+ * Generar respuesta con Google Generative AI (Gemini)
  */
-const generarRespuestaSimulada = (pregunta) => {
-  const preguntaLower = pregunta.toLowerCase();
+const generarRespuestaConIA = async (pregunta) => {
+  console.log(`\n${'='.repeat(80)}`);
+  console.log(`🤖 GENERANDO RESPUESTA CON IA...`);
+  console.log(`Pregunta: "${pregunta}"`);
+  console.log(`genAI disponible: ${!!genAI}`);
+  console.log(`GEMINI_API_KEY configurada: ${!!process.env.GEMINI_API_KEY}`);
+  console.log(`${'='.repeat(80)}`);
+  
+  if (genAI) {
+    try {
+      console.log('🔄 Llamando a Google Generative AI (Gemini)...');
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+      console.log('✅ Modelo Gemini obtenido exitosamente');
 
-  const respuestas = {
-    licencia: {
-      keywords: ['licencia', 'conducir', 'clase b', 'examen', 'manejo'],
-      respuesta: 'Para obtener una licencia de conducir Clase B necesitas tener entre 18 y 75 años, presentar cédula de identidad, certificado médico, certificado de antecedentes, pasar examen psicotécnico y examen de manejo. El proceso toma aproximadamente 30 días.'
-    },
-    renovacion: {
-      keywords: ['renovar', 'renovación', 'vencer', 'vencida'],
-      respuesta: 'Para renovar tu licencia necesitas tener la anterior vigente o vencida hace menos de 3 años. Requieres cédula vigente, certificado médico actualizado y pagar los aranceles. La renovación es más rápida que una solicitud nueva.'
-    },
-    costos: {
-      keywords: ['costo', 'precio', 'cuánto cuesta', 'aranceles', 'pagar'],
-      respuesta: 'Los costos de licencias en Linares varían: Licencia nueva Clase B: $50.000, Renovación: $35.000, Licencia Clase C: $40.000. Estos precios pueden cambiar. Consulta directamente en la municipalidad para valores actualizados.'
-    },
-    horarios: {
-      keywords: ['horario', 'hora', 'abierto', 'cierra', 'atención'],
-      respuesta: 'La Municipalidad de Linares atiende: Lunes a viernes 08:00-17:00, Sábados 09:00-13:00, Domingos cerrado. Ubicación: Calle Principal 123, Linares.'
-    },
-    reservas: {
-      keywords: ['reserva', 'cita', 'agendar', 'hora', 'appointment'],
-      respuesta: 'Para agendar una cita puedes usar nuestro portal online. Selecciona el trámite, elige fecha y hora disponible, confirma con tu RUT y correo. Las citas deben hacerse con al menos 24 horas de anticipación.'
-    },
-    documentos: {
-      keywords: ['documento', 'certificado', 'requisito', 'papers', 'traer'],
-      respuesta: 'Para la mayoría de trámites necesitarás: Cédula de identidad vigente, comprobante de domicilio, y documentos específicos según el trámite (ej: certificado médico, antecedentes, etc). Consulta qué documentos necesitas para tu trámite específico.'
-    },
-  };
+      const systemPrompt = `Eres un asistente de atención al ciudadano de la Municipalidad de Linares, especializado en licencias de conducir y trámites municipales. 
+Proporciona respuestas claras, concisas y útiles. Cuando no sepas algo específico, sugiere contactar directamente con la municipalidad.`;
 
-  for (const [key, config] of Object.entries(respuestas)) {
-    if (config.keywords.some(kw => preguntaLower.includes(kw))) {
-      return config.respuesta;
+      console.log('📤 Enviando solicitud a Gemini API...');
+      console.log(`   System Prompt: ${systemPrompt.substring(0, 50)}...`);
+      
+      const result = await model.generateContent([
+        `${systemPrompt}\n\nPregunta del usuario: ${pregunta}`
+      ]);
+
+      console.log('📥 Respuesta recibida de Gemini API');
+      const response = await result.response;
+      const text = response.text();
+
+      console.log('✅ RESPUESTA DE GEMINI OBTENIDA CORRECTAMENTE');
+      console.log(`📝 Respuesta completa (${text.length} caracteres):`);
+      console.log(`   ${text.substring(0, 200)}${text.length > 200 ? '...' : ''}`);
+      console.log(`${'='.repeat(80)}\n`);
+      return text;
+    } catch (geminiError) {
+      console.error(`\n${'!'.repeat(80)}`);
+      console.error('❌ ERROR CON GEMINI:');
+      console.error('Mensaje:', geminiError.message);
+      console.error('Nombre:', geminiError.name);
+      console.error('Status:', geminiError.status);
+      console.error('Stack:', geminiError.stack);
+      console.error(`${'!'.repeat(80)}\n`);
+      throw geminiError; // Lanzar el error, no usar fallback
     }
+  } else {
+    console.error('\n❌ Google Generative AI NO configurada. Verificar GEMINI_API_KEY en .env');
+    throw new Error('Gemini AI no está configurado. Verifica GEMINI_API_KEY en .env');
   }
-
-  return 'No tengo información específica sobre tu pregunta. Por favor, contacta con la Municipalidad de Linares al teléfono indicado o visita nuestro portal. ¿Hay algo más en lo que pueda ayudarte?';
 };
 
 module.exports = {
   procesarPregunta,
-  generarRespuestaSimulada,
+  generarRespuestaConIA,
 };
