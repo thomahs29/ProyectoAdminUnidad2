@@ -1,0 +1,62 @@
+{
+  "uid": "bbx-http",
+  "title": "Uptime (Blackbox HTTP)",
+  "schemaVersion": 39,
+  "version": 1,
+  "tags": ["blackbox", "uptime"],
+  "time": { "from": "now-24h", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "target",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(probe_success, instance)",
+        "includeAll": true,
+        "allValue": ".*",
+        "refresh": 1
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Availability (last 1h)",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "percentunit" } },
+      "targets": [
+        { "expr": "avg_over_time(probe_success{instance=~\"$target\"}[1h])", "refId": "A" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Status Code",
+      "gridPos": { "h": 8, "w": 9, "x": 6, "y": 0 },
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "probe_http_status_code{instance=~\"$target\"}", "legendFormat": "{{instance}}", "refId": "A" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Probe Duration",
+      "gridPos": { "h": 8, "w": 9, "x": 15, "y": 0 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [
+        { "expr": "probe_duration_seconds{instance=~\"$target\"}", "legendFormat": "{{instance}}", "refId": "A" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "TLS/Handshake (si aplica)",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [
+        { "expr": "probe_tls_handshake_duration_seconds{instance=~\"$target\"}", "legendFormat": "{{instance}}", "refId": "A" }
+      ]
+    }
+  ]
+}

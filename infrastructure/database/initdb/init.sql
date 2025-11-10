@@ -127,6 +127,19 @@ CREATE TABLE IF NOT EXISTS documentos (
   subido_en TIMESTAMPTZ DEFAULT now()
 );
 
+
+-- usuario solo-lectura para el exporter
+CREATE ROLE metrics WITH LOGIN PASSWORD 'metrics_password';
+
+-- permisos estándar para métricas
+GRANT pg_monitor TO metrics;           -- incluye lecturas a vistas de stats
+GRANT pg_read_all_stats TO metrics;    -- extra (no siempre necesario)
+
+-- para ver el estado de las réplicas desde el master
+GRANT SELECT ON pg_stat_replication TO metrics;
+
+-- (opcional) por si quieres stats detalladas por consultas
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 -- tabla ia_faqs (preguntas sugeridas para que la IA las responda)
 CREATE TABLE IF NOT EXISTS ia_faqs (
   id SERIAL PRIMARY KEY,

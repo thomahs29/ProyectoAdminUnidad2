@@ -1,0 +1,33 @@
+groups:
+  - name: base-alerts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "Target {{ $labels.instance }} caído"
+          description: "El job {{ $labels.job }} no responde"
+
+      - alert: HighCPUContainer
+        expr: rate(container_cpu_usage_seconds_total{container!=""}[5m]) > 0.8
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "CPU alta en contenedor {{ $labels.container }}"
+          description: "Uso > 80% durante 5m"
+
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels: { severity: critical }
+        annotations:
+          summary: "Redis no responde"
+
+      - alert: PostgresReplicationLag
+        expr: pg_replication_lag{job="postgres-replica"} > 5
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "Lag de replicación Postgres > 5s"
+          description: "Replica desfasada en {{ $labels.instance }}"

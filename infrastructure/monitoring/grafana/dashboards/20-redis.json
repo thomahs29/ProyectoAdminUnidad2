@@ -1,0 +1,61 @@
+{
+  "uid": "redis-main",
+  "title": "Redis",
+  "schemaVersion": 39,
+  "version": 1,
+  "tags": ["redis"],
+  "time": { "from": "now-6h", "to": "now" },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Up",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "max(redis_up)", "refId": "A" }]
+    },
+    {
+      "type": "stat",
+      "title": "Connected Clients",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "redis_connected_clients", "refId": "A" }]
+    },
+    {
+      "type": "stat",
+      "title": "Memory Used",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "bytes" } },
+      "targets": [{ "expr": "redis_memory_used_bytes", "refId": "A" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Ops/sec",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "rate(redis_commands_processed_total[1m])", "legendFormat": "ops", "refId": "A" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Keyspace (db0 keys/expired)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "redis_db_keys{db=\"db0\"}", "legendFormat": "keys", "refId": "A" },
+        { "expr": "rate(redis_expired_keys_total[5m])", "legendFormat": "expired/s", "refId": "B" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Cache Hits vs Misses",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "rate(redis_keyspace_hits_total[5m])", "legendFormat": "hits/s", "refId": "A" },
+        { "expr": "rate(redis_keyspace_misses_total[5m])", "legendFormat": "misses/s", "refId": "B" }
+      ]
+    }
+  ]
+}
