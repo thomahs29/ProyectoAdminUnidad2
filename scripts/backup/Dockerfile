@@ -12,7 +12,10 @@ COPY backup-files.sh /usr/local/bin/backup-files.sh
 COPY restore-db.sh /usr/local/bin/restore-db.sh
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN chmod +x /usr/local/bin/*.sh
+RUN set -eux; \
+    sed -i 's/\r$//' /usr/local/bin/*.sh; \
+    chmod +x /usr/local/bin/*.sh
+
 
 # crond en foreground
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
