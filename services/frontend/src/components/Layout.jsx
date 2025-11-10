@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
         <div className="container">
           <div className="header-content">
             <div className="logo">
-              <h1>🏛️ Municipalidad de Linares</h1>
+              <h1> Municipalidad de Linares</h1>
               <p>Sistema de Reservas de Licencias de Conducir</p>
             </div>
             {isAuthenticated && (
