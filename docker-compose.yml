@@ -185,7 +185,6 @@ services:
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - MAIL_FROM=${MAIL_FROM}
       - MAIL_REPLY_TO=${MAIL_REPLY_TO}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       redis-cache:
         condition: service_healthy
@@ -437,7 +436,6 @@ services:
       - AI_SERVICE_PORT=3001
       - NODE_ENV=production
       - JWT_SECRET=${JWT_SECRET}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}

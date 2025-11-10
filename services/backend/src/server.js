@@ -11,6 +11,7 @@ const testRoutes = require("./routes/testRoutes.js");
 const documentoRoutes = require("./routes/documentoRoutes.js");
 const notificacionRoutes = require("./routes/notificacionRoutes.js");
 const municipalesRoutes = require("./routes/municipalesRoutes.js");
+const reporteRoutes = require("./routes/reporteRoutes.js");
 const { inicializarDatos } = require("./models/municipalesModel.js");
 
 // Cargar variables de entorno desde la raíz del proyecto
@@ -40,6 +41,7 @@ app.use('/api/tests', testRoutes);
 app.use('/api/documentos', documentoRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
 app.use('/api/municipales', municipalesRoutes);
+app.use('/api/reportes', reporteRoutes);
 
 // Middleware de error global
 app.use((err, req, res, next) => {
