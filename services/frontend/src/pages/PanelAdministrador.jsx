@@ -120,6 +120,77 @@ const PanelAdministrador = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  // Descargar estadísticas en Excel (CSV)
+  const descargarEstadisticasCSV = async () => {
+    try {
+      const hoy = new Date();
+      const hace30Dias = new Date(hoy.getTime() - 30*24*60*60*1000);
+      
+      const formatDate = (date) => date.toISOString().split('T')[0];
+      const fechaInicio = formatDate(hace30Dias);
+      const fechaFin = formatDate(hoy);
+      
+      const token = localStorage.getItem('token');
+      console.log('Token en localStorage:', token ? 'Existe' : 'NO existe');
+      console.log('Descargando Excel:', fechaInicio, fechaFin);
+      
+      const response = await api.get(`/reportes/reservas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+        responseType: 'blob',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      console.log('Respuesta recibida:', response.status, response.data.size);
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `estadisticas_reservas_${new Date().getTime()}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      alert('Excel descargado correctamente');
+    } catch (error) {
+      console.error('Error descargando estadísticas en Excel:', error);
+      console.error('Status:', error.response?.status);
+      console.error('Data:', error.response?.data);
+      alert('Error: ' + (error.response?.status || error.message));
+    }
+  };
+
+  // Descargar estadísticas en PDF
+  const descargarEstadisticasPDF = async () => {
+    try {
+      const hoy = new Date();
+      const hace30Dias = new Date(hoy.getTime() - 30*24*60*60*1000);
+      
+      const formatDate = (date) => date.toISOString().split('T')[0];
+      const fechaInicio = formatDate(hace30Dias);
+      const fechaFin = formatDate(hoy);
+      
+      console.log('Descargando PDF:', fechaInicio, fechaFin);
+      
+      const response = await api.get(`/reportes/tramites?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+        responseType: 'blob'
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `estadisticas_tramites_${new Date().getTime()}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error descargando estadísticas en PDF:', error);
+      alert('Error al descargar las estadísticas');
+    }
+  };
+
   // Enviar notificación masiva
   const enviarNotificacionMasiva = async () => {
     try {
@@ -346,6 +417,15 @@ const PanelAdministrador = () => {
       {activeTab === 'estadisticas' && (
         <div className="tab-content">
           <h2>Estadísticas del Sistema</h2>
+          
+          <div className="actions-admin">
+            <button onClick={descargarEstadisticasCSV} className="btn btn-primary">
+              📥 Descargar en Excel
+            </button>
+            <button onClick={descargarEstadisticasPDF} className="btn btn-primary">
+              📄 Descargar en PDF
+            </button>
+          </div>
           
           {estadisticas && (
             <div className="stats-grid">
