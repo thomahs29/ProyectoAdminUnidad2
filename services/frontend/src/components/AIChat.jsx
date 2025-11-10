@@ -63,10 +63,11 @@ export default function AIChat() {
 
             setMensajes((prev) => [...prev, nuevoRespuesta]);
         } catch (error) {
+            console.error('🚨 [AIChat] Error en manejarEnvioPregunta:', error);
             const errorRespuesta = {
                 id: mensajes.length + 2,
                 tipo: 'error',
-                contenido: 'Disculpa, hubo un error procesando tu pregunta. Intenta nuevamente.',
+                contenido: `❌ Error: ${error.message || 'No se pudo conectar con el servicio de IA'}`,
             };
             setMensajes((prev) => [...prev, errorRespuesta]);
         } finally {

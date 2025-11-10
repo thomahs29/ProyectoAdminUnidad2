@@ -10,7 +10,6 @@ const tramiteRoutes = require("./routes/tramiteRoutes.js");
 const testRoutes = require("./routes/testRoutes.js");
 const documentoRoutes = require("./routes/documentoRoutes.js");
 const notificacionRoutes = require("./routes/notificacionRoutes.js");
-const aiRoutes = require("./routes/aiRoutes.js");
 const municipalesRoutes = require("./routes/municipalesRoutes.js");
 const { inicializarDatos } = require("./models/municipalesModel.js");
 
@@ -40,7 +39,6 @@ app.use('/api/tramites', tramiteRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/documentos', documentoRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
-app.use('/api/ai', aiRoutes);
 app.use('/api/municipales', municipalesRoutes);
 
 // Middleware de error global

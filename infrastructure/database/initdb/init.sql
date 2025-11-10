@@ -140,3 +140,47 @@ GRANT SELECT ON pg_stat_replication TO metrics;
 
 -- (opcional) por si quieres stats detalladas por consultas
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+-- tabla ia_faqs (preguntas sugeridas para que la IA las responda)
+CREATE TABLE IF NOT EXISTS ia_faqs (
+  id SERIAL PRIMARY KEY,
+  pregunta TEXT NOT NULL UNIQUE,
+  categoria VARCHAR(50),
+  palabras_clave TEXT[],
+  activa BOOLEAN DEFAULT TRUE,
+  creada_en TIMESTAMPTZ DEFAULT now(),
+  actualizada_en TIMESTAMPTZ DEFAULT now()
+);
+
+-- Insertar preguntas sugeridas de ejemplo
+INSERT INTO ia_faqs (pregunta, categoria, palabras_clave)
+VALUES
+('¿Cómo solicito una licencia de conducir?', 
+ 'licencia',
+ ARRAY['licencia', 'solicitar', 'conducir', 'documento']),
+
+('¿Cuáles son los requisitos para renovar mi licencia?',
+ 'renovacion',
+ ARRAY['renovar', 'licencia', 'vencida', 'requisitos']),
+
+('¿Cuál es el costo de una licencia de conducir?',
+ 'costos',
+ ARRAY['costo', 'precio', 'aranceles', 'licencia', 'pagar']),
+
+('¿Cuáles son los horarios de atención de la municipalidad?',
+ 'horarios',
+ ARRAY['horario', 'atención', 'abierto', 'cerrado', 'municipalidad']),
+
+('¿Cómo agendo una cita para trámite?',
+ 'reservas',
+ ARRAY['cita', 'reserva', 'agendar', 'hora', 'fecha'])
+ON CONFLICT DO NOTHING;
+
+-- Tabla de historial de conversaciones con la IA
+CREATE TABLE IF NOT EXISTS ia_conversaciones (
+    id SERIAL PRIMARY KEY,
+    usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+    pregunta TEXT NOT NULL,
+    respuesta TEXT NOT NULL,
+    modelo VARCHAR(50),
+    creado_en TIMESTAMP DEFAULT NOW()
+);
