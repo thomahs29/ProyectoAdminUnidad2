@@ -25,7 +25,6 @@ groups:
           summary: "Redis no responde"
 
       - alert: PostgresReplicationLag
-        # Requiere pg_exporter y vistas de replica
         expr: pg_replication_lag{job="postgres-replica"} > 5
         for: 5m
         labels: { severity: warning }

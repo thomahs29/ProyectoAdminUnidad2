@@ -48,3 +48,26 @@ Y restauramos usando el archivo
 
 docker exec -it -e DB_HOST=postgres-master -e DB_NAME=proyadmin2 \
  backup /usr/local/bin/restore-db.sh /backups/db/proyadmin2_20251109-192414.dump //Ejemplo de archivo
+
+Ejemplo 2, crear una tabla en la database, hacerle backup, borrarla, recuperarla con el backup
+
+docker exec -it postgres-master sh //entrar en la db
+export PGPASSWORD="$POSTGRES_PASSWORD";
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CREATE TABLE IF NOT EXISTS demo_backup_test(id serial primary key, txt text, created_at timestamptz default now());" //Crear tabla de prueba
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO demo_backup_test(txt) VALUES ('respaldo_ok');" //Insertar dato
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "TABLE demo_backup_test;" //ver la tabla
+docker exec -it backup /usr/local/bin/backup-db.sh //backup
+docker exec -it backup sh -lc 'ls -lh /backups/db | tail -n +1' //Ver generados
+docker exec -it postgres-master sh //Borrar Tabla
+export PGPASSWORD="$POSTGRES_PASSWORD";
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "DROP TABLE demo_backup_test;"
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT count(\*) FROM demo_backup_test;" //Ver que no existe
+
+docker exec -it `                  //Restaurar el ultimo dump
+  -e DB_HOST=postgres-master`
+-e DB_NAME=proyadmin2 `
+backup /usr/local/bin/restore-db.sh
+
+docker exec -it postgres-master sh //Ver que volvio la tabla
+export PGPASSWORD="$POSTGRES_PASSWORD";
+ psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "TABLE demo_backup_test;"
