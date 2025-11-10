@@ -1,0 +1,503 @@
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - prometheus-data:/prometheus
+      - ./infrastructure/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./infrastructure/monitoring/alert_rules.yml:/etc/prometheus/alert_rules.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - monitoring-network
+    ports:
+      - "9090:9090"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: grafana
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infrastructure/monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./infrastructure/monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+    networks:
+      - monitoring-network
+      - frontend-network
+    ports:
+      - "3002:3000"
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  redis-cache:
+    image: redis:7-alpine
+    container_name: redis-cache
+    restart: unless-stopped
+    networks:
+      - database-network
+    volumes:
+      - redis-data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-commander:
+    image: rediscommander/redis-commander@sha256:19cd0c49f418779fa2822a0496c5e6516d0c792effc39ed20089e6268477e40a
+    container_name: redis-commander
+    restart: unless-stopped
+    networks:
+      - database-network
+      - frontend-network
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis-cache:6379
+    depends_on:
+      redis-cache:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+
+  postgres-master:
+    image: postgres:15-alpine
+    container_name: postgres-master
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    networks:
+      - database-network
+      - backend-network
+    volumes:
+      - postgres-master-data:/var/lib/postgresql/data
+      - ./infrastructure/database/initdb:/docker-entrypoint-initdb.d:ro
+      - ./infrastructure/database/master.conf:/etc/postgresql/postgresql.conf:ro
+      - ./infrastructure/database/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-replica:
+    image: postgres:15-alpine
+    container_name: postgres-replica
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}     # no se usa para conectarse al master; sirve si promueves la réplica
+      POSTGRES_DB: ${DB_NAME}
+      REPL_PASSWORD: ${REPL_PASSWORD}
+      REPL_USER: replicator
+      MASTER_HOST: postgres-master
+      MASTER_PORT: 5432
+      REPL_SLOT_NAME: replica1               # cámbialo si creas más réplicas
+      PGDATA: /var/lib/postgresql/data
+      PGPASSWORD: ${DB_PASSWORD}
+    networks:
+      - database-network
+    volumes:
+      - postgres-replica-data:/var/lib/postgresql/data
+      - ./infrastructure/database/replica/replica-entrypoint.sh:/usr/local/bin/replica-entrypoint.sh:ro
+    entrypoint: ["sh", "/usr/local/bin/replica-entrypoint.sh"]
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      # Devuelve 't' si la instancia está en recuperación (standby)
+      test: ["CMD-SHELL", "psql -U ${DB_USER} -d ${DB_NAME} -tAc \"SELECT pg_is_in_recovery();\" | grep -q t"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  backend:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+    container_name: proyecto-backend
+    restart: on-failure:3
+    env_file:
+      - .env
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - MAIL_FROM=${MAIL_FROM}
+      - MAIL_REPLY_TO=${MAIL_REPLY_TO}
+    depends_on:
+      redis-cache:
+        condition: service_healthy
+      postgres-master:
+        condition: service_healthy
+    networks:
+      - backend-network
+      - monitoring-network
+      - database-network
+    volumes:
+      - backend-uploads:/app/uploads
+    ports:
+      - "3000:3000"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  
+  backend1:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+    container_name: proyecto-backend-1
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - backend-uploads:/app/uploads
+    env_file:
+      - .env
+    networks:
+      - backend-network
+      - monitoring-network
+      - database-network
+
+  backend2:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+    container_name: proyecto-backend-2
+    volumes:
+      - backend-uploads:/app/uploads
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - backend-network
+      - monitoring-network
+      - database-network
+
+
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+    container_name: proyecto-frontend
+    restart: unless-stopped 
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - frontend-network
+      - backend-network
+    environment:
+      - VITE_API_URL=/api
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # cAdvisor: métricas por contenedor
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    command:
+      - '--docker_only=true'
+      - '--housekeeping_interval=10s'
+    networks:
+      - monitoring-network
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+
+  # Node exporter: métricas del host
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: node-exporter
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+    networks:
+      - monitoring-network
+    ports:
+      - "9100:9100"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+
+  # Redis exporter
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.62.0
+    container_name: redis-exporter
+    restart: unless-stopped
+    networks:
+      - monitoring-network
+      - database-network
+    environment:
+      - REDIS_ADDR=redis-cache:6379
+    ports:
+      - "9121:9121"
+    depends_on:
+      redis-cache:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 64M
+
+  # Blackbox exporter
+  blackbox:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: blackbox
+    restart: unless-stopped
+    networks:
+      - monitoring-network
+      - backend-network
+      - frontend-network
+    volumes:
+      - ./infrastructure/monitoring/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    command: ["--config.file=/etc/blackbox_exporter/config.yml"]
+    ports:
+      - "9115:9115"
+
+  # Postgres exporter (master)
+  postgres-master-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres-master-exporter
+    restart: unless-stopped
+    networks:
+      - monitoring-network
+      - database-network
+    environment:
+      # Requiere que el usuario tenga permisos para vistas de stats/replicación
+      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@postgres-master:5432/${DB_NAME}?sslmode=disable
+      - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
+    ports:
+      - "9187:9187"
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+
+  # Postgres exporter (replica)
+  postgres-replica-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres-replica-exporter
+    restart: unless-stopped
+    networks:
+      - monitoring-network
+      - database-network
+    environment:
+      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@postgres-replica:5432/${DB_NAME}?sslmode=disable
+      - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
+    ports:
+      - "9188:9187"
+    depends_on:
+      postgres-replica:
+        condition: service_healthy
+
+  backup:
+    build:
+      context: ./scripts/backup
+    container_name: backup
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Conexión a Postgres (usamos la réplica para bajar carga)
+      DB_HOST: postgres-replica
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      # Backups
+      BACKUP_TIME_CRON: "0 3 * * *"     # diario 03:00
+      BACKUP_RETENTION_DAYS: 7      # conservar 7 días
+      BACKUP_ENABLE_FILES: "true"
+      BACKUP_DIR: /backups
+      FILES_SRC: /app/uploads
+    volumes:
+      - backups-data:/backups            # volumen externo
+      - backend-uploads:/app/uploads:ro  # archivos a respaldar
+    networks:
+      - database-network
+      - backend-network
+    depends_on:
+      postgres-replica:
+        condition: service_healthy
+
+
+  ai-service:
+    build:
+      context: ./services/ai-service
+      dockerfile: Dockerfile
+    image: proyecto-ai-service:1.0.0
+    container_name: proyecto-ai-service
+    restart: on-failure:3
+    env_file:
+      - .env
+    environment:
+      - AI_SERVICE_PORT=3001
+      - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_SSL=${DB_SSL}
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+    networks:
+      - backend-network
+      - database-network
+    ports:
+      - "3001:3001"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3001/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  api-gateway:
+    image: nginx:1.27.2-alpine
+    container_name: proyecto-gateway
+    restart: unless-stopped
+    networks:
+      - frontend-network
+      - backend-network
+    ports:
+      - "80:80"
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+
+networks:
+  frontend-network:
+    driver: bridge
+  backend-network:
+    driver: bridge
+  database-network:
+    driver: bridge
+    internal: true
+  monitoring-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  prometheus-data:
+  grafana-data:
+  postgres-master-data:
+  postgres-replica-data:
+  backend-uploads:
+  backups-data:

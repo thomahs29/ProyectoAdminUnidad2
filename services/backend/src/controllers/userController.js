@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { createUser, getUserByEmail, getAllUsers, getUserByRut} = require('../models/userModel');
 const dotenv = require('dotenv');
+const redisClient = require('../config/redis');
 
 dotenv.config({ path: "../../../.env" });
 
 const genToken = (user) => {
     return jwt.sign(
-        { id: user.id, email: user.email, role: user.role },
+        { id: user.id, email: user.email, rut: user.rut, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES || "1h" }
     );
@@ -54,26 +55,29 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { rut, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Missing email or password' });
+        if (!rut || !password) {
+            return res.status(400).json({ message: 'Missing rut or password' });
         }
 
-        const user = await getUserByEmail(email);
+        const user = await getUserByRut(rut);
         if (!user) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+            return res.status(401).json({ message: 'Invalid rut or password' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password_hash);
         if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+            return res.status(401).json({ message: 'Invalid rut or password' });
         }
 
         const token = genToken(user);
+
+        await redisClient.set(`user_token_${user.id}`, token, 'EX', 3600);
+        
         res.status(200).json({
             msg: "Login exitoso.",
-            user: { id: user.id, nombre: user.nombre, email: user.email, role: user.role },
+            user: { id: user.id, nombre: user.nombre, email: user.email, rut: user.rut, role: user.role },
             token,
         });
     } catch (error) {

@@ -1,0 +1,64 @@
+{
+  "uid": "cadvisor-main",
+  "title": "Containers (cAdvisor)",
+  "schemaVersion": 39,
+  "version": 3,
+  "tags": ["containers", "cadvisor"],
+  "time": { "from": "now-6h", "to": "now" },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "CPU top 10",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "percent" } },
+      "targets": [
+        {
+          "expr": "topk(10, sum by (container_label_com_docker_compose_service) (rate(container_cpu_usage_seconds_total[5m])) * 100)",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Working Set top 10",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "bytes" } },
+      "targets": [
+        {
+          "expr": "topk(10, sum by (container_label_com_docker_compose_service) (container_memory_working_set_bytes))",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Filesystem Usage (bytes)",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "bytes" } },
+      "targets": [
+        {
+          "expr": "topk(10, sum by (container_label_com_docker_compose_service) (container_fs_usage_bytes))",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Restart Count (últimas 24h)",
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 24 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (container_label_com_docker_compose_service) (changes(container_start_time_seconds[24h]))",
+          "refId": "A"
+        }
+      ]
+    }
+  ]
+}
