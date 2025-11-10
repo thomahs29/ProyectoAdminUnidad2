@@ -1,0 +1,80 @@
+{
+  "uid": "ovw-main",
+  "title": "Infra Overview",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 3,
+  "editable": true,
+  "tags": ["infra", "overview"],
+  "time": { "from": "now-6h", "to": "now" },
+  "templating": {
+    "list": [
+      { "name": "job", "type": "query", "datasource": "Prometheus", "query": "label_values(up, job)", "includeAll": true, "allValue": ".*", "refresh": 1 },
+      { "name": "instance", "type": "query", "datasource": "Prometheus", "query": "label_values(up{job=~\"$job\"}, instance)", "includeAll": true, "allValue": ".*", "refresh": 1 }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Targets DOWN",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "sum(up{job=~\"$job\",instance=~\"$instance\"} == 0) OR vector(0)", "refId": "A" }]
+    },
+    {
+      "type": "stat",
+      "title": "HTTP probes failing (blackbox)",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "sum(1 - avg_over_time(probe_success{job=~\"blackbox-.*\"}[5m])) OR vector(0)", "refId": "A" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Host CPU (node-exporter)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "percent" } },
+      "targets": [
+        { "expr": "avg by (instance) (rate(node_cpu_seconds_total{mode!=\"idle\",instance=~\"$instance\"}[5m])) * 100", "legendFormat": "{{instance}}", "refId": "A" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Container CPU (top)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "percent" } },
+      "targets": [
+        {
+          "expr": "topk(5, sum by (container_label_com_docker_compose_service) (rate(container_cpu_usage_seconds_total[5m])) * 100)",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Container Memory (Working Set)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "bytes" } },
+      "targets": [
+        {
+          "expr": "topk(5, sum by (container_label_com_docker_compose_service) (container_memory_working_set_bytes))",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Probe Duration",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [
+        { "expr": "probe_duration_seconds{job=~\"blackbox-.*\"}", "legendFormat": "{{instance}}", "refId": "A" }
+      ]
+    }
+  ]
+}

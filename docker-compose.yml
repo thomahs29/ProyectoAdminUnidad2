@@ -6,11 +6,13 @@ services:
     volumes:
       - prometheus-data:/prometheus
       - ./infrastructure/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./infrastructure/monitoring/alert_rules.yml:/etc/prometheus/alert_rules.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
     networks:
       - monitoring-network
     ports:
@@ -32,6 +34,8 @@ services:
     restart: unless-stopped
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./infrastructure/monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./infrastructure/monitoring/grafana/dashboards:/var/lib/grafana/dashboards
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
@@ -121,6 +125,45 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  postgres-replica:
+    image: postgres:15-alpine
+    container_name: postgres-replica
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}     # no se usa para conectarse al master; sirve si promueves la réplica
+      POSTGRES_DB: ${DB_NAME}
+      REPL_PASSWORD: ${REPL_PASSWORD}
+      REPL_USER: replicator
+      MASTER_HOST: postgres-master
+      MASTER_PORT: 5432
+      REPL_SLOT_NAME: replica1               # cámbialo si creas más réplicas
+      PGDATA: /var/lib/postgresql/data
+      PGPASSWORD: ${DB_PASSWORD}
+    networks:
+      - database-network
+    volumes:
+      - postgres-replica-data:/var/lib/postgresql/data
+      - ./infrastructure/database/replica/replica-entrypoint.sh:/usr/local/bin/replica-entrypoint.sh:ro
+    entrypoint: ["sh", "/usr/local/bin/replica-entrypoint.sh"]
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      # Devuelve 't' si la instancia está en recuperación (standby)
+      test: ["CMD-SHELL", "psql -U ${DB_USER} -d ${DB_NAME} -tAc \"SELECT pg_is_in_recovery();\" | grep -q t"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   backend:
     build:
@@ -245,10 +288,162 @@ services:
           cpus: '0.3'
           memory: 256M
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 30s
+
+  # cAdvisor: métricas por contenedor
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    command:
+      - '--docker_only=true'
+      - '--housekeeping_interval=10s'
+    networks:
+      - monitoring-network
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+
+  # Node exporter: métricas del host
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: node-exporter
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+    networks:
+      - monitoring-network
+    ports:
+      - "9100:9100"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+
+  # Redis exporter
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.62.0
+    container_name: redis-exporter
+    restart: unless-stopped
+    networks:
+      - monitoring-network
+      - database-network
+    environment:
+      - REDIS_ADDR=redis-cache:6379
+    ports:
+      - "9121:9121"
+    depends_on:
+      redis-cache:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 64M
+
+  # Blackbox exporter
+  blackbox:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: blackbox
+    restart: unless-stopped
+    networks:
+      - monitoring-network
+      - backend-network
+      - frontend-network
+    volumes:
+      - ./infrastructure/monitoring/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    command: ["--config.file=/etc/blackbox_exporter/config.yml"]
+    ports:
+      - "9115:9115"
+
+  # Postgres exporter (master)
+  postgres-master-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres-master-exporter
+    restart: unless-stopped
+    networks:
+      - monitoring-network
+      - database-network
+    environment:
+      # Requiere que el usuario tenga permisos para vistas de stats/replicación
+      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@postgres-master:5432/${DB_NAME}?sslmode=disable
+      - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
+    ports:
+      - "9187:9187"
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+
+  # Postgres exporter (replica)
+  postgres-replica-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres-replica-exporter
+    restart: unless-stopped
+    networks:
+      - monitoring-network
+      - database-network
+    environment:
+      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@postgres-replica:5432/${DB_NAME}?sslmode=disable
+      - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
+    ports:
+      - "9188:9187"
+    depends_on:
+      postgres-replica:
+        condition: service_healthy
+
+  backup:
+    build:
+      context: ./scripts/backup
+    container_name: backup
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Conexión a Postgres (usamos la réplica para bajar carga)
+      DB_HOST: postgres-replica
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      # Backups
+      BACKUP_TIME_CRON: "0 3 * * *"     # diario 03:00
+      BACKUP_RETENTION_DAYS: 7      # conservar 7 días
+      BACKUP_ENABLE_FILES: "true"
+      BACKUP_DIR: /backups
+      FILES_SRC: /app/uploads
+    volumes:
+      - backups-data:/backups            # volumen externo
+      - backend-uploads:/app/uploads:ro  # archivos a respaldar
+    networks:
+      - database-network
+      - backend-network
+    depends_on:
+      postgres-replica:
+        condition: service_healthy
+
 
 networks:
   frontend-network:
@@ -266,4 +461,6 @@ volumes:
   prometheus-data:
   grafana-data:
   postgres-master-data:
+  postgres-replica-data:
   backend-uploads:
+  backups-data:
