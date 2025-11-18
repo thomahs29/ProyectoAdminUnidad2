@@ -53,12 +53,12 @@ const Confirmacion = () => {
         localStorage.removeItem('documentosCargados');
 
         // Mostrar confirmación y redirigir
-        alert('✅ Reserva cancelada exitosamente. Se ha enviado un correo de confirmación.');
+        alert(' Reserva cancelada exitosamente. Se ha enviado un correo de confirmación.');
         navigate('/');
       }
     } catch (error) {
       console.error('Error al cancelar:', error);
-      alert('❌ Error al cancelar la reserva: ' + (error.response?.data?.message || error.message));
+      alert('Error al cancelar la reserva: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoadingCancel(false);
     }
@@ -176,7 +176,7 @@ const Confirmacion = () => {
 
         <div className="sidebar">
           <div className="card info-card">
-            <h3>📌 Próximos Pasos</h3>
+            <h3>Próximos Pasos</h3>
             <ol className="steps-list">
               <li>
                 <strong>Revise su correo</strong>
@@ -198,7 +198,7 @@ const Confirmacion = () => {
           </div>
 
           <div className="card warning-card">
-            <h3>⚠️ Importante</h3>
+            <h3>Importante</h3>
             <ul>
               <li>Guarde el número de confirmación de su correo</li>
               <li>Si no puede asistir, cancele con anticipación</li>
@@ -225,7 +225,7 @@ const Confirmacion = () => {
         <div className="modal-overlay" onClick={() => setShowCancelModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>⚠️ Cancelar Reserva</h2>
+              <h2>Cancelar Reserva</h2>
               <button 
                 className="modal-close" 
                 onClick={() => setShowCancelModal(false)}

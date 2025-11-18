@@ -135,13 +135,13 @@ services:
       - .env
     environment:
       POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}     # no se usa para conectarse al master; sirve si promueves la réplica
+      POSTGRES_PASSWORD: ${DB_PASSWORD}     
       POSTGRES_DB: ${DB_NAME}
       REPL_PASSWORD: ${REPL_PASSWORD}
       REPL_USER: replicator
       MASTER_HOST: postgres-master
       MASTER_PORT: 5432
-      REPL_SLOT_NAME: replica1               # cámbialo si creas más réplicas
+      REPL_SLOT_NAME: replica1            
       PGDATA: /var/lib/postgresql/data
       PGPASSWORD: ${DB_PASSWORD}
     networks:

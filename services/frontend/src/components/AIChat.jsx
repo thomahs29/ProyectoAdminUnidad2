@@ -20,7 +20,6 @@ export default function AIChat() {
         cargarFAQs();
     }, []);
 
-    // Scroll automático al último mensaje
     useEffect(() => {
         mesajesFinalRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [mensajes]);
@@ -63,11 +62,11 @@ export default function AIChat() {
 
             setMensajes((prev) => [...prev, nuevoRespuesta]);
         } catch (error) {
-            console.error('🚨 [AIChat] Error en manejarEnvioPregunta:', error);
+            console.error(' [AIChat] Error en manejarEnvioPregunta:', error);
             const errorRespuesta = {
                 id: mensajes.length + 2,
                 tipo: 'error',
-                contenido: `❌ Error: ${error.message || 'No se pudo conectar con el servicio de IA'}`,
+                contenido: ` Error: ${error.message || 'No se pudo conectar con el servicio de IA'}`,
             };
             setMensajes((prev) => [...prev, errorRespuesta]);
         } finally {
@@ -76,7 +75,6 @@ export default function AIChat() {
     };
 
     const manejarSeleccionFAQ = async (faq) => {
-        // Manejar tanto FAQs (objeto) como sugerencias (string)
         const preguntaTexto = typeof faq === 'string' ? faq : faq.pregunta;
         
         const nuevoPregunta = {
@@ -89,11 +87,9 @@ export default function AIChat() {
         setCargando(true);
 
         try {
-            // Verificar si la pregunta es específicamente sobre vencimiento/expiración de licencia
             const esPrefiuntaLicencia = /vence|vencimiento|expiración|caducid|cuándo vence|cuándo expira/i.test(preguntaTexto);
             
-            // Si es pregunta sobre licencia, SIEMPRE ir al backend
-            // Si es otra FAQ, mostrar respuesta preformulada
+            
             if (!esPrefiuntaLicencia && typeof faq === 'object' && faq.respuesta) {
                 const nuevoRespuesta = {
                     id: mensajes.length + 2,
@@ -103,7 +99,6 @@ export default function AIChat() {
                 };
                 setMensajes((prev) => [...prev, nuevoRespuesta]);
             } else {
-                // Ir al backend para procesar
                 const respuesta = await enviarPregunta(preguntaTexto);
                 const nuevoRespuesta = {
                     id: mensajes.length + 2,
@@ -150,7 +145,7 @@ export default function AIChat() {
 
                 {faqs.length > 0 && (
                     <div className="faqs-sugerencias">
-                        <h3>📚 Preguntas Frecuentes</h3>
+                        <h3>Preguntas Frecuentes</h3>
                         <div className="faqs-grid">
                             {faqs.slice(0, 3).map((faq, index) => (
                                 <button

@@ -59,7 +59,7 @@ export default function MisDatosMunicipales() {
     return (
         <div className="mis-datos-page">
             <div className="page-header">
-                <h1>📋 Mis Datos Municipales</h1>
+                <h1> Mis Datos Municipales</h1>
                 <p>Estado actual de tus documentos y trámites</p>
             </div>
 

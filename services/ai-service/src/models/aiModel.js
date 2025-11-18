@@ -37,7 +37,7 @@ const guardarConversacion = async (usuarioId, pregunta, respuesta, modelo) => {
   try {
     // Solo guardar si usuarioId es válido y es UUID
     if (!usuarioId || usuarioId === 'undefined') {
-      console.warn('⚠️  No se guarda conversación: usuarioId inválido');
+      console.warn('No se guarda conversación: usuarioId inválido');
       return null;
     }
 
@@ -50,12 +50,12 @@ const guardarConversacion = async (usuarioId, pregunta, respuesta, modelo) => {
     return result.rows[0];
   } catch (error) {
     console.error('Error guardando conversación:', error.message);
-    // No fallar la respuesta si no se guarda el historial
+
     return null;
   }
 };
 
-// Obtener historial de conversaciones de un usuario
+// historial conversaciones
 const obtenerHistorial = async (usuarioId, limite = 10) => {
   try {
     const result = await pool.query(

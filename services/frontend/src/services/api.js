@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
-// Cliente para el backend
+
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -10,9 +10,7 @@ const api = axios.create({
   }
 });
 
-// Cliente para el AI Service (ahora a través del API Gateway)
-// En desarrollo: usa localhost:3001 directamente
-// En producción: usa /api/ai (ruta en nginx)
+
 const aiApi = axios.create({
   baseURL: import.meta.env.DEV ? 'http://localhost:3001/api/ai' : '/api/ai',
   headers: {
@@ -20,10 +18,9 @@ const aiApi = axios.create({
   }
 });
 
-console.log('🔧 [API Config] Ambiente:', import.meta.env.DEV ? 'desarrollo' : 'producción');
-console.log('🔧 [API Config] aiApi baseURL:', aiApi.defaults.baseURL);
+console.log(' Ambiente:', import.meta.env.DEV ? 'desarrollo' : 'producción');
+console.log('aiApi baseURL:', aiApi.defaults.baseURL);
 
-// Interceptor para agregar token JWT al backend
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
