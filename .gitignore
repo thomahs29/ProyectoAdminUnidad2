@@ -44,3 +44,18 @@ package-lock.json
 # Uploads (ignorar contenido pero mantener carpeta)
 services/backend/src/uploads/documents/*
 !services/backend/src/uploads/documents/.gitkeep
+
+# ═══════════════════════════════════════════════════════════════
+# SSL/TLS Certificates - NEVER COMMIT PRIVATE KEYS
+# ═══════════════════════════════════════════════════════════════
+# Certificados SSL (NUNCA subir claves privadas al repositorio)
+infrastructure/nginx/ssl/*.key
+infrastructure/nginx/ssl/*.crt
+infrastructure/nginx/ssl/*.csr
+infrastructure/nginx/ssl/*.pem
+infrastructure/nginx/ssl/*.p12
+infrastructure/nginx/ssl/*.pfx
+
+# Mantener solo el archivo de configuración OpenSSL
+!infrastructure/nginx/ssl/openssl.cnf
+!infrastructure/nginx/ssl/.gitkeep
