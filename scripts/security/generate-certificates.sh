@@ -1,9 +1,5 @@
 #!/bin/bash
-################################################################################
-# Script de Generación de Certificados SSL/TLS Autofirmados
-# Proyecto: Administración de Redes - Unidad 3
-# Descripción: Genera certificados SSL para habilitar HTTPS en la aplicación
-################################################################################
+
 
 set -e
 
