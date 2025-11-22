@@ -1,8 +1,11 @@
-FROM node:18-alpine
+# ============================================
+# STAGE 1: Dependencies Build Stage
+# ============================================
+FROM node:18.20.5-alpine3.20 AS dependencies
 
 WORKDIR /app
 
-# Dependencias nativas para compilar node-canvas + wget para el healthcheck
+# Instalar dependencias del sistema necesarias para compilación
 RUN apk add --no-cache \
   python3 \
   make \
@@ -14,23 +17,55 @@ RUN apk add --no-cache \
   jpeg-dev \
   giflib-dev \
   librsvg-dev \
-  pixman-dev \
-  wget
+  pixman-dev
 
 ENV PYTHON=/usr/bin/python3
 
 # Copiar package.json y package-lock desde la carpeta src
 COPY src/package*.json ./
 
-# Instalar dependencias de producción
-RUN npm install --build-from-source
+# Instalar solo dependencias de producción
+RUN npm install --production --build-from-source && \
+    npm cache clean --force
+
+# ============================================
+# STAGE 2: Production Runtime Stage
+# ============================================
+FROM node:18.20.5-alpine3.20
+
+WORKDIR /app
+
+# Instalar solo las librerías runtime necesarias (sin herramientas de compilación)
+RUN apk add --no-cache \
+    cairo \
+    pango \
+    jpeg \
+    giflib \
+    librsvg \
+    pixman \
+    wget && \
+    # Crear usuario no privilegiado
+    addgroup -g 1001 -S appuser && \
+    adduser -u 1001 -S appuser -G appuser && \
+    # Crear directorio de trabajo y ajustar permisos
+    chown -R appuser:appuser /app
+
+# Copiar dependencias compiladas desde stage anterior
+COPY --from=dependencies --chown=appuser:appuser /app/node_modules ./node_modules
 
 # Copiar el código fuente
-COPY src/ ./
+COPY --chown=appuser:appuser src/ ./
+
+# Cambiar a usuario no privilegiado
+USER appuser
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
 EXPOSE 3000
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1
 
 CMD ["node", "server.js"]

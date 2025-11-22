@@ -1,9 +1,11 @@
-# Build stage
-FROM node:18-alpine
+# ============================================
+# STAGE 1: Dependencies Build Stage
+# ============================================
+FROM node:18.20.5-alpine3.20 AS dependencies
 
 WORKDIR /app
 
-# Instalar dependencias del sistema
+# Instalar dependencias del sistema para compilación
 RUN apk add --no-cache \
     python3 \
     make \
@@ -14,11 +16,39 @@ RUN apk add --no-cache \
 # Copiar package.json y package-lock.json
 COPY package*.json ./
 
-# Instalar dependencias
-RUN npm install --omit=dev
+# Instalar solo dependencias de producción
+RUN npm install --production && \
+    npm cache clean --force
+
+# ============================================
+# STAGE 2: Production Runtime Stage
+# ============================================
+FROM node:18.20.5-alpine3.20
+
+WORKDIR /app
+
+# Instalar wget para healthcheck
+RUN apk add --no-cache wget && \
+    # Crear usuario no privilegiado
+    addgroup -g 1001 -S aiuser && \
+    adduser -u 1001 -S aiuser -G aiuser && \
+    # Ajustar permisos del directorio de trabajo
+    chown -R aiuser:aiuser /app
+
+# Copiar dependencias desde stage anterior
+COPY --from=dependencies --chown=aiuser:aiuser /app/node_modules ./node_modules
 
 # Copiar código fuente
-COPY src/ ./src/
+COPY --chown=aiuser:aiuser src/ ./src/
+COPY --chown=aiuser:aiuser package*.json ./
+
+# Cambiar a usuario no privilegiado
+USER aiuser
+
+ENV NODE_ENV=production
+ENV AI_SERVICE_PORT=3001
+
+EXPOSE 3001
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
