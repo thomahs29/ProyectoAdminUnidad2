@@ -14,10 +14,13 @@ services:
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
       - '--web.enable-lifecycle'
+      - '--web.external-url=https://localhost/prometheus'
+      - '--web.route-prefix=/'
     networks:
       - monitoring-network
-    ports:
-      - "9090:9090"
+    # Puerto NO expuesto - solo accesible via Nginx Gateway con HTTPS
+    # ports:
+    #   - "9090:9090"
     deploy:
       resources:
         limits:
@@ -40,11 +43,15 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      # Configuración para funcionar detrás de proxy con HTTPS
+      - GF_SERVER_ROOT_URL=https://localhost/grafana
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
     networks:
       - monitoring-network
       - frontend-network
-    ports:
-      - "3002:3000"
+    # Puerto NO expuesto - solo accesible via Nginx Gateway con HTTPS
+    # ports:
+    #   - "3002:3000"
     depends_on:
       - prometheus
     deploy:
@@ -78,7 +85,7 @@ services:
       retries: 5
 
   redis-commander:
-    image: rediscommander/redis-commander:latest
+    image: rediscommander/redis-commander@sha256:19cd0c49f418779fa2822a0496c5e6516d0c792effc39ed20089e6268477e40a
     container_name: redis-commander
     restart: unless-stopped
     networks:
@@ -135,13 +142,13 @@ services:
       - .env
     environment:
       POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}     # no se usa para conectarse al master; sirve si promueves la réplica
+      POSTGRES_PASSWORD: ${DB_PASSWORD}     
       POSTGRES_DB: ${DB_NAME}
       REPL_PASSWORD: ${REPL_PASSWORD}
       REPL_USER: replicator
       MASTER_HOST: postgres-master
       MASTER_PORT: 5432
-      REPL_SLOT_NAME: replica1               # cámbialo si creas más réplicas
+      REPL_SLOT_NAME: replica1            
       PGDATA: /var/lib/postgresql/data
       PGPASSWORD: ${DB_PASSWORD}
     networks:
@@ -251,7 +258,7 @@ services:
       context: ./services/frontend
       dockerfile: Dockerfile
     container_name: proyecto-frontend
-    restart: unless-stopped
+    restart: unless-stopped 
     depends_on:
       backend:
         condition: service_healthy
@@ -427,7 +434,7 @@ services:
     build:
       context: ./services/ai-service
       dockerfile: Dockerfile
-    image: proyecto-ai-service:latest
+    image: proyecto-ai-service:1.0.0
     container_name: proyecto-ai-service
     restart: on-failure:3
     env_file:
@@ -463,19 +470,24 @@ services:
       start_period: 15s
 
   api-gateway:
-    image: nginx:latest
+    image: nginx:1.27.2-alpine
     container_name: proyecto-gateway
     restart: unless-stopped
     networks:
       - frontend-network
       - backend-network
+      - monitoring-network  # Necesario para acceder a Grafana y Prometheus
     ports:
-      - "80:80"
+      - "80:80"      # HTTP (redirección a HTTPS)
+      - "443:443"    # HTTPS
     volumes:
       - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infrastructure/nginx/ssl:/etc/nginx/ssl:ro  # Certificados SSL
     depends_on:
       - backend
       - frontend
+      - grafana
+      - prometheus
     deploy:
       resources:
         limits:

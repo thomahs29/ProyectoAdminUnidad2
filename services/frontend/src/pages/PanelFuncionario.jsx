@@ -47,7 +47,6 @@ const PanelFuncionario = () => {
     // Recargar cuando la pestaña se vuelve visible
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        console.log('📍 Pestaña visible, recargando...');
         fetchReservas();
       }
     };
@@ -67,7 +66,7 @@ const PanelFuncionario = () => {
       const response = await api.get('/reservas/all');
       const reservasData = Array.isArray(response.data) ? response.data : response.data.reservas || [];
       setReservas(reservasData);
-      alert('✅ Reservas recargadas');
+      alert('Reservas recargadas');
     } catch (error) {
       console.error('Error:', error);
       alert('Error al recargar');

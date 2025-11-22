@@ -138,9 +138,8 @@ GRANT pg_read_all_stats TO metrics;    -- extra (no siempre necesario)
 -- para ver el estado de las réplicas desde el master
 GRANT SELECT ON pg_stat_replication TO metrics;
 
--- (opcional) por si quieres stats detalladas por consultas
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
--- tabla ia_faqs (preguntas sugeridas para que la IA las responda)
+-- tabla ia_faqs
 CREATE TABLE IF NOT EXISTS ia_faqs (
   id SERIAL PRIMARY KEY,
   pregunta TEXT NOT NULL UNIQUE,
@@ -151,7 +150,7 @@ CREATE TABLE IF NOT EXISTS ia_faqs (
   actualizada_en TIMESTAMPTZ DEFAULT now()
 );
 
--- Insertar preguntas sugeridas de ejemplo
+--preguntas sugeridas de ejemplo
 INSERT INTO ia_faqs (pregunta, categoria, palabras_clave)
 VALUES
 ('¿Cómo solicito una licencia de conducir?', 
@@ -175,7 +174,7 @@ VALUES
  ARRAY['cita', 'reserva', 'agendar', 'hora', 'fecha'])
 ON CONFLICT DO NOTHING;
 
--- Tabla de historial de conversaciones con la IA
+--conversaciones con la IA
 CREATE TABLE IF NOT EXISTS ia_conversaciones (
     id SERIAL PRIMARY KEY,
     usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,

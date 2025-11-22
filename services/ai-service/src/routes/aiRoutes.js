@@ -4,7 +4,6 @@ const aiController = require('../controllers/aiController');
 
 /**
  * POST /api/ai/chat
- * Enviar pregunta a la IA y obtener respuesta
  */
 router.post('/chat', aiController.chat);
 
@@ -16,7 +15,6 @@ router.get('/faq', aiController.faq);
 
 /**
  * GET /api/ai/historial
- * Obtener historial de conversaciones del usuario
  */
 router.get('/historial', aiController.historial);
 

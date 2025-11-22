@@ -7,17 +7,17 @@ import { aiApi } from './api';
  */
 export const enviarPregunta = async (pregunta) => {
     try {
-        console.log('📤 [Frontend] Enviando pregunta a IA Service:', pregunta);
-        console.log('📍 [Frontend] URL objetivo: http://localhost:3001/api/ai/chat');
+        console.log('[Frontend] Enviando pregunta a IA Service:', pregunta);
+        console.log('[Frontend] URL objetivo: http://localhost:3001/api/ai/chat');
         
         const response = await aiApi.post('/chat', {
             pregunta,
         });
         
-        console.log('✅ [Frontend] Respuesta recibida:', response.data);
+        console.log('[Frontend] Respuesta recibida:', response.data);
         return response.data;
     } catch (error) {
-        console.error('❌ [Frontend] Error enviando pregunta:', error);
+        console.error(' [Frontend] Error enviando pregunta:', error);
         console.error('   Mensaje:', error.message);
         console.error('   Status:', error.response?.status);
         console.error('   Data:', error.response?.data);
@@ -31,22 +31,22 @@ export const enviarPregunta = async (pregunta) => {
  */
 export const obtenerFAQs = async () => {
     try {
-        console.log('📥 [Frontend] Obteniendo FAQs desde IA Service...');
+        console.log('[Frontend] Obteniendo FAQs desde IA Service...');
         const response = await aiApi.get('/faq');
-        console.log('✅ [Frontend] FAQs recibidas:', response.data);
+        console.log('[Frontend] FAQs recibidas:', response.data);
         return response.data.faqs;
     } catch (error) {
-        console.error('❌ [Frontend] Error obteniendo FAQs:', error);
+        console.error(' [Frontend] Error obteniendo FAQs:', error);
         console.error('   Mensaje:', error.message);
         console.error('   Status:', error.response?.status);
-        return []; // Retornar array vacío para que UI no se rompa
+        return []; 
     }
 };
 
 /**
  * Obtener historial de conversaciones
- * @param {number} limite - Número máximo de conversaciones (default: 10)
- * @returns {Promise<array>} Historial de conversaciones
+ * @param {number} limite - 
+ * @returns {Promise<array>} 
  */
 export const obtenerHistorial = async (limite = 10) => {
     try {

@@ -6,7 +6,7 @@ const path = require('path');
 const aiRoutes = require('./routes/aiRoutes');
 const { verifyToken } = require('./middleware/authMiddleware');
 
-// Cargar variables de entorno
+
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app = express();
@@ -24,11 +24,11 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Endpoint de diagnóstico (sin autenticación)
+// Endpoint de diagnóstico 
 app.get('/api/ai/test', (req, res) => {
-  console.log('✅ Test endpoint llamado - Servicio responde correctamente');
+  console.log(' Test endpoint llamado - Servicio responde correctamente');
   res.status(200).json({ 
-    message: '✅ AI Service conectado correctamente',
+    message: 'AI Service conectado correctamente',
     timestamp: new Date().toISOString(),
     geminiConfigured: !!process.env.GEMINI_API_KEY,
     port: PORT
@@ -55,7 +55,6 @@ app.use((err, req, res, next) => {
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🤖 AI Service running on port ${PORT}`);
 });
 
 module.exports = app;
