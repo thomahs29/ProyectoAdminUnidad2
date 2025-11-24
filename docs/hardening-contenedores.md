@@ -4,7 +4,7 @@
 
 ## Medidas Aplicadas en Dockerfiles
 
-### 1. ✅ Usuarios No Privilegiados
+### 1. Usuarios No Privilegiados
 
 **Objetivo:** Evitar que los contenedores se ejecuten como usuario `root`, minimizando el impacto de posibles vulnerabilidades.
 
@@ -65,7 +65,7 @@ USER aiuser
 
 ---
 
-### 2. ✅ Versiones Específicas de Imágenes Base
+### 2. Versiones Específicas de Imágenes Base
 
 
 | Servicio | Imagen Base Anterior | Imagen Base Actualizada |
@@ -112,9 +112,9 @@ COPY --from=dependencies /app/node_modules ./node_modules
 ```
 
 **Beneficios:**
-- ✅ No incluye herramientas de compilación (python3, make, g++, build-base) en runtime
-- ✅ Solo librerías runtime necesarias (cairo, pango, jpeg)
-- ✅ Reducción de superficie de ataque
+- No incluye herramientas de compilación (python3, make, g++, build-base) en runtime
+- Solo librerías runtime necesarias (cairo, pango, jpeg)
+- Reducción de superficie de ataque
 
 #### AI Service
 ```dockerfile
@@ -169,7 +169,7 @@ security_opt:
 
 ---
 
-### 2. ✅ Linux Capabilities - `cap_drop` / `cap_add`
+### 2. Linux Capabilities - `cap_drop` / `cap_add`
 
 **Estrategia:** Eliminar TODAS las capabilities y agregar solo las necesarias.
 
@@ -202,7 +202,7 @@ cap_add:
 
 ---
 
-### 3. ✅ Read-Only Filesystem
+### 3. Read-Only Filesystem
 
 #### Frontend (Nginx)
 ```yaml
@@ -235,7 +235,7 @@ read_only: false  # Necesita escribir uploads
 
 ---
 
-### 4. ✅ Límites de Recursos
+### 4.Límites de Recursos
 
 **Aplicado a todos los servicios:**
 
@@ -251,9 +251,9 @@ deploy:
 ```
 
 **Beneficios:**
-- ✅ Previene DoS por consumo excesivo de recursos
-- ✅ Garantiza recursos mínimos disponibles
-- ✅ Mejora estabilidad del sistema
+-  Previene DoS por consumo excesivo de recursos
+- Garantiza recursos mínimos disponibles
+-  Mejora estabilidad del sistema
 
 **Distribución de recursos:**
 
@@ -269,7 +269,7 @@ deploy:
 
 ---
 
-### 5. ✅ Logging con Rotación
+### 5. Logging con Rotación
 
 **Aplicado a:** frontend, backend, ai-service
 
@@ -288,15 +288,15 @@ logging:
 - **Rotación automática:** Cuando un archivo alcanza 10 MB
 
 **Beneficios:**
-- ✅ Previene llenar disco con logs
-- ✅ Retiene suficiente historia para debugging (30 MB)
-- ✅ Rotación automática sin intervención manual
+- Previene llenar disco con logs
+- Retiene suficiente historia para debugging (30 MB)
+-  Rotación automática sin intervención manual
 
 **Referencia:** CIS Docker Benchmark 2.12
 
 ---
 
-### 6. ✅ Políticas de Restart
+### 6. Políticas de Restart
 
 ```yaml
 restart: unless-stopped  # Servicios críticos (frontend, grafana, prometheus)
@@ -308,12 +308,12 @@ restart: on-failure:3    # Servicios de aplicación (backend, ai-service)
 - **`on-failure:3`:** Reinicia hasta 3 veces en caso de fallo, luego se detiene (aplicación)
 
 **Beneficios:**
-- ✅ Alta disponibilidad para servicios críticos
-- ✅ Evita reinicio infinito de servicios con errores de configuración
+-  Alta disponibilidad para servicios críticos
+- Evita reinicio infinito de servicios con errores de configuración
 
 ---
 
-### 7. ✅ Redes Aisladas
+### 7.  Redes Aisladas
 
 ```yaml
 networks:
@@ -416,9 +416,9 @@ docker exec proyecto-frontend touch /test.txt
 Ver archivo `docs/vulnerability-scan-report.md` para el reporte completo de Trivy.
 
 **Resumen:**
-- ✅ Imágenes base actualizadas a versiones sin CVEs críticos
-- ✅ Dependencias de Node.js auditadas con `npm audit`
-- ✅ Escaneo periódico programado
+-  Imágenes base actualizadas a versiones sin CVEs críticos
+- Dependencias de Node.js auditadas con `npm audit`
+- Escaneo periódico programado
 
 ---
 
@@ -432,25 +432,3 @@ Ver archivo `docs/vulnerability-scan-report.md` para el reporte completo de Triv
 
 ---
 
-## Checklist de Implementación
-
-- [x] Usuarios no privilegiados en todos los Dockerfiles
-- [x] Versiones específicas de imágenes base
-- [x] Multi-stage builds implementados
-- [x] `security_opt: no-new-privileges` configurado
-- [x] Capabilities eliminadas con `cap_drop: ALL`
-- [x] Capabilities mínimas con `cap_add`
-- [x] Read-only filesystem (donde aplica)
-- [x] Límites de CPU y memoria configurados
-- [x] Reservations de recursos configurados
-- [x] Logging con rotación automática
-- [x] Políticas de restart apropiadas
-- [x] Healthchecks en todos los servicios
-- [x] Redes aisladas por función
-- [ ] Escaneo de vulnerabilidades con Trivy
-- [x] Documentación completa
-
----
-
-**Última actualización:** 22 de noviembre de 2025  
-**Próxima revisión:** Diciembre 2025
