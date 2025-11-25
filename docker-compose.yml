@@ -104,8 +104,9 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      # Variables para el usuario administrador
+      POSTGRES_USER: ${DB_ROOT_USER}
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     networks:
       - database-network
@@ -134,9 +135,11 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}     
+      #Root para replicación
+      POSTGRES_USER: ${DB_ROOT_USER}
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD}     
       POSTGRES_DB: ${DB_NAME}
+      #Datos para replicación
       REPL_PASSWORD: ${REPL_PASSWORD}
       REPL_USER: replicator
       MASTER_HOST: postgres-master
@@ -279,15 +282,15 @@ services:
     security_opt:
       - no-new-privileges:true
     cap_drop:
-      - ALL
+      - ALL 
     cap_add:
       - CHOWN
       - SETUID
       - SETGID
     read_only: true
     tmpfs:
-      - /var/cache/nginx:rw,noexec,nosuid,size=50m
-      - /var/run:rw,noexec,nosuid,size=10m
+      - /var/cache/nginx:rw,noexec,nosuid,size=50m,uid=1001,gid=1001
+      - /var/run:rw,noexec,nosuid,size=10m,uid=1001,gid=1001
     logging:
       driver: "json-file"
       options:
@@ -402,8 +405,8 @@ services:
       - monitoring-network
       - database-network
     environment:
-      # Requiere que el usuario tenga permisos para vistas de stats/replicación
-      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@postgres-master:5432/${DB_NAME}?sslmode=disable
+      # Usamos el usuario root solo dentro de la red interna para métricas
+      - DATA_SOURCE_NAME=postgresql://${DB_ROOT_USER}:${DB_ROOT_PASSWORD}@postgres-master:5432/${DB_NAME}?sslmode=disable
       - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
     ports:
       - "9187:9187"
@@ -420,7 +423,7 @@ services:
       - monitoring-network
       - database-network
     environment:
-      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@postgres-replica:5432/${DB_NAME}?sslmode=disable
+      - DATA_SOURCE_NAME=postgresql://${DB_ROOT_USER}:${DB_ROOT_PASSWORD}@postgres-replica:5432/${DB_NAME}?sslmode=disable
       - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
     ports:
       - "9188:9187"

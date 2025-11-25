@@ -1,7 +1,7 @@
 # ============================================
 # STAGE 1: Dependencies Build Stage
 # ============================================
-FROM node:18.20.5-alpine3.20 AS dependencies
+FROM node:18.20.5-alpine3.20 AS deps
 
 WORKDIR /app
 
@@ -31,7 +31,7 @@ RUN npm install --production --build-from-source && \
 # ============================================
 # STAGE 2: Production Runtime Stage
 # ============================================
-FROM node:18.20.5-alpine3.20
+FROM node:18.20.5-alpine3.20 AS runtime
 
 WORKDIR /app
 
@@ -45,16 +45,17 @@ RUN apk add --no-cache \
     pixman \
     wget && \
     # Crear usuario no privilegiado
-    addgroup -g 1001 -S appuser && \
-    adduser -u 1001 -S appuser -G appuser && \
-    # Crear directorio de trabajo y ajustar permisos
-    chown -R appuser:appuser /app
+    addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup && \
+    # Crear directorio de uploads con permisos correctos
+    mkdir -p /app/uploads /app/uploads/documents && \
+    chown -R appuser:appgroup /app
 
-# Copiar dependencias compiladas desde stage anterior
-COPY --from=dependencies --chown=appuser:appuser /app/node_modules ./node_modules
+# Copiar dependencias compiladas desde el stage anterior
+COPY --from=deps --chown=appuser:appgroup /app/node_modules ./node_modules
 
-# Copiar el código fuente
-COPY --chown=appuser:appuser src/ ./
+# Copiar el código fuente de la app
+COPY --chown=appuser:appgroup src/ ./
 
 # Cambiar a usuario no privilegiado
 USER appuser
@@ -64,7 +65,7 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-# Healthcheck
+# Healthcheck interno del contenedor (nota: en docker-compose usas /api/health)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1
 
