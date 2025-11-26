@@ -5,7 +5,7 @@
 # - Operaciones de backup/restore necesitan acceso a archivos del sistema
 # - cron daemon requiere privilegios para programar tareas
 # ============================================
-FROM alpine:3.21.2
+FROM alpine:3.20
 
 # Instalar paquetes necesarios (sin fijar versiones para evitar conflictos)
 RUN apk update && apk add --no-cache \

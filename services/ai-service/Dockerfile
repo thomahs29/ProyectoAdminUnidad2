@@ -16,9 +16,8 @@ RUN apk add --no-cache \
 # Copiar package.json y package-lock.json
 COPY package*.json ./
 
-# Instalar solo dependencias de producción y actualizar paquetes vulnerables
+# Instalar solo dependencias de producción (overrides se aplican automáticamente)
 RUN npm install --production && \
-    npm install --force cross-spawn@7.0.6 glob@10.5.0 && \
     npm cache clean --force
 
 # ============================================

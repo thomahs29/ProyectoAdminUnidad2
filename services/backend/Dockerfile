@@ -1,7 +1,7 @@
 # ============================================
 # STAGE 1: Dependencies Build Stage
 # ============================================
-FROM node:18.20.5-alpine3.20 AS deps
+FROM node:18.20.5-alpine3.21 AS deps
 
 WORKDIR /app
 
@@ -24,15 +24,14 @@ ENV PYTHON=/usr/bin/python3
 # Copiar package.json y package-lock desde la carpeta src
 COPY src/package*.json ./
 
-# Instalar solo dependencias de producción y actualizar paquetes vulnerables
+# Instalar solo dependencias de producción (overrides se aplican automáticamente)
 RUN npm install --production --build-from-source && \
-  npm install --force cross-spawn@7.0.6 glob@10.5.0 && \
   npm cache clean --force
 
 # ============================================
 # STAGE 2: Production Runtime Stage
 # ============================================
-FROM node:18.20.5-alpine3.20 AS runtime
+FROM node:18.20.5-alpine3.21 AS runtime
 
 WORKDIR /app
 
@@ -71,8 +70,8 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-# Healthcheck interno del contenedor (nota: en docker-compose usas /api/health)
+# Healthcheck interno del contenedor
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1
+  CMD wget --quiet --tries=1 --spider http://localhost:3000/api/health || exit 1
 
 CMD ["node", "server.js"]

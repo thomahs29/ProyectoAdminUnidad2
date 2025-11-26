@@ -5,13 +5,13 @@
                     │                    Analyzed Image                      
 ────────────────────┼────────────────────────────────────────────────────────
   Target            │  proyectoadminunidad2-backend:latest                   
-    digest          │  74983114d443                                          
+    digest          │  d1d4ff1e3435                                          
     platform        │ linux/amd64                                            
     provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
-                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/4004ce2430a7f9a8af91e50fb2ef754f9f632bfa              
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/5a018e94f1396b5f2d6fc51fa40e15e40ac5d723              
     vulnerabilities │    1C     4H     0M     0L                             
-    size            │ 126 MB                                                 
-    packages        │ 551                                                    
+    size            │ 127 MB                                                 
+    packages        │ 566                                                    
 
 
 ## Packages and Vulnerabilities
@@ -39,18 +39,6 @@ pkg:apk/alpine/libpng@1.6.47-r0?os_name=alpine&os_version=3.21
       Fixed version  : not fixed    
     
 
-   0C     1H     0M     0L  cross-spawn 7.0.3
-pkg:npm/cross-spawn@7.0.3
-
-    ✗ HIGH CVE-2024-21538 [Inefficient Regular Expression Complexity]
-      https://scout.docker.com/v/CVE-2024-21538?s=github&n=cross-spawn&t=npm&vr=%3E%3D7.0.0%2C%3C7.0.5
-      Affected range : >=7.0.0                                                              
-                     : <7.0.5                                                               
-      Fixed version  : 7.0.5                                                                
-      CVSS Score     : 7.7                                                                  
-      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P  
-    
-
    0C     1H     0M     0L  glob 10.4.2
 pkg:npm/glob@10.4.2
 
@@ -61,6 +49,18 @@ pkg:npm/glob@10.4.2
       Fixed version  : 11.1.0                                        
       CVSS Score     : 7.5                                           
       CVSS Vector    : CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H  
+    
+
+   0C     1H     0M     0L  cross-spawn 7.0.3
+pkg:npm/cross-spawn@7.0.3
+
+    ✗ HIGH CVE-2024-21538 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2024-21538?s=github&n=cross-spawn&t=npm&vr=%3E%3D7.0.0%2C%3C7.0.5
+      Affected range : >=7.0.0                                                              
+                     : <7.0.5                                                               
+      Fixed version  : 7.0.5                                                                
+      CVSS Score     : 7.7                                                                  
+      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P  
     
 
 

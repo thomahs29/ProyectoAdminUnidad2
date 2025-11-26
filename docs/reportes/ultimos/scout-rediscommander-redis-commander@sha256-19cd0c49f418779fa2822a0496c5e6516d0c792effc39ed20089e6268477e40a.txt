@@ -101,15 +101,15 @@ pkg:apk/alpine/zlib@1.2.11-r3?os_name=alpine&os_version=3.12
       Fixed version  : 1.2.12-r0   
     
 
-   1C     0H     0M     0L  ejs 2.7.4
-pkg:npm/ejs@2.7.4
+   1C     0H     0M     0L  execa 0.7.0
+pkg:npm/execa@0.7.0
 
-    ✗ CRITICAL CVE-2022-29078 [Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')]
-      https://scout.docker.com/v/CVE-2022-29078?s=github&n=ejs&t=npm&vr=%3C3.1.7
-      Affected range : <3.1.7                                        
-      Fixed version  : 3.1.7                                         
+    ✗ CRITICAL GMS-2020-2 [OWASP Top Ten 2017 Category A9 - Using Components with Known Vulnerabilities]
+      https://scout.docker.com/v/GMS-2020-2?s=gitlab&n=execa&t=npm&vr=%3C2.0.0
+      Affected range : <2.0.0                                        
+      Fixed version  : 2.0.0                                         
       CVSS Score     : 9.8                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H  
+      CVSS Vector    : CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H  
     
 
    1C     0H     0M     0L  form-data 2.3.2
@@ -123,24 +123,22 @@ pkg:npm/form-data@2.3.2
       CVSS Vector    : CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:N/SC:H/SI:H/SA:N  
     
 
-   1C     0H     0M     0L  execa 0.7.0
-pkg:npm/execa@0.7.0
+   1C     0H     0M     0L  apk-tools 2.10.6-r0
+pkg:apk/alpine/apk-tools@2.10.6-r0?os_name=alpine&os_version=3.12
 
-    ✗ CRITICAL GMS-2020-2 [OWASP Top Ten 2017 Category A9 - Using Components with Known Vulnerabilities]
-      https://scout.docker.com/v/GMS-2020-2?s=gitlab&n=execa&t=npm&vr=%3C2.0.0
-      Affected range : <2.0.0                                        
-      Fixed version  : 2.0.0                                         
-      CVSS Score     : 9.8                                           
-      CVSS Vector    : CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H  
+    ✗ CRITICAL CVE-2021-36159
+      https://scout.docker.com/v/CVE-2021-36159?s=alpine&n=apk-tools&ns=alpine&t=apk&osn=alpine&osv=3.12&vr=%3C2.10.7-r0
+      Affected range : <2.10.7-r0  
+      Fixed version  : 2.10.7-r0   
     
 
-   1C     0H     0M     0L  json-schema 0.2.3
-pkg:npm/json-schema@0.2.3
+   1C     0H     0M     0L  ejs 2.7.4
+pkg:npm/ejs@2.7.4
 
-    ✗ CRITICAL CVE-2021-3918 [Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')]
-      https://scout.docker.com/v/CVE-2021-3918?s=github&n=json-schema&t=npm&vr=%3C0.4.0
-      Affected range : <0.4.0                                        
-      Fixed version  : 0.4.0                                         
+    ✗ CRITICAL CVE-2022-29078 [Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')]
+      https://scout.docker.com/v/CVE-2022-29078?s=github&n=ejs&t=npm&vr=%3C3.1.7
+      Affected range : <3.1.7                                        
+      Fixed version  : 3.1.7                                         
       CVSS Score     : 9.8                                           
       CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H  
     
@@ -157,13 +155,15 @@ pkg:npm/minimist@1.2.5
       CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H  
     
 
-   1C     0H     0M     0L  apk-tools 2.10.6-r0
-pkg:apk/alpine/apk-tools@2.10.6-r0?os_name=alpine&os_version=3.12
+   1C     0H     0M     0L  json-schema 0.2.3
+pkg:npm/json-schema@0.2.3
 
-    ✗ CRITICAL CVE-2021-36159
-      https://scout.docker.com/v/CVE-2021-36159?s=alpine&n=apk-tools&ns=alpine&t=apk&osn=alpine&osv=3.12&vr=%3C2.10.7-r0
-      Affected range : <2.10.7-r0  
-      Fixed version  : 2.10.7-r0   
+    ✗ CRITICAL CVE-2021-3918 [Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')]
+      https://scout.docker.com/v/CVE-2021-3918?s=github&n=json-schema&t=npm&vr=%3C0.4.0
+      Affected range : <0.4.0                                        
+      Fixed version  : 0.4.0                                         
+      CVSS Score     : 9.8                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H  
     
 
    0C    10H     0M     0L  busybox 1.31.1-r20
@@ -281,29 +281,6 @@ pkg:npm/path-to-regexp@0.1.7
       CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P  
     
 
-   0C     1H     0M     0L  express 4.17.1
-pkg:npm/express@4.17.1
-
-    ✗ HIGH CVE-2022-24999 [OWASP Top Ten 2017 Category A9 - Using Components with Known Vulnerabilities]
-      https://scout.docker.com/v/CVE-2022-24999?s=gitlab&n=express&t=npm&vr=%3C4.17.3
-      Affected range : <4.17.3                                       
-      Fixed version  : 4.17.3                                        
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
-   0C     1H     0M     0L  ansi-regex 4.1.0
-pkg:npm/ansi-regex@4.1.0
-
-    ✗ HIGH CVE-2021-3807 [Inefficient Regular Expression Complexity]
-      https://scout.docker.com/v/CVE-2021-3807?s=github&n=ansi-regex&t=npm&vr=%3E%3D4.0.0%2C%3C4.1.1
-      Affected range : >=4.0.0                                       
-                     : <4.1.1                                        
-      Fixed version  : 4.1.1                                         
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
    0C     1H     0M     0L  ip 1.1.5
 pkg:npm/ip@1.1.5
 
@@ -315,16 +292,38 @@ pkg:npm/ip@1.1.5
       CVSS Vector    : CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H  
     
 
-   0C     1H     0M     0L  json5 2.2.0
-pkg:npm/json5@2.2.0
+   0C     1H     0M     0L  body-parser 1.19.0
+pkg:npm/body-parser@1.19.0
 
-    ✗ HIGH CVE-2022-46175 [Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')]
-      https://scout.docker.com/v/CVE-2022-46175?s=github&n=json5&t=npm&vr=%3E%3D2.0.0%2C%3C2.2.2
-      Affected range : >=2.0.0                                       
-                     : <2.2.2                                        
-      Fixed version  : 2.2.2                                         
-      CVSS Score     : 7.1                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:L/A:H  
+    ✗ HIGH CVE-2024-45590 [Asymmetric Resource Consumption (Amplification)]
+      https://scout.docker.com/v/CVE-2024-45590?s=github&n=body-parser&t=npm&vr=%3C1.20.3
+      Affected range : <1.20.3                                                          
+      Fixed version  : 1.20.3                                                           
+      CVSS Score     : 8.7                                                              
+      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N  
+    
+
+   0C     1H     0M     0L  express 4.17.1
+pkg:npm/express@4.17.1
+
+    ✗ HIGH CVE-2022-24999 [OWASP Top Ten 2017 Category A9 - Using Components with Known Vulnerabilities]
+      https://scout.docker.com/v/CVE-2022-24999?s=gitlab&n=express&t=npm&vr=%3C4.17.3
+      Affected range : <4.17.3                                       
+      Fixed version  : 4.17.3                                        
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  ansi-regex 5.0.0
+pkg:npm/ansi-regex@5.0.0
+
+    ✗ HIGH CVE-2021-3807 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2021-3807?s=github&n=ansi-regex&t=npm&vr=%3E%3D5.0.0%2C%3C5.0.1
+      Affected range : >=5.0.0                                       
+                     : <5.0.1                                        
+      Fixed version  : 5.0.1                                         
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
     
 
    0C     1H     0M     0L  ansi-regex 3.0.0
@@ -339,6 +338,41 @@ pkg:npm/ansi-regex@3.0.0
       CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
     
 
+   0C     1H     0M     0L  json5 2.2.0
+pkg:npm/json5@2.2.0
+
+    ✗ HIGH CVE-2022-46175 [Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')]
+      https://scout.docker.com/v/CVE-2022-46175?s=github&n=json5&t=npm&vr=%3E%3D2.0.0%2C%3C2.2.2
+      Affected range : >=2.0.0                                       
+                     : <2.2.2                                        
+      Fixed version  : 2.2.2                                         
+      CVSS Score     : 7.1                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:L/A:H  
+    
+
+   0C     1H     0M     0L  qs 6.7.0
+pkg:npm/qs@6.7.0
+
+    ✗ HIGH CVE-2022-24999 [Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')]
+      https://scout.docker.com/v/CVE-2022-24999?s=github&n=qs&t=npm&vr=%3E%3D6.7.0%2C%3C6.7.3
+      Affected range : >=6.7.0                                       
+                     : <6.7.3                                        
+      Fixed version  : 6.7.3                                         
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  yarn 1.22.4
+pkg:npm/yarn@1.22.4
+
+    ✗ HIGH CVE-2021-4435 [Untrusted Search Path]
+      https://scout.docker.com/v/CVE-2021-4435?s=github&n=yarn&t=npm&vr=%3C1.22.13
+      Affected range : <1.22.13                                      
+      Fixed version  : 1.22.13                                       
+      CVSS Score     : 7.7                                           
+      CVSS Vector    : CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H  
+    
+
    0C     1H     0M     0L  jsonwebtoken 8.5.1
 pkg:npm/jsonwebtoken@8.5.1
 
@@ -350,6 +384,71 @@ pkg:npm/jsonwebtoken@8.5.1
       CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N  
     
 
+   0C     1H     0M     0L  http-cache-semantics 3.8.1
+pkg:npm/http-cache-semantics@3.8.1
+
+    ✗ HIGH CVE-2022-25881 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2022-25881?s=github&n=http-cache-semantics&t=npm&vr=%3C4.1.1
+      Affected range : <4.1.1                                        
+      Fixed version  : 4.1.1                                         
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  decode-uri-component 0.2.0
+pkg:npm/decode-uri-component@0.2.0
+
+    ✗ HIGH CVE-2022-38900 [Improper Input Validation]
+      https://scout.docker.com/v/CVE-2022-38900?s=github&n=decode-uri-component&t=npm&vr=%3C0.2.1
+      Affected range : <0.2.1                                        
+      Fixed version  : 0.2.1                                         
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  gcc 9.3.0-r2
+pkg:apk/alpine/gcc@9.3.0-r2?os_name=alpine&os_version=3.12
+
+    ✗ HIGH CVE-2021-37322
+      https://scout.docker.com/v/CVE-2021-37322?s=alpine&n=gcc&ns=alpine&t=apk&osn=alpine&osv=3.12&vr=%3C%3D9.3.0-r2
+      Affected range : <=9.3.0-r2  
+      Fixed version  : not fixed   
+    
+
+   0C     1H     0M     0L  ansi-regex 4.1.0
+pkg:npm/ansi-regex@4.1.0
+
+    ✗ HIGH CVE-2021-3807 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2021-3807?s=github&n=ansi-regex&t=npm&vr=%3E%3D4.0.0%2C%3C4.1.1
+      Affected range : >=4.0.0                                       
+                     : <4.1.1                                        
+      Fixed version  : 4.1.1                                         
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  async 0.1.22
+pkg:npm/async@0.1.22
+
+    ✗ HIGH CVE-2021-43138 [OWASP Top Ten 2017 Category A9 - Using Components with Known Vulnerabilities]
+      https://scout.docker.com/v/CVE-2021-43138?s=gitlab&n=async&t=npm&vr=%3C2.6.4
+      Affected range : <2.6.4                                        
+      Fixed version  : 2.6.4, 3.2.2                                  
+      CVSS Score     : 7.8                                           
+      CVSS Vector    : CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H  
+    
+
+   0C     1H     0M     0L  semver 5.7.1
+pkg:npm/semver@5.7.1
+
+    ✗ HIGH CVE-2022-25883 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2022-25883?s=github&n=semver&t=npm&vr=%3C5.7.2
+      Affected range : <5.7.2                                        
+      Fixed version  : 5.7.2                                         
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
    0C     1H     0M     0L  ssri 6.0.1
 pkg:npm/ssri@6.0.1
 
@@ -358,6 +457,39 @@ pkg:npm/ssri@6.0.1
       Affected range : >=5.2.2                                       
                      : <6.0.2                                        
       Fixed version  : 6.0.2                                         
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  semver 5.7.0
+pkg:npm/semver@5.7.0
+
+    ✗ HIGH CVE-2022-25883 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2022-25883?s=github&n=semver&t=npm&vr=%3C5.7.2
+      Affected range : <5.7.2                                        
+      Fixed version  : 5.7.2                                         
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  cross-spawn 5.1.0
+pkg:npm/cross-spawn@5.1.0
+
+    ✗ HIGH CVE-2024-21538 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2024-21538?s=github&n=cross-spawn&t=npm&vr=%3C6.0.6
+      Affected range : <6.0.6                                                               
+      Fixed version  : 6.0.6                                                                
+      CVSS Score     : 7.7                                                                  
+      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P  
+    
+
+   0C     1H     0M     0L  minimatch 3.0.4
+pkg:npm/minimatch@3.0.4
+
+    ✗ HIGH CVE-2022-3517 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2022-3517?s=github&n=minimatch&t=npm&vr=%3C3.0.5
+      Affected range : <3.0.5                                        
+      Fixed version  : 3.0.5                                         
       CVSS Score     : 7.5                                           
       CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
     
@@ -374,116 +506,6 @@ pkg:npm/async@3.2.0
       CVSS Vector    : CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H  
     
 
-   0C     1H     0M     0L  async 0.1.22
-pkg:npm/async@0.1.22
-
-    ✗ HIGH CVE-2021-43138 [OWASP Top Ten 2017 Category A9 - Using Components with Known Vulnerabilities]
-      https://scout.docker.com/v/CVE-2021-43138?s=gitlab&n=async&t=npm&vr=%3C2.6.4
-      Affected range : <2.6.4                                        
-      Fixed version  : 2.6.4, 3.2.2                                  
-      CVSS Score     : 7.8                                           
-      CVSS Vector    : CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H  
-    
-
-   0C     1H     0M     0L  yarn 1.22.4
-pkg:npm/yarn@1.22.4
-
-    ✗ HIGH CVE-2021-4435 [Untrusted Search Path]
-      https://scout.docker.com/v/CVE-2021-4435?s=github&n=yarn&t=npm&vr=%3C1.22.13
-      Affected range : <1.22.13                                      
-      Fixed version  : 1.22.13                                       
-      CVSS Score     : 7.7                                           
-      CVSS Vector    : CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H  
-    
-
-   0C     1H     0M     0L  ansi-regex 5.0.0
-pkg:npm/ansi-regex@5.0.0
-
-    ✗ HIGH CVE-2021-3807 [Inefficient Regular Expression Complexity]
-      https://scout.docker.com/v/CVE-2021-3807?s=github&n=ansi-regex&t=npm&vr=%3E%3D5.0.0%2C%3C5.0.1
-      Affected range : >=5.0.0                                       
-                     : <5.0.1                                        
-      Fixed version  : 5.0.1                                         
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
-   0C     1H     0M     0L  minimatch 3.0.4
-pkg:npm/minimatch@3.0.4
-
-    ✗ HIGH CVE-2022-3517 [Inefficient Regular Expression Complexity]
-      https://scout.docker.com/v/CVE-2022-3517?s=github&n=minimatch&t=npm&vr=%3C3.0.5
-      Affected range : <3.0.5                                        
-      Fixed version  : 3.0.5                                         
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
-   0C     1H     0M     0L  body-parser 1.19.0
-pkg:npm/body-parser@1.19.0
-
-    ✗ HIGH CVE-2024-45590 [Asymmetric Resource Consumption (Amplification)]
-      https://scout.docker.com/v/CVE-2024-45590?s=github&n=body-parser&t=npm&vr=%3C1.20.3
-      Affected range : <1.20.3                                                          
-      Fixed version  : 1.20.3                                                           
-      CVSS Score     : 8.7                                                              
-      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N  
-    
-
-   0C     1H     0M     0L  qs 6.7.0
-pkg:npm/qs@6.7.0
-
-    ✗ HIGH CVE-2022-24999 [Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')]
-      https://scout.docker.com/v/CVE-2022-24999?s=github&n=qs&t=npm&vr=%3E%3D6.7.0%2C%3C6.7.3
-      Affected range : >=6.7.0                                       
-                     : <6.7.3                                        
-      Fixed version  : 6.7.3                                         
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
-   0C     1H     0M     0L  cross-spawn 5.1.0
-pkg:npm/cross-spawn@5.1.0
-
-    ✗ HIGH CVE-2024-21538 [Inefficient Regular Expression Complexity]
-      https://scout.docker.com/v/CVE-2024-21538?s=github&n=cross-spawn&t=npm&vr=%3C6.0.6
-      Affected range : <6.0.6                                                               
-      Fixed version  : 6.0.6                                                                
-      CVSS Score     : 7.7                                                                  
-      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P  
-    
-
-   0C     1H     0M     0L  semver 5.7.0
-pkg:npm/semver@5.7.0
-
-    ✗ HIGH CVE-2022-25883 [Inefficient Regular Expression Complexity]
-      https://scout.docker.com/v/CVE-2022-25883?s=github&n=semver&t=npm&vr=%3C5.7.2
-      Affected range : <5.7.2                                        
-      Fixed version  : 5.7.2                                         
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
-   0C     1H     0M     0L  http-cache-semantics 3.8.1
-pkg:npm/http-cache-semantics@3.8.1
-
-    ✗ HIGH CVE-2022-25881 [Inefficient Regular Expression Complexity]
-      https://scout.docker.com/v/CVE-2022-25881?s=github&n=http-cache-semantics&t=npm&vr=%3C4.1.1
-      Affected range : <4.1.1                                        
-      Fixed version  : 4.1.1                                         
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
-   0C     1H     0M     0L  gcc 9.3.0-r2
-pkg:apk/alpine/gcc@9.3.0-r2?os_name=alpine&os_version=3.12
-
-    ✗ HIGH CVE-2021-37322
-      https://scout.docker.com/v/CVE-2021-37322?s=alpine&n=gcc&ns=alpine&t=apk&osn=alpine&osv=3.12&vr=%3C%3D9.3.0-r2
-      Affected range : <=9.3.0-r2  
-      Fixed version  : not fixed   
-    
-
    0C     1H     0M     0L  qs 6.5.2
 pkg:npm/qs@6.5.2
 
@@ -492,28 +514,6 @@ pkg:npm/qs@6.5.2
       Affected range : >=6.5.0                                       
                      : <6.5.3                                        
       Fixed version  : 6.5.3                                         
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
-   0C     1H     0M     0L  semver 5.7.1
-pkg:npm/semver@5.7.1
-
-    ✗ HIGH CVE-2022-25883 [Inefficient Regular Expression Complexity]
-      https://scout.docker.com/v/CVE-2022-25883?s=github&n=semver&t=npm&vr=%3C5.7.2
-      Affected range : <5.7.2                                        
-      Fixed version  : 5.7.2                                         
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
-   0C     1H     0M     0L  decode-uri-component 0.2.0
-pkg:npm/decode-uri-component@0.2.0
-
-    ✗ HIGH CVE-2022-38900 [Improper Input Validation]
-      https://scout.docker.com/v/CVE-2022-38900?s=github&n=decode-uri-component&t=npm&vr=%3C0.2.1
-      Affected range : <0.2.1                                        
-      Fixed version  : 0.2.1                                         
       CVSS Score     : 7.5                                           
       CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
     
