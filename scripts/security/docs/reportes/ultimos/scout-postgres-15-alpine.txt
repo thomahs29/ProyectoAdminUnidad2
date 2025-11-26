@@ -1,0 +1,47 @@
+
+
+## Overview
+
+                    │       Analyzed Image         
+────────────────────┼──────────────────────────────
+  Target            │  postgres:15-alpine          
+    digest          │  64583b3cb4f2                
+    platform        │ linux/amd64                  
+    vulnerabilities │    0C     4H     0M     0L   
+    size            │ 109 MB                       
+    packages        │ 66                           
+
+
+## Packages and Vulnerabilities
+
+   0C     4H     0M     0L  stdlib 1.24.6
+pkg:golang/stdlib@1.24.6
+
+    ✗ HIGH CVE-2025-61725
+      https://scout.docker.com/v/CVE-2025-61725?s=golang&n=stdlib&t=golang&vr=%3C1.24.8
+      Affected range : <1.24.8  
+      Fixed version  : 1.24.8   
+    
+    ✗ HIGH CVE-2025-61723
+      https://scout.docker.com/v/CVE-2025-61723?s=golang&n=stdlib&t=golang&vr=%3C1.24.8
+      Affected range : <1.24.8  
+      Fixed version  : 1.24.8   
+    
+    ✗ HIGH CVE-2025-58188
+      https://scout.docker.com/v/CVE-2025-58188?s=golang&n=stdlib&t=golang&vr=%3C1.24.8
+      Affected range : <1.24.8  
+      Fixed version  : 1.24.8   
+    
+    ✗ HIGH CVE-2025-58187
+      https://scout.docker.com/v/CVE-2025-58187?s=golang&n=stdlib&t=golang&vr=%3C1.24.9
+      Affected range : <1.24.9  
+      Fixed version  : 1.24.9   
+    
+
+
+4 vulnerabilities found in 1 package
+  CRITICAL  0  
+  HIGH      4  
+  MEDIUM    0  
+  LOW       0  
+

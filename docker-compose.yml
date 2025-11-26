@@ -1,7 +1,6 @@
-
 services:
   prometheus:
-    image: prom/prometheus:v2.54.1
+    image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
     volumes:
@@ -18,22 +17,19 @@ services:
       - '--web.route-prefix=/'
     networks:
       - monitoring-network
-    # Puerto NO expuesto - solo accesible via Nginx Gateway con HTTPS
-    # ports:
-    #   - "9090:9090"
     deploy:
       resources:
         limits:
           cpus: '0.5'
           memory: 512M
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy" ]
       interval: 30s
       timeout: 5s
       retries: 3
 
   grafana:
-    image: grafana/grafana:11.2.0
+    image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
     volumes:
@@ -43,15 +39,11 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
-      # Configuración para funcionar detrás de proxy con HTTPS
       - GF_SERVER_ROOT_URL=https://localhost/grafana
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     networks:
       - monitoring-network
       - frontend-network
-    # Puerto NO expuesto - solo accesible via Nginx Gateway con HTTPS
-    # ports:
-    #   - "3002:3000"
     depends_on:
       - prometheus
     deploy:
@@ -60,13 +52,13 @@ services:
           cpus: '0.5'
           memory: 512M
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1" ]
       interval: 30s
       timeout: 5s
       retries: 3
 
   redis-cache:
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     container_name: redis-cache
     restart: unless-stopped
     networks:
@@ -79,13 +71,13 @@ services:
           cpus: '0.3'
           memory: 256M
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis-commander:
-    image: rediscommander/redis-commander@sha256:19cd0c49f418779fa2822a0496c5e6516d0c792effc39ed20089e6268477e40a
+    image: rediscommander/redis-commander:latest
     container_name: redis-commander
     restart: unless-stopped
     networks:
@@ -105,14 +97,15 @@ services:
           memory: 128M
 
   postgres-master:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: postgres-master
     restart: unless-stopped
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      # Variables para el usuario administrador
+      POSTGRES_USER: ${DB_ROOT_USER}
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     networks:
       - database-network
@@ -129,26 +122,28 @@ services:
           cpus: '0.5'
           memory: 512M
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} || exit 1"]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   postgres-replica:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: postgres-replica
     restart: unless-stopped
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}     
+      #Root para replicación
+      POSTGRES_USER: ${DB_ROOT_USER}
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD}     
       POSTGRES_DB: ${DB_NAME}
+      #Datos para replicación
       REPL_PASSWORD: ${REPL_PASSWORD}
       REPL_USER: replicator
       MASTER_HOST: postgres-master
       MASTER_PORT: 5432
-      REPL_SLOT_NAME: replica1            
+      REPL_SLOT_NAME: replica1
       PGDATA: /var/lib/postgresql/data
       PGPASSWORD: ${DB_PASSWORD}
     networks:
@@ -156,7 +151,7 @@ services:
     volumes:
       - postgres-replica-data:/var/lib/postgresql/data
       - ./infrastructure/database/replica/replica-entrypoint.sh:/usr/local/bin/replica-entrypoint.sh:ro
-    entrypoint: ["sh", "/usr/local/bin/replica-entrypoint.sh"]
+    entrypoint: [ "sh", "/usr/local/bin/replica-entrypoint.sh" ]
     depends_on:
       postgres-master:
         condition: service_healthy
@@ -166,12 +161,10 @@ services:
           cpus: '0.5'
           memory: 512M
     healthcheck:
-      # Devuelve 't' si la instancia está en recuperación (standby)
-      test: ["CMD-SHELL", "psql -U ${DB_USER} -d ${DB_NAME} -tAc \"SELECT pg_is_in_recovery();\" | grep -q t"]
+      test: [ "CMD-SHELL", "psql -U ${DB_USER} -d ${DB_NAME} -tAc \"SELECT pg_is_in_recovery();\" | grep -q t" ]
       interval: 10s
       timeout: 5s
       retries: 5
-
 
   backend:
     build:
@@ -205,19 +198,34 @@ services:
       - backend-uploads:/app/uploads
     ports:
       - "3000:3000"
+    # Configuraciones de Hardening
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: false # Necesita escribir uploads
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     deploy:
       resources:
         limits:
           cpus: '0.5'
           memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 15s
 
-  
   backend1:
     build:
       context: ./services/backend
@@ -252,13 +260,12 @@ services:
       - monitoring-network
       - database-network
 
-
   frontend:
     build:
       context: ./services/frontend
       dockerfile: Dockerfile
     container_name: proyecto-frontend
-    restart: unless-stopped 
+    restart: unless-stopped
     depends_on:
       backend:
         condition: service_healthy
@@ -267,13 +274,34 @@ services:
       - backend-network
     environment:
       - VITE_API_URL=/api
+    # Configuraciones de Hardening
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL 
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:rw,noexec,nosuid,size=50m,uid=1001,gid=1001
+      - /var/run:rw,noexec,nosuid,size=10m,uid=1001,gid=1001
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     deploy:
       resources:
         limits:
           cpus: '0.3'
           memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      test: [ "CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1" ]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -281,7 +309,7 @@ services:
 
   # cAdvisor: métricas por contenedor
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     restart: unless-stopped
     privileged: true
@@ -306,7 +334,7 @@ services:
 
   # Node exporter: métricas del host
   node-exporter:
-    image: prom/node-exporter:v1.8.2
+    image: prom/node-exporter:latest
     container_name: node-exporter
     restart: unless-stopped
     pid: host
@@ -330,7 +358,7 @@ services:
 
   # Redis exporter
   redis-exporter:
-    image: oliver006/redis_exporter:v1.62.0
+    image: oliver006/redis_exporter:latest
     container_name: redis-exporter
     restart: unless-stopped
     networks:
@@ -351,7 +379,7 @@ services:
 
   # Blackbox exporter
   blackbox:
-    image: prom/blackbox-exporter:v0.25.0
+    image: prom/blackbox-exporter:latest
     container_name: blackbox
     restart: unless-stopped
     networks:
@@ -360,21 +388,21 @@ services:
       - frontend-network
     volumes:
       - ./infrastructure/monitoring/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
-    command: ["--config.file=/etc/blackbox_exporter/config.yml"]
+    command: [ "--config.file=/etc/blackbox_exporter/config.yml" ]
     ports:
       - "9115:9115"
 
   # Postgres exporter (master)
   postgres-master-exporter:
-    image: prometheuscommunity/postgres-exporter:v0.15.0
+    image: prometheuscommunity/postgres-exporter:latest
     container_name: postgres-master-exporter
     restart: unless-stopped
     networks:
       - monitoring-network
       - database-network
     environment:
-      # Requiere que el usuario tenga permisos para vistas de stats/replicación
-      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@postgres-master:5432/${DB_NAME}?sslmode=disable
+      # Usamos el usuario root solo dentro de la red interna para métricas
+      - DATA_SOURCE_NAME=postgresql://${DB_ROOT_USER}:${DB_ROOT_PASSWORD}@postgres-master:5432/${DB_NAME}?sslmode=disable
       - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
     ports:
       - "9187:9187"
@@ -384,14 +412,14 @@ services:
 
   # Postgres exporter (replica)
   postgres-replica-exporter:
-    image: prometheuscommunity/postgres-exporter:v0.15.0
+    image: prometheuscommunity/postgres-exporter:latest
     container_name: postgres-replica-exporter
     restart: unless-stopped
     networks:
       - monitoring-network
       - database-network
     environment:
-      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@postgres-replica:5432/${DB_NAME}?sslmode=disable
+      - DATA_SOURCE_NAME=postgresql://${DB_ROOT_USER}:${DB_ROOT_PASSWORD}@postgres-replica:5432/${DB_NAME}?sslmode=disable
       - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
     ports:
       - "9188:9187"
@@ -414,21 +442,20 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       # Backups
-      BACKUP_TIME_CRON: "0 3 * * *"     # diario 03:00
-      BACKUP_RETENTION_DAYS: 7      # conservar 7 días
+      BACKUP_TIME_CRON: "0 3 * * *" # diario 03:00
+      BACKUP_RETENTION_DAYS: 7 # conservar 7 días
       BACKUP_ENABLE_FILES: "true"
       BACKUP_DIR: /backups
       FILES_SRC: /app/uploads
     volumes:
-      - backups-data:/backups            # volumen externo
-      - backend-uploads:/app/uploads:ro  # archivos a respaldar
+      - backups-data:/backups # volumen externo
+      - backend-uploads:/app/uploads:ro # archivos a respaldar
     networks:
       - database-network
       - backend-network
     depends_on:
       postgres-replica:
         condition: service_healthy
-
 
   ai-service:
     build:
@@ -457,32 +484,55 @@ services:
       - database-network
     ports:
       - "3001:3001"
+    # Configuraciones de Hardening
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=100m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     deploy:
       resources:
         limits:
           cpus: '0.5'
           memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3001/health || exit 1"]
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3001/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 15s
 
   api-gateway:
-    image: nginx:1.27.2-alpine
+    build:
+      context: ./infrastructure/nginx
+      dockerfile: Dockerfile
     container_name: proyecto-gateway
     restart: unless-stopped
     networks:
       - frontend-network
       - backend-network
-      - monitoring-network  # Necesario para acceder a Grafana y Prometheus
+      - monitoring-network # Necesario para acceder a monitoreo
     ports:
-      - "80:80"      # HTTP (redirección a HTTPS)
-      - "443:443"    # HTTPS
+      - "80:80" # HTTP (redirección a HTTPS)
+      - "443:443" # HTTPS
     volumes:
       - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./infrastructure/nginx/ssl:/etc/nginx/ssl:ro  # Certificados SSL
+      - ./infrastructure/nginx/ssl:/etc/nginx/ssl:ro # Certificados SSL
+    tmpfs:
+      - /run:uid=1001,gid=1001,mode=1777
+      - /var/cache/nginx:uid=1001,gid=1001
     depends_on:
       - backend
       - frontend

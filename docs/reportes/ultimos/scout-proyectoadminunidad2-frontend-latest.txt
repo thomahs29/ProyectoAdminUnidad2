@@ -1,0 +1,39 @@
+
+
+## Overview
+
+                    │                    Analyzed Image                      
+────────────────────┼────────────────────────────────────────────────────────
+  Target            │  proyectoadminunidad2-frontend:latest                  
+    digest          │  dced7f2f182d                                          
+    platform        │ linux/amd64                                            
+    provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/f0aa4564ec14e1d8a0596049d66c383851fb4dd9              
+    vulnerabilities │    0C     2H     0M     0L                             
+    size            │ 25 MB                                                  
+    packages        │ 83                                                     
+
+
+## Packages and Vulnerabilities
+
+   0C     2H     0M     0L  libpng 1.6.47-r0
+pkg:apk/alpine/libpng@1.6.47-r0?os_name=alpine&os_version=3.21
+
+    ✗ HIGH CVE-2025-65018
+      https://scout.docker.com/v/CVE-2025-65018?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C%3D1.6.47-r0
+      Affected range : <=1.6.47-r0  
+      Fixed version  : not fixed    
+    
+    ✗ HIGH CVE-2025-64720
+      https://scout.docker.com/v/CVE-2025-64720?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C%3D1.6.47-r0
+      Affected range : <=1.6.47-r0  
+      Fixed version  : not fixed    
+    
+
+
+2 vulnerabilities found in 1 package
+  CRITICAL  0  
+  HIGH      2  
+  MEDIUM    0  
+  LOW       0  
+

@@ -1,0 +1,20 @@
+
+
+## Overview
+
+                    │                    Analyzed Image                      
+────────────────────┼────────────────────────────────────────────────────────
+  Target            │  proyectoadminunidad2-backup:latest                    
+    digest          │  ecef67d99bfb                                          
+    platform        │ linux/amd64                                            
+    provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/4004ce2430a7f9a8af91e50fb2ef754f9f632bfa              
+    vulnerabilities │    0C     0H     0M     0L                             
+    size            │ 10 MB                                                  
+    packages        │ 60                                                     
+
+
+## Packages and Vulnerabilities
+
+  No vulnerable packages detected
+

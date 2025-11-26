@@ -1,0 +1,47 @@
+
+
+## Overview
+
+                    │       Analyzed Image         
+────────────────────┼──────────────────────────────
+  Target            │  proyecto-ai-service:1.0.0   
+    digest          │  eab6c848fff1                
+    platform        │ linux/amd64                  
+    vulnerabilities │    0C     2H     0M     0L   
+    size            │ 52 MB                        
+    packages        │ 350                          
+
+
+## Packages and Vulnerabilities
+
+   0C     1H     0M     0L  cross-spawn 7.0.3
+pkg:npm/cross-spawn@7.0.3
+
+    ✗ HIGH CVE-2024-21538 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2024-21538?s=github&n=cross-spawn&t=npm&vr=%3E%3D7.0.0%2C%3C7.0.5
+      Affected range : >=7.0.0                                                              
+                     : <7.0.5                                                               
+      Fixed version  : 7.0.5                                                                
+      CVSS Score     : 7.7                                                                  
+      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P  
+    
+
+   0C     1H     0M     0L  glob 10.4.2
+pkg:npm/glob@10.4.2
+
+    ✗ HIGH CVE-2025-64756 [Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')]
+      https://scout.docker.com/v/CVE-2025-64756?s=github&n=glob&t=npm&vr=%3E%3D10.2.0%2C%3C10.5.0
+      Affected range : >=10.2.0                                      
+                     : <10.5.0                                       
+      Fixed version  : 11.1.0                                        
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H  
+    
+
+
+2 vulnerabilities found in 2 packages
+  CRITICAL  0  
+  HIGH      2  
+  MEDIUM    0  
+  LOW       0  
+

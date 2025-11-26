@@ -1,0 +1,43 @@
+
+
+## Overview
+
+                    │                    Analyzed Image                      
+────────────────────┼────────────────────────────────────────────────────────
+  Target            │  proyectoadminunidad2-backup:latest                    
+    digest          │  6705d8f418b8                                          
+    platform        │ linux/amd64                                            
+    provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/5a018e94f1396b5f2d6fc51fa40e15e40ac5d723              
+    vulnerabilities │    0C     2H     0M     0L                             
+    size            │ 12 MB                                                  
+    packages        │ 57                                                     
+
+
+## Packages and Vulnerabilities
+
+   0C     1H     0M     0L  less 643-r2
+pkg:apk/alpine/less@643-r2?os_name=alpine&os_version=3.20
+
+    ✗ HIGH CVE-2024-32487
+      https://scout.docker.com/v/CVE-2024-32487?s=alpine&n=less&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D643-r2
+      Affected range : <=643-r2   
+      Fixed version  : not fixed  
+    
+
+   0C     1H     0M     0L  c-ares 1.33.1-r0
+pkg:apk/alpine/c-ares@1.33.1-r0?os_name=alpine&os_version=3.20
+
+    ✗ HIGH CVE-2025-31498
+      https://scout.docker.com/v/CVE-2025-31498?s=alpine&n=c-ares&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D1.33.1-r0
+      Affected range : <=1.33.1-r0  
+      Fixed version  : not fixed    
+    
+
+
+2 vulnerabilities found in 2 packages
+  CRITICAL  0  
+  HIGH      2  
+  MEDIUM    0  
+  LOW       0  
+
