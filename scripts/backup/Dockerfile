@@ -7,17 +7,18 @@
 # ============================================
 FROM alpine:3.21.2
 
-# Instalar paquetes necesarios (versiones actuales de Alpine 3.20)
-RUN apk add --no-cache \
-  bash \
-  tzdata \
-  postgresql16-client \
-  coreutils \
-  findutils \
-  gzip \
-  tar \
-  ca-certificates \
-  curl
+# Instalar paquetes necesarios (sin fijar versiones para evitar conflictos)
+RUN apk update && apk add --no-cache \
+    bash \
+    tzdata \
+    postgresql16-client \
+    coreutils \
+    findutils \
+    gzip \
+    tar \
+    ca-certificates \
+    curl && \
+    update-ca-certificates
 
 # Configurar zona horaria 
 ENV TZ=America/Santiago
