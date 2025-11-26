@@ -5,19 +5,19 @@
 # - Operaciones de backup/restore necesitan acceso a archivos del sistema
 # - cron daemon requiere privilegios para programar tareas
 # ============================================
-FROM alpine:3.20.3
+FROM alpine:3.21.2
 
-# Instalar paquetes necesarios con versiones específicas
+# Instalar paquetes necesarios (versiones actuales de Alpine 3.20)
 RUN apk add --no-cache \
-    bash=5.2.26-r0 \
-    tzdata=2024b-r0 \
-    postgresql16-client=16.4-r0 \
-    coreutils=9.5-r1 \
-    findutils=4.10.0-r0 \
-    gzip=1.13-r0 \
-    tar=1.35-r2 \
-    ca-certificates=20240705-r0 \
-    curl=8.10.1-r0
+  bash \
+  tzdata \
+  postgresql16-client \
+  coreutils \
+  findutils \
+  gzip \
+  tar \
+  ca-certificates \
+  curl
 
 # Configurar zona horaria 
 ENV TZ=America/Santiago
@@ -30,11 +30,11 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Normalizar fin de línea y dar permisos de ejecución
 RUN set -eux; \
-    sed -i 's/\r$//' /usr/local/bin/*.sh; \
-    chmod +x /usr/local/bin/*.sh; \
-    # Crear directorios necesarios
-    mkdir -p /backups && \
-    chmod 755 /backups
+  sed -i 's/\r$//' /usr/local/bin/*.sh; \
+  chmod +x /usr/local/bin/*.sh; \
+  # Crear directorios necesarios
+  mkdir -p /backups && \
+  chmod 755 /backups
 
 # Healthcheck para verificar que el servicio está activo
 HEALTHCHECK --interval=60s --timeout=5s --start-period=10s --retries=3 \

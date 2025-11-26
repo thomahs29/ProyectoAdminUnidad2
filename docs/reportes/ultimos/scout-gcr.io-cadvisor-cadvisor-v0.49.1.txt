@@ -1,0 +1,223 @@
+
+
+## Overview
+
+                    │           Analyzed Image            
+────────────────────┼─────────────────────────────────────
+  Target            │  gcr.io/cadvisor/cadvisor:v0.49.1   
+    digest          │  3cde6faf0791                       
+    platform        │ linux/amd64                         
+    vulnerabilities │    6C    22H     0M     0L          
+    size            │ 33 MB                               
+    packages        │ 146                                 
+
+
+## Packages and Vulnerabilities
+
+   2C    10H     0M     0L  stdlib 1.22.0
+pkg:golang/stdlib@1.22.0
+
+    ✗ CRITICAL CVE-2024-24790
+      https://scout.docker.com/v/CVE-2024-24790?s=golang&n=stdlib&t=golang&vr=%3E%3D1.22.0-0%2C%3C1.22.4
+      Affected range : >=1.22.0-0  
+                     : <1.22.4     
+      Fixed version  : 1.22.4      
+    
+    ✗ CRITICAL CVE-2025-22871
+      https://scout.docker.com/v/CVE-2025-22871?s=golang&n=stdlib&t=golang&vr=%3C1.23.8
+      Affected range : <1.23.8  
+      Fixed version  : 1.23.8   
+    
+    ✗ HIGH CVE-2025-61725
+      https://scout.docker.com/v/CVE-2025-61725?s=golang&n=stdlib&t=golang&vr=%3C1.24.8
+      Affected range : <1.24.8  
+      Fixed version  : 1.24.8   
+    
+    ✗ HIGH CVE-2025-61723
+      https://scout.docker.com/v/CVE-2025-61723?s=golang&n=stdlib&t=golang&vr=%3C1.24.8
+      Affected range : <1.24.8  
+      Fixed version  : 1.24.8   
+    
+    ✗ HIGH CVE-2025-58188
+      https://scout.docker.com/v/CVE-2025-58188?s=golang&n=stdlib&t=golang&vr=%3C1.24.8
+      Affected range : <1.24.8  
+      Fixed version  : 1.24.8   
+    
+    ✗ HIGH CVE-2025-58187
+      https://scout.docker.com/v/CVE-2025-58187?s=golang&n=stdlib&t=golang&vr=%3C1.24.9
+      Affected range : <1.24.9  
+      Fixed version  : 1.24.9   
+    
+    ✗ HIGH CVE-2024-34158
+      https://scout.docker.com/v/CVE-2024-34158?s=golang&n=stdlib&t=golang&vr=%3C1.22.7
+      Affected range : <1.22.7  
+      Fixed version  : 1.22.7   
+    
+    ✗ HIGH CVE-2024-34156
+      https://scout.docker.com/v/CVE-2024-34156?s=golang&n=stdlib&t=golang&vr=%3C1.22.7
+      Affected range : <1.22.7  
+      Fixed version  : 1.22.7   
+    
+    ✗ HIGH CVE-2024-24791
+      https://scout.docker.com/v/CVE-2024-24791?s=golang&n=stdlib&t=golang&vr=%3E%3D1.22.0-0%2C%3C1.22.5
+      Affected range : >=1.22.0-0  
+                     : <1.22.5     
+      Fixed version  : 1.22.5      
+    
+    ✗ HIGH CVE-2024-24784
+      https://scout.docker.com/v/CVE-2024-24784?s=golang&n=stdlib&t=golang&vr=%3E%3D1.22.0-0%2C%3C1.22.1
+      Affected range : >=1.22.0-0  
+                     : <1.22.1     
+      Fixed version  : 1.22.1      
+    
+    ✗ HIGH CVE-2023-45288
+      https://scout.docker.com/v/CVE-2023-45288?s=golang&n=stdlib&t=golang&vr=%3E%3D1.22.0-0%2C%3C1.22.2
+      Affected range : >=1.22.0-0  
+                     : <1.22.2     
+      Fixed version  : 1.22.2      
+    
+    ✗ HIGH CVE-2022-30635
+      https://scout.docker.com/v/CVE-2022-30635?s=golang&n=stdlib&t=golang&vr=%3C1.22.7
+      Affected range : <1.22.7  
+      Fixed version  : 1.22.7   
+    
+
+   1C     2H     0M     0L  openssl 3.1.4-r5
+pkg:apk/alpine/openssl@3.1.4-r5?os_name=alpine&os_version=3.18
+
+    ✗ CRITICAL CVE-2024-5535
+      https://scout.docker.com/v/CVE-2024-5535?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C3.1.6-r0
+      Affected range : <3.1.6-r0  
+      Fixed version  : 3.1.6-r0   
+    
+    ✗ HIGH CVE-2024-6119
+      https://scout.docker.com/v/CVE-2024-6119?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C3.1.7-r0
+      Affected range : <3.1.7-r0  
+      Fixed version  : 3.1.7-r0   
+    
+    ✗ HIGH CVE-2024-4741
+      https://scout.docker.com/v/CVE-2024-4741?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C3.1.6-r0
+      Affected range : <3.1.6-r0  
+      Fixed version  : 3.1.6-r0   
+    
+
+   1C     2H     0M     0L  golang.org/x/crypto 0.17.0
+pkg:golang/golang.org/x/crypto@0.17.0
+
+    ✗ CRITICAL CVE-2024-45337 [Improper Authorization]
+      https://scout.docker.com/v/CVE-2024-45337?s=github&n=crypto&ns=golang.org%2Fx&t=golang&vr=%3C0.31.0
+      Affected range : <0.31.0                                       
+      Fixed version  : 0.31.0                                        
+      CVSS Score     : 9.1                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N  
+    
+    ✗ HIGH CVE-2025-47913
+      https://scout.docker.com/v/CVE-2025-47913?s=golang&n=crypto&ns=golang.org%2Fx&t=golang&vr=%3C0.43.0
+      Affected range : <0.43.0  
+      Fixed version  : 0.43.0   
+    
+    ✗ HIGH CVE-2025-22869
+      https://scout.docker.com/v/CVE-2025-22869?s=golang&n=crypto&ns=golang.org%2Fx&t=golang&vr=%3C0.35.0
+      Affected range : <0.35.0  
+      Fixed version  : 0.35.0   
+    
+
+   1C     1H     0M     0L  krb5 1.20.1-r1
+pkg:apk/alpine/krb5@1.20.1-r1?os_name=alpine&os_version=3.18
+
+    ✗ CRITICAL CVE-2024-37371
+      https://scout.docker.com/v/CVE-2024-37371?s=alpine&n=krb5&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C1.20.2-r1
+      Affected range : <1.20.2-r1  
+      Fixed version  : 1.20.2-r1   
+    
+    ✗ HIGH CVE-2024-37370
+      https://scout.docker.com/v/CVE-2024-37370?s=alpine&n=krb5&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C1.20.2-r1
+      Affected range : <1.20.2-r1  
+      Fixed version  : 1.20.2-r1   
+    
+
+   1C     0H     0M     0L  github.com/docker/docker 20.10.27+incompatible
+pkg:golang/github.com/docker/docker@20.10.27%2Bincompatible
+
+    ✗ CRITICAL CVE-2024-41110 [Partial String Comparison]
+      https://scout.docker.com/v/CVE-2024-41110?s=github&n=docker&ns=github.com%2Fdocker&t=golang&vr=%3E%3D19.03.0%2C%3C23.0.15
+      Affected range : >=19.03.0                                                        
+                     : <23.0.15                                                         
+      Fixed version  : 23.0.15                                                          
+      CVSS Score     : 9.4                                                              
+      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H  
+    
+
+   0C     3H     0M     0L  github.com/opencontainers/runc 1.1.12
+pkg:golang/github.com/opencontainers/runc@1.1.12
+
+    ✗ HIGH CVE-2025-52881 [Race Condition Enabling Link Following]
+      https://scout.docker.com/v/CVE-2025-52881?s=github&n=runc&ns=github.com%2Fopencontainers&t=golang&vr=%3C%3D1.2.7
+      Affected range : <=1.2.7                                                          
+      Fixed version  : 1.2.8                                                            
+      CVSS Score     : 7.3                                                              
+      CVSS Vector    : CVSS:4.0/AV:L/AC:L/AT:P/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H  
+    
+    ✗ HIGH CVE-2025-52565 [Race Condition Enabling Link Following]
+      https://scout.docker.com/v/CVE-2025-52565?s=github&n=runc&ns=github.com%2Fopencontainers&t=golang&vr=%3E%3D1.0.0-rc3%2C%3C%3D1.2.7
+      Affected range : >=1.0.0-rc3                                                      
+                     : <=1.2.7                                                          
+      Fixed version  : 1.2.8                                                            
+      CVSS Score     : 7.3                                                              
+      CVSS Vector    : CVSS:4.0/AV:L/AC:L/AT:P/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H  
+    
+    ✗ HIGH CVE-2025-31133 [Race Condition Enabling Link Following]
+      https://scout.docker.com/v/CVE-2025-31133?s=github&n=runc&ns=github.com%2Fopencontainers&t=golang&vr=%3C%3D1.2.7
+      Affected range : <=1.2.7                                                          
+      Fixed version  : 1.2.8                                                            
+      CVSS Score     : 7.3                                                              
+      CVSS Vector    : CVSS:4.0/AV:L/AC:L/AT:P/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H  
+    
+
+   0C     1H     0M     0L  golang.org/x/oauth2 0.10.0
+pkg:golang/golang.org/x/oauth2@0.10.0
+
+    ✗ HIGH CVE-2025-22868 [Improper Validation of Syntactic Correctness of Input]
+      https://scout.docker.com/v/CVE-2025-22868?s=github&n=oauth2&ns=golang.org%2Fx&t=golang&vr=%3C0.27.0
+      Affected range : <0.27.0                                       
+      Fixed version  : 0.27.0                                        
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  musl 1.2.4-r2
+pkg:apk/alpine/musl@1.2.4-r2?os_name=alpine&os_version=3.18
+
+    ✗ HIGH CVE-2025-26519
+      https://scout.docker.com/v/CVE-2025-26519?s=alpine&n=musl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C1.2.4-r3
+      Affected range : <1.2.4-r3  
+      Fixed version  : 1.2.4-r3   
+    
+
+   0C     1H     0M     0L  github.com/opencontainers/selinux 1.10.0
+pkg:golang/github.com/opencontainers/selinux@1.10.0
+
+    ✗ HIGH CVE-2025-52881 [Race Condition Enabling Link Following]
+      https://scout.docker.com/v/CVE-2025-52881?s=github&n=selinux&ns=github.com%2Fopencontainers&t=golang&vr=%3C%3D1.12.0
+      Affected range : <=1.12.0                                                         
+      Fixed version  : 1.13.0                                                           
+      CVSS Score     : 7.3                                                              
+      CVSS Vector    : CVSS:4.0/AV:L/AC:L/AT:P/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H  
+    
+
+   0C     1H     0M     0L  xz 5.4.3-r0
+pkg:apk/alpine/xz@5.4.3-r0?os_name=alpine&os_version=3.18
+
+    ✗ HIGH CVE-2025-31115
+      https://scout.docker.com/v/CVE-2025-31115?s=alpine&n=xz&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C5.4.3-r1
+      Affected range : <5.4.3-r1  
+      Fixed version  : 5.4.3-r1   
+    
+
+
+28 vulnerabilities found in 10 packages
+  CRITICAL  6   
+  HIGH      22  
+  MEDIUM    0   
+  LOW       0   
+

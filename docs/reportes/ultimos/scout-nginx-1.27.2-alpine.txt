@@ -1,0 +1,652 @@
+
+
+## Overview
+
+                    │                                       Analyzed Image                                        
+────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────
+  Target            │  nginx:1.27.2-alpine                                                                        
+    digest          │  d213b2a02ef4                                                                               
+    platform        │ linux/amd64                                                                                 
+    provenance      │ https://github.com/nginxinc/docker-nginx.git                                                
+                    │  https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f                                                   
+    vulnerabilities │    1C    16H     0M     0L                                                                  
+    size            │ 23 MB                                                                                       
+    packages        │ 80                                                                                          
+                    │                                                                                             
+  Base image        │  oisupport/staging-amd64:da42e3f8cbb6986d85dc0832a36b91eb74600f41d614a2e1101431a946046db8   
+                    │  bbd86dd5c396                                                                               
+
+
+## Packages and Vulnerabilities
+
+   1C     3H     0M     0L  curl 8.11.0-r2
+pkg:apk/alpine/curl@8.11.0-r2?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L11-L79
+RUN set -x \
+    && apkArch="$(cat /etc/apk/arch)" \
+    && nginxPackages=" \
+        nginx=${NGINX_VERSION}-r${PKG_RELEASE} \
+        nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE} \
+    " \
+# install prerequisites for public key and pkg-oss checks
+    && apk add --no-cache --virtual .checksum-deps \
+        openssl \
+    && case "$apkArch" in \
+        x86_64|aarch64) \
+# arches officially built by upstream
+            apk add -X "https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages \
+            ;; \
+        *) \
+# we're on an architecture upstream doesn't officially build for
+# let's build binaries from the published packaging sources
+            set -x \
+            && tempDir="$(mktemp -d)" \
+            && chown nobody:nobody $tempDir \
+            && apk add --no-cache --virtual .build-deps \
+                gcc \
+                libc-dev \
+                make \
+                openssl-dev \
+                pcre2-dev \
+                zlib-dev \
+                linux-headers \
+                libxslt-dev \
+                gd-dev \
+                geoip-dev \
+                libedit-dev \
+                bash \
+                alpine-sdk \
+                findutils \
+                curl \
+            && su nobody -s /bin/sh -c " \
+                export HOME=${tempDir} \
+                && cd ${tempDir} \
+                && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && PKGOSSCHECKSUM=\"6982e2df739645fc72db5bdf994032f799718230e7016e811d9d482e5cf41814c888660ca9a68814d5e99ab571e892ada3bd43166e720cbf04c7f85b6934772c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\" \
+                && if [ \"\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\" = \"\$PKGOSSCHECKSUM\" ]; then \
+                    echo \"pkg-oss tarball checksum verification succeeded!\"; \
+                else \
+                    echo \"pkg-oss tarball checksum verification failed!\"; \
+                    exit 1; \
+                fi \
+                && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE} \
+                && cd alpine \
+                && make module-geoip module-image-filter module-njs module-xslt \
+                && apk index --allow-untrusted -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk \
+                && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz \
+                " \
+            && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/ \
+            && apk del --no-network .build-deps \
+            && apk add -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages \
+            ;; \
+    esac \
+# remove checksum deps
+    && apk del --no-network .checksum-deps \
+# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
+    && if [ -n "$tempDir" ]; then rm -rf "$tempDir"; fi \
+    && if [ -f "/etc/apk/keys/abuild-key.rsa.pub" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi \
+# Bring in curl and ca-certificates to make registering on DNS SD easier
+    && apk add --no-cache curl ca-certificates
+
+    ✗ CRITICAL CVE-2025-0665
+      https://scout.docker.com/v/CVE-2025-0665?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C8.12.0-r0
+      Affected range : <8.12.0-r0  
+      Fixed version  : 8.12.0-r0   
+    
+    ✗ HIGH CVE-2025-9086
+      https://scout.docker.com/v/CVE-2025-9086?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C8.14.1-r2
+      Affected range : <8.14.1-r2  
+      Fixed version  : 8.14.1-r2   
+    
+    ✗ HIGH CVE-2025-5399
+      https://scout.docker.com/v/CVE-2025-5399?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C8.14.1-r0
+      Affected range : <8.14.1-r0  
+      Fixed version  : 8.14.1-r0   
+    
+    ✗ HIGH CVE-2025-0725
+      https://scout.docker.com/v/CVE-2025-0725?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C8.12.0-r0
+      Affected range : <8.12.0-r0  
+      Fixed version  : 8.12.0-r0   
+    
+
+   0C     3H     0M     0L  libxml2 2.12.7-r0
+pkg:apk/alpine/libxml2@2.12.7-r0?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L11-L79
+RUN set -x \
+    && apkArch="$(cat /etc/apk/arch)" \
+    && nginxPackages=" \
+        nginx=${NGINX_VERSION}-r${PKG_RELEASE} \
+        nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE} \
+    " \
+# install prerequisites for public key and pkg-oss checks
+    && apk add --no-cache --virtual .checksum-deps \
+        openssl \
+    && case "$apkArch" in \
+        x86_64|aarch64) \
+# arches officially built by upstream
+            apk add -X "https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages \
+            ;; \
+        *) \
+# we're on an architecture upstream doesn't officially build for
+# let's build binaries from the published packaging sources
+            set -x \
+            && tempDir="$(mktemp -d)" \
+            && chown nobody:nobody $tempDir \
+            && apk add --no-cache --virtual .build-deps \
+                gcc \
+                libc-dev \
+                make \
+                openssl-dev \
+                pcre2-dev \
+                zlib-dev \
+                linux-headers \
+                libxslt-dev \
+                gd-dev \
+                geoip-dev \
+                libedit-dev \
+                bash \
+                alpine-sdk \
+                findutils \
+                curl \
+            && su nobody -s /bin/sh -c " \
+                export HOME=${tempDir} \
+                && cd ${tempDir} \
+                && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && PKGOSSCHECKSUM=\"6982e2df739645fc72db5bdf994032f799718230e7016e811d9d482e5cf41814c888660ca9a68814d5e99ab571e892ada3bd43166e720cbf04c7f85b6934772c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\" \
+                && if [ \"\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\" = \"\$PKGOSSCHECKSUM\" ]; then \
+                    echo \"pkg-oss tarball checksum verification succeeded!\"; \
+                else \
+                    echo \"pkg-oss tarball checksum verification failed!\"; \
+                    exit 1; \
+                fi \
+                && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE} \
+                && cd alpine \
+                && make module-geoip module-image-filter module-njs module-xslt \
+                && apk index --allow-untrusted -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk \
+                && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz \
+                " \
+            && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/ \
+            && apk del --no-network .build-deps \
+            && apk add -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages \
+            ;; \
+    esac \
+# remove checksum deps
+    && apk del --no-network .checksum-deps \
+# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
+    && if [ -n "$tempDir" ]; then rm -rf "$tempDir"; fi \
+    && if [ -f "/etc/apk/keys/abuild-key.rsa.pub" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi \
+# Bring in curl and ca-certificates to make registering on DNS SD easier
+    && apk add --no-cache curl ca-certificates
+
+    ✗ HIGH CVE-2025-24928
+      https://scout.docker.com/v/CVE-2025-24928?s=alpine&n=libxml2&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C2.12.7-r1
+      Affected range : <2.12.7-r1  
+      Fixed version  : 2.12.7-r1   
+    
+    ✗ HIGH CVE-2024-56171
+      https://scout.docker.com/v/CVE-2024-56171?s=alpine&n=libxml2&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C2.12.7-r1
+      Affected range : <2.12.7-r1  
+      Fixed version  : 2.12.7-r1   
+    
+    ✗ HIGH CVE-2025-6021
+      https://scout.docker.com/v/CVE-2025-6021?s=alpine&n=libxml2&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D2.12.10-r0
+      Affected range : <=2.12.10-r0  
+      Fixed version  : not fixed     
+    
+
+   0C     2H     0M     0L  libxslt 1.1.39-r1
+pkg:apk/alpine/libxslt@1.1.39-r1?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L11-L79
+RUN set -x \
+    && apkArch="$(cat /etc/apk/arch)" \
+    && nginxPackages=" \
+        nginx=${NGINX_VERSION}-r${PKG_RELEASE} \
+        nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE} \
+    " \
+# install prerequisites for public key and pkg-oss checks
+    && apk add --no-cache --virtual .checksum-deps \
+        openssl \
+    && case "$apkArch" in \
+        x86_64|aarch64) \
+# arches officially built by upstream
+            apk add -X "https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages \
+            ;; \
+        *) \
+# we're on an architecture upstream doesn't officially build for
+# let's build binaries from the published packaging sources
+            set -x \
+            && tempDir="$(mktemp -d)" \
+            && chown nobody:nobody $tempDir \
+            && apk add --no-cache --virtual .build-deps \
+                gcc \
+                libc-dev \
+                make \
+                openssl-dev \
+                pcre2-dev \
+                zlib-dev \
+                linux-headers \
+                libxslt-dev \
+                gd-dev \
+                geoip-dev \
+                libedit-dev \
+                bash \
+                alpine-sdk \
+                findutils \
+                curl \
+            && su nobody -s /bin/sh -c " \
+                export HOME=${tempDir} \
+                && cd ${tempDir} \
+                && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && PKGOSSCHECKSUM=\"6982e2df739645fc72db5bdf994032f799718230e7016e811d9d482e5cf41814c888660ca9a68814d5e99ab571e892ada3bd43166e720cbf04c7f85b6934772c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\" \
+                && if [ \"\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\" = \"\$PKGOSSCHECKSUM\" ]; then \
+                    echo \"pkg-oss tarball checksum verification succeeded!\"; \
+                else \
+                    echo \"pkg-oss tarball checksum verification failed!\"; \
+                    exit 1; \
+                fi \
+                && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE} \
+                && cd alpine \
+                && make module-geoip module-image-filter module-njs module-xslt \
+                && apk index --allow-untrusted -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk \
+                && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz \
+                " \
+            && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/ \
+            && apk del --no-network .build-deps \
+            && apk add -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages \
+            ;; \
+    esac \
+# remove checksum deps
+    && apk del --no-network .checksum-deps \
+# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
+    && if [ -n "$tempDir" ]; then rm -rf "$tempDir"; fi \
+    && if [ -f "/etc/apk/keys/abuild-key.rsa.pub" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi \
+# Bring in curl and ca-certificates to make registering on DNS SD easier
+    && apk add --no-cache curl ca-certificates
+
+    ✗ HIGH CVE-2025-24855
+      https://scout.docker.com/v/CVE-2025-24855?s=alpine&n=libxslt&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C1.1.39-r2
+      Affected range : <1.1.39-r2  
+      Fixed version  : 1.1.39-r2   
+    
+    ✗ HIGH CVE-2024-55549
+      https://scout.docker.com/v/CVE-2024-55549?s=alpine&n=libxslt&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C1.1.39-r2
+      Affected range : <1.1.39-r2  
+      Fixed version  : 1.1.39-r2   
+    
+
+   0C     2H     0M     0L  expat 2.6.4-r0
+pkg:apk/alpine/expat@2.6.4-r0?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L11-L79
+RUN set -x \
+    && apkArch="$(cat /etc/apk/arch)" \
+    && nginxPackages=" \
+        nginx=${NGINX_VERSION}-r${PKG_RELEASE} \
+        nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE} \
+    " \
+# install prerequisites for public key and pkg-oss checks
+    && apk add --no-cache --virtual .checksum-deps \
+        openssl \
+    && case "$apkArch" in \
+        x86_64|aarch64) \
+# arches officially built by upstream
+            apk add -X "https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages \
+            ;; \
+        *) \
+# we're on an architecture upstream doesn't officially build for
+# let's build binaries from the published packaging sources
+            set -x \
+            && tempDir="$(mktemp -d)" \
+            && chown nobody:nobody $tempDir \
+            && apk add --no-cache --virtual .build-deps \
+                gcc \
+                libc-dev \
+                make \
+                openssl-dev \
+                pcre2-dev \
+                zlib-dev \
+                linux-headers \
+                libxslt-dev \
+                gd-dev \
+                geoip-dev \
+                libedit-dev \
+                bash \
+                alpine-sdk \
+                findutils \
+                curl \
+            && su nobody -s /bin/sh -c " \
+                export HOME=${tempDir} \
+                && cd ${tempDir} \
+                && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && PKGOSSCHECKSUM=\"6982e2df739645fc72db5bdf994032f799718230e7016e811d9d482e5cf41814c888660ca9a68814d5e99ab571e892ada3bd43166e720cbf04c7f85b6934772c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\" \
+                && if [ \"\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\" = \"\$PKGOSSCHECKSUM\" ]; then \
+                    echo \"pkg-oss tarball checksum verification succeeded!\"; \
+                else \
+                    echo \"pkg-oss tarball checksum verification failed!\"; \
+                    exit 1; \
+                fi \
+                && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE} \
+                && cd alpine \
+                && make module-geoip module-image-filter module-njs module-xslt \
+                && apk index --allow-untrusted -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk \
+                && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz \
+                " \
+            && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/ \
+            && apk del --no-network .build-deps \
+            && apk add -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages \
+            ;; \
+    esac \
+# remove checksum deps
+    && apk del --no-network .checksum-deps \
+# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
+    && if [ -n "$tempDir" ]; then rm -rf "$tempDir"; fi \
+    && if [ -f "/etc/apk/keys/abuild-key.rsa.pub" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi \
+# Bring in curl and ca-certificates to make registering on DNS SD easier
+    && apk add --no-cache curl ca-certificates
+
+    ✗ HIGH CVE-2025-59375
+      https://scout.docker.com/v/CVE-2025-59375?s=alpine&n=expat&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C2.7.2-r0
+      Affected range : <2.7.2-r0  
+      Fixed version  : 2.7.2-r0   
+    
+    ✗ HIGH CVE-2024-8176
+      https://scout.docker.com/v/CVE-2024-8176?s=alpine&n=expat&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C2.7.0-r0
+      Affected range : <2.7.0-r0  
+      Fixed version  : 2.7.0-r0   
+    
+
+   0C     2H     0M     0L  libpng 1.6.44-r0
+pkg:apk/alpine/libpng@1.6.44-r0?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L11-L79
+RUN set -x \
+    && apkArch="$(cat /etc/apk/arch)" \
+    && nginxPackages=" \
+        nginx=${NGINX_VERSION}-r${PKG_RELEASE} \
+        nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE} \
+    " \
+# install prerequisites for public key and pkg-oss checks
+    && apk add --no-cache --virtual .checksum-deps \
+        openssl \
+    && case "$apkArch" in \
+        x86_64|aarch64) \
+# arches officially built by upstream
+            apk add -X "https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages \
+            ;; \
+        *) \
+# we're on an architecture upstream doesn't officially build for
+# let's build binaries from the published packaging sources
+            set -x \
+            && tempDir="$(mktemp -d)" \
+            && chown nobody:nobody $tempDir \
+            && apk add --no-cache --virtual .build-deps \
+                gcc \
+                libc-dev \
+                make \
+                openssl-dev \
+                pcre2-dev \
+                zlib-dev \
+                linux-headers \
+                libxslt-dev \
+                gd-dev \
+                geoip-dev \
+                libedit-dev \
+                bash \
+                alpine-sdk \
+                findutils \
+                curl \
+            && su nobody -s /bin/sh -c " \
+                export HOME=${tempDir} \
+                && cd ${tempDir} \
+                && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && PKGOSSCHECKSUM=\"6982e2df739645fc72db5bdf994032f799718230e7016e811d9d482e5cf41814c888660ca9a68814d5e99ab571e892ada3bd43166e720cbf04c7f85b6934772c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\" \
+                && if [ \"\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\" = \"\$PKGOSSCHECKSUM\" ]; then \
+                    echo \"pkg-oss tarball checksum verification succeeded!\"; \
+                else \
+                    echo \"pkg-oss tarball checksum verification failed!\"; \
+                    exit 1; \
+                fi \
+                && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE} \
+                && cd alpine \
+                && make module-geoip module-image-filter module-njs module-xslt \
+                && apk index --allow-untrusted -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk \
+                && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz \
+                " \
+            && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/ \
+            && apk del --no-network .build-deps \
+            && apk add -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages \
+            ;; \
+    esac \
+# remove checksum deps
+    && apk del --no-network .checksum-deps \
+# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
+    && if [ -n "$tempDir" ]; then rm -rf "$tempDir"; fi \
+    && if [ -f "/etc/apk/keys/abuild-key.rsa.pub" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi \
+# Bring in curl and ca-certificates to make registering on DNS SD easier
+    && apk add --no-cache curl ca-certificates
+
+    ✗ HIGH CVE-2025-65018
+      https://scout.docker.com/v/CVE-2025-65018?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D1.6.44-r0
+      Affected range : <=1.6.44-r0  
+      Fixed version  : not fixed    
+    
+    ✗ HIGH CVE-2025-64720
+      https://scout.docker.com/v/CVE-2025-64720?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D1.6.44-r0
+      Affected range : <=1.6.44-r0  
+      Fixed version  : not fixed    
+    
+
+   0C     1H     0M     0L  musl 1.2.5-r0
+pkg:apk/alpine/musl@1.2.5-r0?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L0-L0
+
+
+    ✗ HIGH CVE-2025-26519
+      https://scout.docker.com/v/CVE-2025-26519?s=alpine&n=musl&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C1.2.5-r1
+      Affected range : <1.2.5-r1  
+      Fixed version  : 1.2.5-r1   
+    
+
+   0C     1H     0M     0L  c-ares 1.33.1-r0
+pkg:apk/alpine/c-ares@1.33.1-r0?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L11-L79
+RUN set -x \
+    && apkArch="$(cat /etc/apk/arch)" \
+    && nginxPackages=" \
+        nginx=${NGINX_VERSION}-r${PKG_RELEASE} \
+        nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE} \
+    " \
+# install prerequisites for public key and pkg-oss checks
+    && apk add --no-cache --virtual .checksum-deps \
+        openssl \
+    && case "$apkArch" in \
+        x86_64|aarch64) \
+# arches officially built by upstream
+            apk add -X "https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages \
+            ;; \
+        *) \
+# we're on an architecture upstream doesn't officially build for
+# let's build binaries from the published packaging sources
+            set -x \
+            && tempDir="$(mktemp -d)" \
+            && chown nobody:nobody $tempDir \
+            && apk add --no-cache --virtual .build-deps \
+                gcc \
+                libc-dev \
+                make \
+                openssl-dev \
+                pcre2-dev \
+                zlib-dev \
+                linux-headers \
+                libxslt-dev \
+                gd-dev \
+                geoip-dev \
+                libedit-dev \
+                bash \
+                alpine-sdk \
+                findutils \
+                curl \
+            && su nobody -s /bin/sh -c " \
+                export HOME=${tempDir} \
+                && cd ${tempDir} \
+                && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && PKGOSSCHECKSUM=\"6982e2df739645fc72db5bdf994032f799718230e7016e811d9d482e5cf41814c888660ca9a68814d5e99ab571e892ada3bd43166e720cbf04c7f85b6934772c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\" \
+                && if [ \"\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\" = \"\$PKGOSSCHECKSUM\" ]; then \
+                    echo \"pkg-oss tarball checksum verification succeeded!\"; \
+                else \
+                    echo \"pkg-oss tarball checksum verification failed!\"; \
+                    exit 1; \
+                fi \
+                && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE} \
+                && cd alpine \
+                && make module-geoip module-image-filter module-njs module-xslt \
+                && apk index --allow-untrusted -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk \
+                && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz \
+                " \
+            && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/ \
+            && apk del --no-network .build-deps \
+            && apk add -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages \
+            ;; \
+    esac \
+# remove checksum deps
+    && apk del --no-network .checksum-deps \
+# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
+    && if [ -n "$tempDir" ]; then rm -rf "$tempDir"; fi \
+    && if [ -f "/etc/apk/keys/abuild-key.rsa.pub" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi \
+# Bring in curl and ca-certificates to make registering on DNS SD easier
+    && apk add --no-cache curl ca-certificates
+
+    ✗ HIGH CVE-2025-31498
+      https://scout.docker.com/v/CVE-2025-31498?s=alpine&n=c-ares&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D1.33.1-r0
+      Affected range : <=1.33.1-r0  
+      Fixed version  : not fixed    
+    
+
+   0C     1H     0M     0L  openssl 3.3.2-r1
+pkg:apk/alpine/openssl@3.3.2-r1?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L0-L0
+
+
+    ✗ HIGH CVE-2025-9230
+      https://scout.docker.com/v/CVE-2025-9230?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C3.3.5-r0
+      Affected range : <3.3.5-r0  
+      Fixed version  : 3.3.5-r0   
+    
+
+   0C     1H     0M     0L  xz 5.6.2-r0
+pkg:apk/alpine/xz@5.6.2-r0?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L11-L79
+RUN set -x \
+    && apkArch="$(cat /etc/apk/arch)" \
+    && nginxPackages=" \
+        nginx=${NGINX_VERSION}-r${PKG_RELEASE} \
+        nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE} \
+        nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE} \
+    " \
+# install prerequisites for public key and pkg-oss checks
+    && apk add --no-cache --virtual .checksum-deps \
+        openssl \
+    && case "$apkArch" in \
+        x86_64|aarch64) \
+# arches officially built by upstream
+            apk add -X "https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages \
+            ;; \
+        *) \
+# we're on an architecture upstream doesn't officially build for
+# let's build binaries from the published packaging sources
+            set -x \
+            && tempDir="$(mktemp -d)" \
+            && chown nobody:nobody $tempDir \
+            && apk add --no-cache --virtual .build-deps \
+                gcc \
+                libc-dev \
+                make \
+                openssl-dev \
+                pcre2-dev \
+                zlib-dev \
+                linux-headers \
+                libxslt-dev \
+                gd-dev \
+                geoip-dev \
+                libedit-dev \
+                bash \
+                alpine-sdk \
+                findutils \
+                curl \
+            && su nobody -s /bin/sh -c " \
+                export HOME=${tempDir} \
+                && cd ${tempDir} \
+                && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && PKGOSSCHECKSUM=\"6982e2df739645fc72db5bdf994032f799718230e7016e811d9d482e5cf41814c888660ca9a68814d5e99ab571e892ada3bd43166e720cbf04c7f85b6934772c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\" \
+                && if [ \"\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\" = \"\$PKGOSSCHECKSUM\" ]; then \
+                    echo \"pkg-oss tarball checksum verification succeeded!\"; \
+                else \
+                    echo \"pkg-oss tarball checksum verification failed!\"; \
+                    exit 1; \
+                fi \
+                && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
+                && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE} \
+                && cd alpine \
+                && make module-geoip module-image-filter module-njs module-xslt \
+                && apk index --allow-untrusted -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk \
+                && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz \
+                " \
+            && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/ \
+            && apk del --no-network .build-deps \
+            && apk add -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages \
+            ;; \
+    esac \
+# remove checksum deps
+    && apk del --no-network .checksum-deps \
+# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
+    && if [ -n "$tempDir" ]; then rm -rf "$tempDir"; fi \
+    && if [ -f "/etc/apk/keys/abuild-key.rsa.pub" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi \
+# Bring in curl and ca-certificates to make registering on DNS SD easier
+    && apk add --no-cache curl ca-certificates
+
+    ✗ HIGH CVE-2025-31115
+      https://scout.docker.com/v/CVE-2025-31115?s=alpine&n=xz&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C5.6.2-r1
+      Affected range : <5.6.2-r1  
+      Fixed version  : 5.6.2-r1   
+    
+
+
+17 vulnerabilities found in 9 packages
+  CRITICAL  1   
+  HIGH      16  
+  MEDIUM    0   
+  LOW       0   
+

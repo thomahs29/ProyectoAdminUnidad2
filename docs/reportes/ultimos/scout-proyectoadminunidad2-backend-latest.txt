@@ -1,0 +1,72 @@
+
+
+## Overview
+
+                    │                    Analyzed Image                      
+────────────────────┼────────────────────────────────────────────────────────
+  Target            │  proyectoadminunidad2-backend:latest                   
+    digest          │  74983114d443                                          
+    platform        │ linux/amd64                                            
+    provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/4004ce2430a7f9a8af91e50fb2ef754f9f632bfa              
+    vulnerabilities │    1C     4H     0M     0L                             
+    size            │ 126 MB                                                 
+    packages        │ 551                                                    
+
+
+## Packages and Vulnerabilities
+
+   1C     0H     0M     0L  harfbuzz 9.0.0-r1
+pkg:apk/alpine/harfbuzz@9.0.0-r1?os_name=alpine&os_version=3.21
+
+    ✗ CRITICAL CVE-2024-56732
+      https://scout.docker.com/v/CVE-2024-56732?s=alpine&n=harfbuzz&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C%3D9.0.0-r1
+      Affected range : <=9.0.0-r1  
+      Fixed version  : not fixed   
+    
+
+   0C     2H     0M     0L  libpng 1.6.47-r0
+pkg:apk/alpine/libpng@1.6.47-r0?os_name=alpine&os_version=3.21
+
+    ✗ HIGH CVE-2025-65018
+      https://scout.docker.com/v/CVE-2025-65018?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C%3D1.6.47-r0
+      Affected range : <=1.6.47-r0  
+      Fixed version  : not fixed    
+    
+    ✗ HIGH CVE-2025-64720
+      https://scout.docker.com/v/CVE-2025-64720?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C%3D1.6.47-r0
+      Affected range : <=1.6.47-r0  
+      Fixed version  : not fixed    
+    
+
+   0C     1H     0M     0L  cross-spawn 7.0.3
+pkg:npm/cross-spawn@7.0.3
+
+    ✗ HIGH CVE-2024-21538 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2024-21538?s=github&n=cross-spawn&t=npm&vr=%3E%3D7.0.0%2C%3C7.0.5
+      Affected range : >=7.0.0                                                              
+                     : <7.0.5                                                               
+      Fixed version  : 7.0.5                                                                
+      CVSS Score     : 7.7                                                                  
+      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P  
+    
+
+   0C     1H     0M     0L  glob 10.4.2
+pkg:npm/glob@10.4.2
+
+    ✗ HIGH CVE-2025-64756 [Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')]
+      https://scout.docker.com/v/CVE-2025-64756?s=github&n=glob&t=npm&vr=%3E%3D10.2.0%2C%3C10.5.0
+      Affected range : >=10.2.0                                      
+                     : <10.5.0                                       
+      Fixed version  : 11.1.0                                        
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H  
+    
+
+
+5 vulnerabilities found in 4 packages
+  CRITICAL  1  
+  HIGH      4  
+  MEDIUM    0  
+  LOW       0  
+

@@ -1,0 +1,285 @@
+
+
+## Overview
+
+                    │                                       Analyzed Image                                        
+────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────
+  Target            │  redis:7-alpine                                                                             
+    digest          │  4706ecab5371                                                                               
+    platform        │ linux/amd64                                                                                 
+    provenance      │ https://github.com/redis/docker-library-redis.git                                           
+                    │  https://github.com/redis/docker-library-redis/blob/d42d7aec93b1c54dd46f37a66a92f62478456039                                                   
+    vulnerabilities │    4C    39H     0M     0L                                                                  
+    size            │ 17 MB                                                                                       
+    packages        │ 26                                                                                          
+                    │                                                                                             
+  Base image        │  oisupport/staging-amd64:d7d2af10dd52b47735f4b5abdb91ff534bffee8495cd5b3f588a14c7389c6676   
+                    │  41c815331447                                                                               
+
+
+## Packages and Vulnerabilities
+
+   4C    39H     0M     0L  stdlib 1.18.2
+pkg:golang/stdlib@1.18.2
+
+https://github.com/redis/docker-library-redis/blob/d42d7aec93b1c54dd46f37a66a92f62478456039/7.4/alpine/Dockerfile#L25-L50
+RUN set -eux; \
+	apk add --no-cache --virtual .gosu-fetch gnupg; \
+	arch="$(apk --print-arch)"; \
+	case "$arch" in \
+		'x86_64') url='https://github.com/tianon/gosu/releases/download/1.17/gosu-amd64'; sha256='bbc4136d03ab138b1ad66fa4fc051bafc6cc7ffae632b069a53657279a450de3' ;; \
+		'aarch64') url='https://github.com/tianon/gosu/releases/download/1.17/gosu-arm64'; sha256='c3805a85d17f4454c23d7059bcb97e1ec1af272b90126e79ed002342de08389b' ;; \
+		'armhf') url='https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf'; sha256='e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b' ;; \
+		'x86') url='https://github.com/tianon/gosu/releases/download/1.17/gosu-i386'; sha256='087dbb8fe479537e64f9c86fa49ff3b41dee1cbd28739a19aaef83dc8186b1ca' ;; \
+		'ppc64le') url='https://github.com/tianon/gosu/releases/download/1.17/gosu-ppc64el'; sha256='1891acdcfa70046818ab6ed3c52b9d42fa10fbb7b340eb429c8c7849691dbd76' ;; \
+		'riscv64') url='https://github.com/tianon/gosu/releases/download/1.17/gosu-riscv64'; sha256='38a6444b57adce135c42d5a3689f616fc7803ddc7a07ff6f946f2ebc67a26ba6' ;; \
+		's390x') url='https://github.com/tianon/gosu/releases/download/1.17/gosu-s390x'; sha256='69873bab588192f760547ca1f75b27cfcf106e9f7403fee6fd0600bc914979d0' ;; \
+		'armv7') url='https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf'; sha256='e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b' ;; \
+		*) echo >&2 "error: unsupported gosu architecture: '$arch'"; exit 1 ;; \
+	esac; \
+	wget -O /usr/local/bin/gosu.asc "$url.asc"; \
+	wget -O /usr/local/bin/gosu "$url"; \
+	echo "$sha256 */usr/local/bin/gosu" | sha256sum -c -; \
+	export GNUPGHOME="$(mktemp -d)"; \
+	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
+	gpgconf --kill all; \
+	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+	apk del --no-network .gosu-fetch; \
+	chmod +x /usr/local/bin/gosu; \
+	gosu --version; \
+	gosu nobody true
+
+    ✗ CRITICAL CVE-2024-24790
+      https://scout.docker.com/v/CVE-2024-24790?s=golang&n=stdlib&t=golang&vr=%3C1.21.11
+      Affected range : <1.21.11  
+      Fixed version  : 1.21.11   
+    
+    ✗ CRITICAL CVE-2023-24540
+      https://scout.docker.com/v/CVE-2023-24540?s=golang&n=stdlib&t=golang&vr=%3C1.19.9
+      Affected range : <1.19.9  
+      Fixed version  : 1.19.9   
+    
+    ✗ CRITICAL CVE-2023-24538
+      https://scout.docker.com/v/CVE-2023-24538?s=golang&n=stdlib&t=golang&vr=%3C1.19.8
+      Affected range : <1.19.8  
+      Fixed version  : 1.19.8   
+    
+    ✗ CRITICAL CVE-2025-22871
+      https://scout.docker.com/v/CVE-2025-22871?s=golang&n=stdlib&t=golang&vr=%3C1.23.8
+      Affected range : <1.23.8  
+      Fixed version  : 1.23.8   
+    
+    ✗ HIGH CVE-2023-29403
+      https://scout.docker.com/v/CVE-2023-29403?s=golang&n=stdlib&t=golang&vr=%3C1.19.10
+      Affected range : <1.19.10  
+      Fixed version  : 1.19.10   
+    
+    ✗ HIGH CVE-2022-30580
+      https://scout.docker.com/v/CVE-2022-30580?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.3
+      Affected range : >=1.18.0-0  
+                     : <1.18.3     
+      Fixed version  : 1.18.3      
+    
+    ✗ HIGH CVE-2025-61725
+      https://scout.docker.com/v/CVE-2025-61725?s=golang&n=stdlib&t=golang&vr=%3C1.24.8
+      Affected range : <1.24.8  
+      Fixed version  : 1.24.8   
+    
+    ✗ HIGH CVE-2025-61723
+      https://scout.docker.com/v/CVE-2025-61723?s=golang&n=stdlib&t=golang&vr=%3C1.24.8
+      Affected range : <1.24.8  
+      Fixed version  : 1.24.8   
+    
+    ✗ HIGH CVE-2025-58188
+      https://scout.docker.com/v/CVE-2025-58188?s=golang&n=stdlib&t=golang&vr=%3C1.24.8
+      Affected range : <1.24.8  
+      Fixed version  : 1.24.8   
+    
+    ✗ HIGH CVE-2025-58187
+      https://scout.docker.com/v/CVE-2025-58187?s=golang&n=stdlib&t=golang&vr=%3C1.24.9
+      Affected range : <1.24.9  
+      Fixed version  : 1.24.9   
+    
+    ✗ HIGH CVE-2024-34158
+      https://scout.docker.com/v/CVE-2024-34158?s=golang&n=stdlib&t=golang&vr=%3C1.22.7
+      Affected range : <1.22.7  
+      Fixed version  : 1.22.7   
+    
+    ✗ HIGH CVE-2024-34156
+      https://scout.docker.com/v/CVE-2024-34156?s=golang&n=stdlib&t=golang&vr=%3C1.22.7
+      Affected range : <1.22.7  
+      Fixed version  : 1.22.7   
+    
+    ✗ HIGH CVE-2024-24791
+      https://scout.docker.com/v/CVE-2024-24791?s=golang&n=stdlib&t=golang&vr=%3C1.21.12
+      Affected range : <1.21.12  
+      Fixed version  : 1.21.12   
+    
+    ✗ HIGH CVE-2024-24784
+      https://scout.docker.com/v/CVE-2024-24784?s=golang&n=stdlib&t=golang&vr=%3C1.21.8
+      Affected range : <1.21.8  
+      Fixed version  : 1.21.8   
+    
+    ✗ HIGH CVE-2023-45288
+      https://scout.docker.com/v/CVE-2023-45288?s=golang&n=stdlib&t=golang&vr=%3C1.21.9
+      Affected range : <1.21.9  
+      Fixed version  : 1.21.9   
+    
+    ✗ HIGH CVE-2023-45287
+      https://scout.docker.com/v/CVE-2023-45287?s=golang&n=stdlib&t=golang&vr=%3C1.20.0
+      Affected range : <1.20.0  
+      Fixed version  : 1.20.0   
+    
+    ✗ HIGH CVE-2023-45283
+      https://scout.docker.com/v/CVE-2023-45283?s=golang&n=stdlib&t=golang&vr=%3C1.20.11
+      Affected range : <1.20.11  
+      Fixed version  : 1.20.11   
+    
+    ✗ HIGH CVE-2023-44487  CISA KEV 
+      https://scout.docker.com/v/CVE-2023-44487?s=golang&n=stdlib&t=golang&vr=%3C1.20.10
+      Affected range : <1.20.10  
+      Fixed version  : 1.20.10   
+    
+    ✗ HIGH CVE-2023-39325
+      https://scout.docker.com/v/CVE-2023-39325?s=golang&n=stdlib&t=golang&vr=%3C1.20.10
+      Affected range : <1.20.10  
+      Fixed version  : 1.20.10   
+    
+    ✗ HIGH CVE-2023-24537
+      https://scout.docker.com/v/CVE-2023-24537?s=golang&n=stdlib&t=golang&vr=%3C1.19.8
+      Affected range : <1.19.8  
+      Fixed version  : 1.19.8   
+    
+    ✗ HIGH CVE-2023-24536
+      https://scout.docker.com/v/CVE-2023-24536?s=golang&n=stdlib&t=golang&vr=%3C1.19.8
+      Affected range : <1.19.8  
+      Fixed version  : 1.19.8   
+    
+    ✗ HIGH CVE-2023-24534
+      https://scout.docker.com/v/CVE-2023-24534?s=golang&n=stdlib&t=golang&vr=%3C1.19.8
+      Affected range : <1.19.8  
+      Fixed version  : 1.19.8   
+    
+    ✗ HIGH CVE-2022-41725
+      https://scout.docker.com/v/CVE-2022-41725?s=golang&n=stdlib&t=golang&vr=%3C1.19.6
+      Affected range : <1.19.6  
+      Fixed version  : 1.19.6   
+    
+    ✗ HIGH CVE-2022-41724
+      https://scout.docker.com/v/CVE-2022-41724?s=golang&n=stdlib&t=golang&vr=%3C1.19.6
+      Affected range : <1.19.6  
+      Fixed version  : 1.19.6   
+    
+    ✗ HIGH CVE-2022-41723
+      https://scout.docker.com/v/CVE-2022-41723?s=golang&n=stdlib&t=golang&vr=%3C1.19.6
+      Affected range : <1.19.6  
+      Fixed version  : 1.19.6   
+    
+    ✗ HIGH CVE-2022-41722
+      https://scout.docker.com/v/CVE-2022-41722?s=golang&n=stdlib&t=golang&vr=%3C1.19.6
+      Affected range : <1.19.6  
+      Fixed version  : 1.19.6   
+    
+    ✗ HIGH CVE-2022-41720
+      https://scout.docker.com/v/CVE-2022-41720?s=golang&n=stdlib&t=golang&vr=%3C1.18.9
+      Affected range : <1.18.9  
+      Fixed version  : 1.18.9   
+    
+    ✗ HIGH CVE-2022-41716
+      https://scout.docker.com/v/CVE-2022-41716?s=golang&n=stdlib&t=golang&vr=%3C1.18.8
+      Affected range : <1.18.8  
+      Fixed version  : 1.18.8   
+    
+    ✗ HIGH CVE-2022-41715
+      https://scout.docker.com/v/CVE-2022-41715?s=golang&n=stdlib&t=golang&vr=%3C1.18.7
+      Affected range : <1.18.7  
+      Fixed version  : 1.18.7   
+    
+    ✗ HIGH CVE-2022-32189
+      https://scout.docker.com/v/CVE-2022-32189?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.5
+      Affected range : >=1.18.0-0  
+                     : <1.18.5     
+      Fixed version  : 1.18.5      
+    
+    ✗ HIGH CVE-2022-30635
+      https://scout.docker.com/v/CVE-2022-30635?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.4
+      Affected range : >=1.18.0-0  
+                     : <1.18.4     
+      Fixed version  : 1.18.4      
+    
+    ✗ HIGH CVE-2022-30634
+      https://scout.docker.com/v/CVE-2022-30634?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.3
+      Affected range : >=1.18.0-0  
+                     : <1.18.3     
+      Fixed version  : 1.18.3      
+    
+    ✗ HIGH CVE-2022-30633
+      https://scout.docker.com/v/CVE-2022-30633?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.4
+      Affected range : >=1.18.0-0  
+                     : <1.18.4     
+      Fixed version  : 1.18.4      
+    
+    ✗ HIGH CVE-2022-30632
+      https://scout.docker.com/v/CVE-2022-30632?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.4
+      Affected range : >=1.18.0-0  
+                     : <1.18.4     
+      Fixed version  : 1.18.4      
+    
+    ✗ HIGH CVE-2022-30631
+      https://scout.docker.com/v/CVE-2022-30631?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.4
+      Affected range : >=1.18.0-0  
+                     : <1.18.4     
+      Fixed version  : 1.18.4      
+    
+    ✗ HIGH CVE-2022-30630
+      https://scout.docker.com/v/CVE-2022-30630?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.4
+      Affected range : >=1.18.0-0  
+                     : <1.18.4     
+      Fixed version  : 1.18.4      
+    
+    ✗ HIGH CVE-2022-29804
+      https://scout.docker.com/v/CVE-2022-29804?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.3
+      Affected range : >=1.18.0-0  
+                     : <1.18.3     
+      Fixed version  : 1.18.3      
+    
+    ✗ HIGH CVE-2022-2880
+      https://scout.docker.com/v/CVE-2022-2880?s=golang&n=stdlib&t=golang&vr=%3C1.18.7
+      Affected range : <1.18.7  
+      Fixed version  : 1.18.7   
+    
+    ✗ HIGH CVE-2022-2879
+      https://scout.docker.com/v/CVE-2022-2879?s=golang&n=stdlib&t=golang&vr=%3C1.18.7
+      Affected range : <1.18.7  
+      Fixed version  : 1.18.7   
+    
+    ✗ HIGH CVE-2022-28131
+      https://scout.docker.com/v/CVE-2022-28131?s=golang&n=stdlib&t=golang&vr=%3E%3D1.18.0-0%2C%3C1.18.4
+      Affected range : >=1.18.0-0  
+                     : <1.18.4     
+      Fixed version  : 1.18.4      
+    
+    ✗ HIGH CVE-2022-27664
+      https://scout.docker.com/v/CVE-2022-27664?s=golang&n=stdlib&t=golang&vr=%3C1.18.6
+      Affected range : <1.18.6  
+      Fixed version  : 1.18.6   
+    
+    ✗ HIGH CVE-2023-29400
+      https://scout.docker.com/v/CVE-2023-29400?s=golang&n=stdlib&t=golang&vr=%3C1.19.9
+      Affected range : <1.19.9  
+      Fixed version  : 1.19.9   
+    
+    ✗ HIGH CVE-2023-24539
+      https://scout.docker.com/v/CVE-2023-24539?s=golang&n=stdlib&t=golang&vr=%3C1.19.9
+      Affected range : <1.19.9  
+      Fixed version  : 1.19.9   
+    
+
+
+43 vulnerabilities found in 1 package
+  CRITICAL  4   
+  HIGH      39  
+  MEDIUM    0   
+  LOW       0   
+

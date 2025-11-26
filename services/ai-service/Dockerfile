@@ -1,7 +1,7 @@
 # ============================================
 # STAGE 1: Dependencies Build Stage
 # ============================================
-FROM node:18.20.5-alpine3.20 AS dependencies
+FROM node:18.20.5-alpine3.21 AS dependencies
 
 WORKDIR /app
 
@@ -16,16 +16,22 @@ RUN apk add --no-cache \
 # Copiar package.json y package-lock.json
 COPY package*.json ./
 
-# Instalar solo dependencias de producción
+# Instalar solo dependencias de producción y actualizar paquetes vulnerables
 RUN npm install --production && \
+    npm install --force cross-spawn@7.0.6 glob@10.5.0 && \
     npm cache clean --force
 
 # ============================================
 # STAGE 2: Production Runtime Stage
 # ============================================
-FROM node:18.20.5-alpine3.20
+FROM node:18.20.5-alpine3.21
 
 WORKDIR /app
+
+# Actualizar paquetes con vulnerabilidades conocidas a versiones parcheadas
+RUN apk update && \
+  apk upgrade && \
+  rm -rf /var/cache/apk/*
 
 # Instalar wget para healthcheck
 RUN apk add --no-cache wget && \
@@ -52,7 +58,7 @@ EXPOSE 3001
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:${AI_SERVICE_PORT:-3001}/health || exit 1
+    CMD wget --quiet --tries=1 --spider http://localhost:${AI_SERVICE_PORT:-3001}/health || exit 1
 
 # Comando de inicio
 CMD ["node", "src/server.js"]

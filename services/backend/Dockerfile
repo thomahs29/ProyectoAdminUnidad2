@@ -1,7 +1,7 @@
 # ============================================
 # STAGE 1: Dependencies Build Stage
 # ============================================
-FROM node:18.20.5-alpine3.20 AS dependencies
+FROM node:18.20.5-alpine3.21 AS dependencies
 
 WORKDIR /app
 
@@ -24,31 +24,37 @@ ENV PYTHON=/usr/bin/python3
 # Copiar package.json y package-lock desde la carpeta src
 COPY src/package*.json ./
 
-# Instalar solo dependencias de producción
+# Instalar solo dependencias de producción y actualizar paquetes vulnerables
 RUN npm install --production --build-from-source && \
-    npm cache clean --force
+  npm install --force cross-spawn@7.0.6 glob@10.5.0 && \
+  npm cache clean --force
 
 # ============================================
 # STAGE 2: Production Runtime Stage
 # ============================================
-FROM node:18.20.5-alpine3.20
+FROM node:18.20.5-alpine3.21
 
 WORKDIR /app
 
+# Actualizar paquetes con vulnerabilidades conocidas a versiones parcheadas
+RUN apk update && \
+  apk upgrade && \
+  rm -rf /var/cache/apk/*
+
 # Instalar solo las librerías runtime necesarias (sin herramientas de compilación)
 RUN apk add --no-cache \
-    cairo \
-    pango \
-    jpeg \
-    giflib \
-    librsvg \
-    pixman \
-    wget && \
-    # Crear usuario no privilegiado
-    addgroup -g 1001 -S appuser && \
-    adduser -u 1001 -S appuser -G appuser && \
-    # Crear directorio de trabajo y ajustar permisos
-    chown -R appuser:appuser /app
+  cairo \
+  pango \
+  jpeg \
+  giflib \
+  librsvg \
+  pixman \
+  wget && \
+  # Crear usuario no privilegiado
+  addgroup -g 1001 -S appuser && \
+  adduser -u 1001 -S appuser -G appuser && \
+  # Crear directorio de trabajo y ajustar permisos
+  chown -R appuser:appuser /app
 
 # Copiar dependencias compiladas desde stage anterior
 COPY --from=dependencies --chown=appuser:appuser /app/node_modules ./node_modules

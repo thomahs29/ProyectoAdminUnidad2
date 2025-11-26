@@ -1,0 +1,81 @@
+
+
+## Overview
+
+                    │                    Analyzed Image                      
+────────────────────┼────────────────────────────────────────────────────────
+  Target            │  proyectoadminunidad2-frontend:latest                  
+    digest          │  6f8bb3f4e35a                                          
+    platform        │ linux/amd64                                            
+    provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/4004ce2430a7f9a8af91e50fb2ef754f9f632bfa              
+    vulnerabilities │    2C     6H     0M     0L                             
+    size            │ 21 MB                                                  
+    packages        │ 83                                                     
+
+
+## Packages and Vulnerabilities
+
+   2C     2H     0M     0L  libxml2 2.13.4-r5
+pkg:apk/alpine/libxml2@2.13.4-r5?os_name=alpine&os_version=3.21
+
+    ✗ CRITICAL CVE-2025-49796
+      https://scout.docker.com/v/CVE-2025-49796?s=alpine&n=libxml2&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C2.13.9-r0
+      Affected range : <2.13.9-r0  
+      Fixed version  : 2.13.9-r0   
+    
+    ✗ CRITICAL CVE-2025-49794
+      https://scout.docker.com/v/CVE-2025-49794?s=alpine&n=libxml2&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C2.13.9-r0
+      Affected range : <2.13.9-r0  
+      Fixed version  : 2.13.9-r0   
+    
+    ✗ HIGH CVE-2025-6021
+      https://scout.docker.com/v/CVE-2025-6021?s=alpine&n=libxml2&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C2.13.9-r0
+      Affected range : <2.13.9-r0  
+      Fixed version  : 2.13.9-r0   
+    
+    ✗ HIGH CVE-2025-49795
+      https://scout.docker.com/v/CVE-2025-49795?s=alpine&n=libxml2&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C2.13.9-r0
+      Affected range : <2.13.9-r0  
+      Fixed version  : 2.13.9-r0   
+    
+
+   0C     2H     0M     0L  curl 8.12.1-r1
+pkg:apk/alpine/curl@8.12.1-r1?os_name=alpine&os_version=3.21
+
+    ✗ HIGH CVE-2025-9086
+      https://scout.docker.com/v/CVE-2025-9086?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C8.14.1-r2
+      Affected range : <8.14.1-r2  
+      Fixed version  : 8.14.1-r2   
+    
+    ✗ HIGH CVE-2025-5399
+      https://scout.docker.com/v/CVE-2025-5399?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C8.14.1-r0
+      Affected range : <8.14.1-r0  
+      Fixed version  : 8.14.1-r0   
+    
+
+   0C     1H     0M     0L  openssl 3.3.3-r0
+pkg:apk/alpine/openssl@3.3.3-r0?os_name=alpine&os_version=3.21
+
+    ✗ HIGH CVE-2025-9230
+      https://scout.docker.com/v/CVE-2025-9230?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C3.3.5-r0
+      Affected range : <3.3.5-r0  
+      Fixed version  : 3.3.5-r0   
+    
+
+   0C     1H     0M     0L  expat 2.7.0-r0
+pkg:apk/alpine/expat@2.7.0-r0?os_name=alpine&os_version=3.21
+
+    ✗ HIGH CVE-2025-59375
+      https://scout.docker.com/v/CVE-2025-59375?s=alpine&n=expat&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C2.7.2-r0
+      Affected range : <2.7.2-r0  
+      Fixed version  : 2.7.2-r0   
+    
+
+
+8 vulnerabilities found in 4 packages
+  CRITICAL  2  
+  HIGH      6  
+  MEDIUM    0  
+  LOW       0  
+
