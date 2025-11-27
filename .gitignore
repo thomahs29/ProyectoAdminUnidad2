@@ -32,6 +32,7 @@ replay_pid*
 .env.*.local
 services/backend/src/.env
 services/frontend/.env
+.env.bak
 
 # Node.js
 node_modules/
