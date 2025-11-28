@@ -1,17 +1,3 @@
-# 🏛️ Sistema de Reservas de Licencias de Conducir - Municipalidad de Linares
-
-## 📋 Tabla de Contenidos
-1. [Descripción del Proyecto](#descripción-del-proyecto)
-2. [Arquitectura](#arquitectura)
-3. [Alta Disponibilidad](#alta-disponibilidad)
-4. [Componente IA](#componente-ia)
-5. [Cómo Usar](#cómo-usar)
-6. [Backup y Monitoreo](#backup-y-monitoreo)
-
----
-
-## 📌 Descripción del Proyecto
-
 ### ¿Qué es el Proyecto?
 
 Sistema integral de gestión de reservas de licencias de conducir para la Municipalidad de Linares. Una plataforma web que automatiza el proceso de solicitud, aprobación y seguimiento de trámites de licencias de conducir.
@@ -305,21 +291,6 @@ IA: Su licencia vence el 15 de marzo 2026, en 135 días.
 └────────┬────────────────────┘
          │
     ┌────┴────────────────────┐
-    │                         │
-┌───▼──────────┐    ┌────────▼────┐
-│ Gemini API   │    │ PostgreSQL   │
-│ (Respuestas) │    │ (Historial)  │
-└──────────────┘    └─────────────┘
-```
-
----
-
-## Cómo Usar
-
-### Requisitos
-
-#### Mínimos
-- **Docker & Docker Compose** 20.10+
 - **RAM:** 4GB
 - **CPU:** 2 cores
 - **Disco:** 10GB
