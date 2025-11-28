@@ -125,10 +125,7 @@ Credenciales de acceso (contraseñas, API keys, tokens JWT) expuestas en código
 
 **Variables de entorno (.env)**
 ```bash
-# .env (excluido de Git)
-DB_ROOT_PASSWORD=postgres182653871263618987134
-JWT_SECRET=hola1234
-GEMINI_API_KEY=AIzaSyBKQQBaLyEGD5zckuSOOCTJzwQSRemxqmU
+
 ```
 
  **.gitignore configurado**
