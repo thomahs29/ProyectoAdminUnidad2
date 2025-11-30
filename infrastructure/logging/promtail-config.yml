@@ -1,0 +1,59 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # Scrape de logs de contenedores Docker
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+    
+    relabel_configs:
+      # Obtener nombre del contenedor
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container_name'
+      
+      # Obtener ID del contenedor
+      - source_labels: ['__meta_docker_container_id']
+        target_label: 'container_id'
+      
+      # Solo procesar contenedores específicos (aplicación)
+      - source_labels: ['container_name']
+        regex: '(proyecto-backend|proyecto-backend-1|proyecto-backend-2|proyecto-ai-service|postgres-master|postgres-replica)'
+        action: keep
+    
+    pipeline_stages:
+      # Stage 1: Parsear JSON si el log está en formato JSON
+      - json:
+          expressions:
+            level: level
+            event_type: event_type
+            user_id: user_id
+            user_rut: user_rut
+            ip_address: ip_address
+            endpoint: endpoint
+            message: message
+            timestamp: timestamp
+      
+      # Stage 2: Si no hay level, usar INFO por defecto
+      - labels:
+          level:
+          event_type:
+          container_name:
+      
+      # Stage 3: Timestamp parsing
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          fallback_formats:
+            - RFC3339
+            - "2006-01-02T15:04:05Z07:00"
+          location: "America/Santiago"

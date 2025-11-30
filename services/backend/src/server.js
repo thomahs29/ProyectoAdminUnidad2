@@ -12,6 +12,7 @@ const documentoRoutes = require("./routes/documentoRoutes.js");
 const notificacionRoutes = require("./routes/notificacionRoutes.js");
 const municipalesRoutes = require("./routes/municipalesRoutes.js");
 const reporteRoutes = require("./routes/reporteRoutes.js");
+const auditMiddleware = require("./middleware/auditMiddleware.js");
 const { inicializarDatos } = require("./models/municipalesModel.js");
 
 // Cargar variables de entorno desde la raíz del proyecto
@@ -34,21 +35,24 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/users', userRoutes);
+// Rutas públicas (sin auditoría)
 app.use('/api/reservas', reservaRoutes);
 app.use('/api/tramites', tramiteRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/documentos', documentoRoutes);
-app.use('/api/notificaciones', notificacionRoutes);
-app.use('/api/municipales', municipalesRoutes);
-app.use('/api/reportes', reporteRoutes);
+
+// Rutas sensibles (con auditoría)
+app.use('/api/users', auditMiddleware, userRoutes);
+app.use('/api/notificaciones', auditMiddleware, notificacionRoutes);
+app.use('/api/municipales', auditMiddleware, municipalesRoutes);
+app.use('/api/reportes', auditMiddleware, reporteRoutes);
 
 // Middleware de error global
 app.use((err, req, res, next) => {
     console.error('[ERROR GLOBAL]', err);
-    res.status(500).json({ 
-        message: 'Internal server error', 
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined 
+    res.status(500).json({
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
 });
 
