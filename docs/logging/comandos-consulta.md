@@ -2,6 +2,10 @@
 
 Referencia rápida de comandos y queries para consultar logs de seguridad.
 
+## SCRIPT PARA PROBAR LOS LOGS DESDE POWERSHELL
+
+.\scripts\logs\test-security-logs.ps1
+
 ## LogQL (Loki Query Language)
 
 ### Queries Básicas
