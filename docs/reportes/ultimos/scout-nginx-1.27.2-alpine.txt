@@ -204,8 +204,8 @@ RUN set -x \
       Fixed version  : not fixed     
     
 
-   0C     2H     0M     0L  libpng 1.6.44-r0
-pkg:apk/alpine/libpng@1.6.44-r0?os_name=alpine&os_version=3.20
+   0C     2H     0M     0L  libxslt 1.1.39-r1
+pkg:apk/alpine/libxslt@1.1.39-r1?os_name=alpine&os_version=3.20
 
 https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L11-L79
 RUN set -x \
@@ -278,15 +278,15 @@ RUN set -x \
 # Bring in curl and ca-certificates to make registering on DNS SD easier
     && apk add --no-cache curl ca-certificates
 
-    ✗ HIGH CVE-2025-65018
-      https://scout.docker.com/v/CVE-2025-65018?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D1.6.44-r0
-      Affected range : <=1.6.44-r0  
-      Fixed version  : not fixed    
+    ✗ HIGH CVE-2025-24855
+      https://scout.docker.com/v/CVE-2025-24855?s=alpine&n=libxslt&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C1.1.39-r2
+      Affected range : <1.1.39-r2  
+      Fixed version  : 1.1.39-r2   
     
-    ✗ HIGH CVE-2025-64720
-      https://scout.docker.com/v/CVE-2025-64720?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D1.6.44-r0
-      Affected range : <=1.6.44-r0  
-      Fixed version  : not fixed    
+    ✗ HIGH CVE-2024-55549
+      https://scout.docker.com/v/CVE-2024-55549?s=alpine&n=libxslt&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C1.1.39-r2
+      Affected range : <1.1.39-r2  
+      Fixed version  : 1.1.39-r2   
     
 
    0C     2H     0M     0L  expat 2.6.4-r0
@@ -374,8 +374,8 @@ RUN set -x \
       Fixed version  : 2.7.0-r0   
     
 
-   0C     2H     0M     0L  libxslt 1.1.39-r1
-pkg:apk/alpine/libxslt@1.1.39-r1?os_name=alpine&os_version=3.20
+   0C     2H     0M     0L  libpng 1.6.44-r0
+pkg:apk/alpine/libpng@1.6.44-r0?os_name=alpine&os_version=3.20
 
 https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L11-L79
 RUN set -x \
@@ -448,15 +448,15 @@ RUN set -x \
 # Bring in curl and ca-certificates to make registering on DNS SD easier
     && apk add --no-cache curl ca-certificates
 
-    ✗ HIGH CVE-2025-24855
-      https://scout.docker.com/v/CVE-2025-24855?s=alpine&n=libxslt&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C1.1.39-r2
-      Affected range : <1.1.39-r2  
-      Fixed version  : 1.1.39-r2   
+    ✗ HIGH CVE-2025-65018
+      https://scout.docker.com/v/CVE-2025-65018?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D1.6.44-r0
+      Affected range : <=1.6.44-r0  
+      Fixed version  : not fixed    
     
-    ✗ HIGH CVE-2024-55549
-      https://scout.docker.com/v/CVE-2024-55549?s=alpine&n=libxslt&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C1.1.39-r2
-      Affected range : <1.1.39-r2  
-      Fixed version  : 1.1.39-r2   
+    ✗ HIGH CVE-2025-64720
+      https://scout.docker.com/v/CVE-2025-64720?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D1.6.44-r0
+      Affected range : <=1.6.44-r0  
+      Fixed version  : not fixed    
     
 
    0C     1H     0M     0L  c-ares 1.33.1-r0
@@ -537,18 +537,6 @@ RUN set -x \
       https://scout.docker.com/v/CVE-2025-31498?s=alpine&n=c-ares&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C%3D1.33.1-r0
       Affected range : <=1.33.1-r0  
       Fixed version  : not fixed    
-    
-
-   0C     1H     0M     0L  openssl 3.3.2-r1
-pkg:apk/alpine/openssl@3.3.2-r1?os_name=alpine&os_version=3.20
-
-https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L0-L0
-
-
-    ✗ HIGH CVE-2025-9230
-      https://scout.docker.com/v/CVE-2025-9230?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C3.3.5-r0
-      Affected range : <3.3.5-r0  
-      Fixed version  : 3.3.5-r0   
     
 
    0C     1H     0M     0L  xz 5.6.2-r0
@@ -641,6 +629,18 @@ https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f
       https://scout.docker.com/v/CVE-2025-26519?s=alpine&n=musl&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C1.2.5-r1
       Affected range : <1.2.5-r1  
       Fixed version  : 1.2.5-r1   
+    
+
+   0C     1H     0M     0L  openssl 3.3.2-r1
+pkg:apk/alpine/openssl@3.3.2-r1?os_name=alpine&os_version=3.20
+
+https://github.com/nginxinc/docker-nginx/blob/6a4c0cb4ac7e53bbbe473df71b61a5bf9f95252f/mainline/alpine/Dockerfile#L0-L0
+
+
+    ✗ HIGH CVE-2025-9230
+      https://scout.docker.com/v/CVE-2025-9230?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.20&vr=%3C3.3.5-r0
+      Affected range : <3.3.5-r0  
+      Fixed version  : 3.3.5-r0   
     
 
 

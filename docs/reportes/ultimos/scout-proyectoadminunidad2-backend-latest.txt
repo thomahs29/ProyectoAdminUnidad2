@@ -5,10 +5,10 @@
                     │                    Analyzed Image                      
 ────────────────────┼────────────────────────────────────────────────────────
   Target            │  proyectoadminunidad2-backend:latest                   
-    digest          │  d1d4ff1e3435                                          
+    digest          │  bf6117aed051                                          
     platform        │ linux/amd64                                            
     provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
-                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/5a018e94f1396b5f2d6fc51fa40e15e40ac5d723              
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/2e57547232832be446b39ede726d044410598e3b              
     vulnerabilities │    1C     4H     0M     0L                             
     size            │ 127 MB                                                 
     packages        │ 566                                                    
@@ -39,18 +39,6 @@ pkg:apk/alpine/libpng@1.6.47-r0?os_name=alpine&os_version=3.21
       Fixed version  : not fixed    
     
 
-   0C     1H     0M     0L  glob 10.4.2
-pkg:npm/glob@10.4.2
-
-    ✗ HIGH CVE-2025-64756 [Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')]
-      https://scout.docker.com/v/CVE-2025-64756?s=github&n=glob&t=npm&vr=%3E%3D10.2.0%2C%3C10.5.0
-      Affected range : >=10.2.0                                      
-                     : <10.5.0                                       
-      Fixed version  : 11.1.0                                        
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H  
-    
-
    0C     1H     0M     0L  cross-spawn 7.0.3
 pkg:npm/cross-spawn@7.0.3
 
@@ -61,6 +49,18 @@ pkg:npm/cross-spawn@7.0.3
       Fixed version  : 7.0.5                                                                
       CVSS Score     : 7.7                                                                  
       CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P  
+    
+
+   0C     1H     0M     0L  glob 10.4.2
+pkg:npm/glob@10.4.2
+
+    ✗ HIGH CVE-2025-64756 [Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')]
+      https://scout.docker.com/v/CVE-2025-64756?s=github&n=glob&t=npm&vr=%3E%3D10.2.0%2C%3C10.5.0
+      Affected range : >=10.2.0                                      
+                     : <10.5.0                                       
+      Fixed version  : 11.1.0                                        
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H  
     
 
 

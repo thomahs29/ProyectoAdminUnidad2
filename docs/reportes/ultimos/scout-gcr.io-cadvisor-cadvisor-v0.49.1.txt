@@ -82,25 +82,6 @@ pkg:golang/stdlib@1.22.0
       Fixed version  : 1.22.7   
     
 
-   1C     2H     0M     0L  openssl 3.1.4-r5
-pkg:apk/alpine/openssl@3.1.4-r5?os_name=alpine&os_version=3.18
-
-    ✗ CRITICAL CVE-2024-5535
-      https://scout.docker.com/v/CVE-2024-5535?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C3.1.6-r0
-      Affected range : <3.1.6-r0  
-      Fixed version  : 3.1.6-r0   
-    
-    ✗ HIGH CVE-2024-6119
-      https://scout.docker.com/v/CVE-2024-6119?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C3.1.7-r0
-      Affected range : <3.1.7-r0  
-      Fixed version  : 3.1.7-r0   
-    
-    ✗ HIGH CVE-2024-4741
-      https://scout.docker.com/v/CVE-2024-4741?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C3.1.6-r0
-      Affected range : <3.1.6-r0  
-      Fixed version  : 3.1.6-r0   
-    
-
    1C     2H     0M     0L  golang.org/x/crypto 0.17.0
 pkg:golang/golang.org/x/crypto@0.17.0
 
@@ -120,6 +101,25 @@ pkg:golang/golang.org/x/crypto@0.17.0
       https://scout.docker.com/v/CVE-2025-22869?s=golang&n=crypto&ns=golang.org%2Fx&t=golang&vr=%3C0.35.0
       Affected range : <0.35.0  
       Fixed version  : 0.35.0   
+    
+
+   1C     2H     0M     0L  openssl 3.1.4-r5
+pkg:apk/alpine/openssl@3.1.4-r5?os_name=alpine&os_version=3.18
+
+    ✗ CRITICAL CVE-2024-5535
+      https://scout.docker.com/v/CVE-2024-5535?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C3.1.6-r0
+      Affected range : <3.1.6-r0  
+      Fixed version  : 3.1.6-r0   
+    
+    ✗ HIGH CVE-2024-6119
+      https://scout.docker.com/v/CVE-2024-6119?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C3.1.7-r0
+      Affected range : <3.1.7-r0  
+      Fixed version  : 3.1.7-r0   
+    
+    ✗ HIGH CVE-2024-4741
+      https://scout.docker.com/v/CVE-2024-4741?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C3.1.6-r0
+      Affected range : <3.1.6-r0  
+      Fixed version  : 3.1.6-r0   
     
 
    1C     1H     0M     0L  krb5 1.20.1-r1
@@ -183,17 +183,6 @@ pkg:apk/alpine/xz@5.4.3-r0?os_name=alpine&os_version=3.18
       Fixed version  : 5.4.3-r1   
     
 
-   0C     1H     0M     0L  github.com/opencontainers/selinux 1.10.0
-pkg:golang/github.com/opencontainers/selinux@1.10.0
-
-    ✗ HIGH CVE-2025-52881 [Race Condition Enabling Link Following]
-      https://scout.docker.com/v/CVE-2025-52881?s=github&n=selinux&ns=github.com%2Fopencontainers&t=golang&vr=%3C%3D1.12.0
-      Affected range : <=1.12.0                                                         
-      Fixed version  : 1.13.0                                                           
-      CVSS Score     : 7.3                                                              
-      CVSS Vector    : CVSS:4.0/AV:L/AC:L/AT:P/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H  
-    
-
    0C     1H     0M     0L  golang.org/x/oauth2 0.10.0
 pkg:golang/golang.org/x/oauth2@0.10.0
 
@@ -212,6 +201,17 @@ pkg:apk/alpine/musl@1.2.4-r2?os_name=alpine&os_version=3.18
       https://scout.docker.com/v/CVE-2025-26519?s=alpine&n=musl&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C1.2.4-r3
       Affected range : <1.2.4-r3  
       Fixed version  : 1.2.4-r3   
+    
+
+   0C     1H     0M     0L  github.com/opencontainers/selinux 1.10.0
+pkg:golang/github.com/opencontainers/selinux@1.10.0
+
+    ✗ HIGH CVE-2025-52881 [Race Condition Enabling Link Following]
+      https://scout.docker.com/v/CVE-2025-52881?s=github&n=selinux&ns=github.com%2Fopencontainers&t=golang&vr=%3C%3D1.12.0
+      Affected range : <=1.12.0                                                         
+      Fixed version  : 1.13.0                                                           
+      CVSS Score     : 7.3                                                              
+      CVSS Vector    : CVSS:4.0/AV:L/AC:L/AT:P/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H  
     
 
 
