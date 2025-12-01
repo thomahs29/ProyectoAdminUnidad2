@@ -1,61 +1,23 @@
-# Matriz de Riesgos de Seguridad
 
-## Fecha de Elaboración
-27 de noviembre de 2025
-
-## Versión
-1.0
-
----
-
-## 1. Metodología de Evaluación
-
-### 1.1 Probabilidad
-
-| Nivel | Descripción | Criterio |
-|-------|-------------|----------|
-| **Baja (1)** | Poco probable | Ocurre menos de 1 vez al año |
-| **Media (2)** | Probable | Ocurre 1-4 veces al año |
-| **Alta (3)** | Muy probable | Ocurre más de 4 veces al año |
 
 ### 1.2 Impacto
 
-| Nivel | Descripción | Criterio |
-|-------|-------------|----------|
-| **Bajo (1)** | Impacto menor | Afecta funcionalidad no crítica, sin pérdida de datos |
-| **Medio (2)** | Impacto moderado | Afecta funcionalidad crítica temporalmente, datos recuperables |
-| **Alto (3)** | Impacto severo | Pérdida de datos, indisponibilidad prolongada, exposición de información sensible |
+**Bajo (1):** Impacto menor - Afecta funcionalidad no crítica, sin pérdida de datos.
+
+**Medio (2):** Impacto moderado - Afecta funcionalidad crítica temporalmente, datos recuperables.
+
+**Alto (3):** Impacto severo - Pérdida de datos, indisponibilidad prolongada, exposición de información sensible.
 
 ### 1.3 Nivel de Riesgo
 
 **Cálculo:** Nivel de Riesgo = Probabilidad × Impacto
 
-| Puntuación | Nivel | Color | Acción |
-|------------|-------|-------|--------|
-| 1-2 | **Bajo** | 🟢 Verde | Monitorear |
-| 3-4 | **Medio** | 🟡 Amarillo | Mitigar |
-| 6-9 | **Alto** | 🔴 Rojo | Acción inmediata |
+**Bajo (1-2):** Verde - Monitorear.
 
----
+**Medio (3-4):** Amarillo - Mitigar.
 
-## 2. Matriz de Riesgos Identificados
+**Alto (6-9):** Rojo - Acción inmediata.
 
-### Resumen Ejecutivo
-
-| # | Riesgo | Probabilidad | Impacto | Nivel | Estado |
-|---|--------|--------------|---------|-------|--------|
-| 1 | Inyección SQL | Media (2) | Alto (3) | 🔴 **6** | Mitigado |
-| 2 | Exposición de credenciales | Media (2) | Alto (3) | 🔴 **6** | Mitigado |
-| 3 | Vulnerabilidades en dependencias npm | Alta (3) | Medio (2) | 🔴 **6** | Mitigado |
-| 4 | Acceso no autorizado a base de datos | Baja (1) | Alto (3) | 🟡 **3** | Mitigado |
-| 5 | Denegación de servicio (DoS) | Media (2) | Medio (2) | 🟡 **4** | Parcialmente mitigado |
-| 6 | Fallo de replicación de base de datos | Media (2) | Medio (2) | 🟡 **4** | Mitigado |
-| 7 | Compromiso de contenedor Docker | Baja (1) | Alto (3) | 🟡 **3** | Mitigado |
-| 8 | Pérdida de logs de auditoría | Baja (1) | Medio (2) | 🟢 **2** | Mitigado |
-| 9 | Escalación de privilegios | Baja (1) | Alto (3) | 🟡 **3** | Mitigado |
-| 10 | Exposición de datos personales (GDPR) | Media (2) | Alto (3) | 🔴 **6** | Mitigado |
-
----
 
 ## 3. Detalle de Riesgos y Mitigaciones
 
@@ -66,7 +28,7 @@ Atacante inserta código SQL malicioso a través de inputs no validados, permiti
 
 **Probabilidad:** Media (2)  
 **Impacto:** Alto (3)  
-**Nivel de Riesgo:** 🔴 **6 (Alto)**
+**Nivel de Riesgo:** **6 (Alto)**
 
 **Amenazas:**
 - Extracción de datos sensibles (usuarios, RUT, contraseñas)
@@ -75,18 +37,18 @@ Atacante inserta código SQL malicioso a través de inputs no validados, permiti
 
 **Mitigaciones Implementadas:**
 
-✅ **Uso de consultas parametrizadas (Prepared Statements)**
+ **Uso de consultas parametrizadas (Prepared Statements)**
 ```javascript
 // services/backend/src/models/userModel.js
 const query = 'SELECT * FROM usuarios WHERE email = $1';
 const result = await pool.query(query, [email]);
 ```
 
-✅ **ORM con validación automática**
+ **ORM con validación automática**
 - Pool de PostgreSQL con escape automático de parámetros
 - Validación de tipos de datos
 
-✅ **Validación de inputs**
+ **Validación de inputs**
 ```javascript
 // Validación de RUT, email, etc.
 if (!/^[0-9]{7,8}-[0-9Kk]$/.test(rut)) {
@@ -94,16 +56,13 @@ if (!/^[0-9]{7,8}-[0-9Kk]$/.test(rut)) {
 }
 ```
 
-✅ **Principio de privilegio mínimo**
+ **Principio de privilegio mínimo**
 - Usuario `proyadmin_user` solo tiene permisos SELECT, INSERT, UPDATE, DELETE
 - NO tiene permisos DROP, CREATE TABLE, GRANT
 
 **Controles Adicionales:**
 - Revisión de código (code review) antes de merge
 - Escaneo estático de código con herramientas SAST
-
-**Responsable:** Equipo de Desarrollo  
-**Frecuencia de Revisión:** Mensual
 
 ---
 
@@ -114,7 +73,7 @@ Credenciales de acceso (contraseñas, API keys, tokens JWT) expuestas en código
 
 **Probabilidad:** Media (2)  
 **Impacto:** Alto (3)  
-**Nivel de Riesgo:** 🔴 **6 (Alto)**
+**Nivel de Riesgo:** **6 (Alto)**
 
 **Amenazas:**
 - Acceso no autorizado a base de datos
@@ -170,7 +129,7 @@ Librerías npm con vulnerabilidades conocidas (CVEs) que pueden ser explotadas p
 
 **Probabilidad:** Alta (3)  
 **Impacto:** Medio (2)  
-**Nivel de Riesgo:** 🔴 **6 (Alto)**
+**Nivel de Riesgo:** **6 (Alto)**
 
 **Amenazas:**
 - Ejecución remota de código (RCE)
@@ -218,9 +177,6 @@ FROM node:20-alpine3.21  # NO :latest
 - 7 CVEs no corregibles documentadas en `docs/vulnerabilidades-residuales.md`
 - Mitigación: Capas adicionales de seguridad (WAF, rate limiting)
 
-**Responsable:** Equipo de Desarrollo  
-**Frecuencia de Revisión:** Semanal
-
 ---
 
 ### Riesgo 4: Acceso No Autorizado a Base de Datos
@@ -230,7 +186,7 @@ Atacante obtiene acceso directo a PostgreSQL desde fuera de la red Docker, permi
 
 **Probabilidad:** Baja (1)  
 **Impacto:** Alto (3)  
-**Nivel de Riesgo:** 🟡 **3 (Medio)**
+**Nivel de Riesgo:** **3 (Medio)**
 
 **Amenazas:**
 - Extracción masiva de datos (data breach)
@@ -252,7 +208,7 @@ postgres-master:
 - Red `database-network` solo accesible por backend y ai-service
 - Sin acceso desde host (localhost:5432 no funciona)
 
-**Autenticación fuerte (SCRAM-SHA-256)**
+**Autenticación fuerte**
 ```properties
 # infrastructure/database/pg_hba.conf
 host all all 0.0.0.0/0 scram-sha-256
@@ -273,9 +229,6 @@ log_disconnections = on
 - Monitoreo de intentos de conexión fallidos
 - Alertas en Grafana para conexiones anómalas
 
-**Responsable:** Administradores de Sistemas  
-**Frecuencia de Revisión:** Mensual
-
 ---
 
 ### Riesgo 5: Denegación de Servicio (DoS)
@@ -285,7 +238,7 @@ Atacante sobrecarga el sistema con peticiones masivas, causando indisponibilidad
 
 **Probabilidad:** Media (2)  
 **Impacto:** Medio (2)  
-**Nivel de Riesgo:** 🟡 **4 (Medio)**
+**Nivel de Riesgo:** **4 (Medio)**
 
 **Amenazas:**
 - Indisponibilidad del sistema
@@ -336,9 +289,6 @@ backend:
 - CDN con protección DDoS (Cloudflare)
 - Autoscaling horizontal (Kubernetes)
 
-**Responsable:** Administradores de Sistemas  
-**Frecuencia de Revisión:** Trimestral
-
 ---
 
 ### Riesgo 6: Fallo de Replicación de Base de Datos
@@ -348,7 +298,7 @@ La réplica de PostgreSQL falla o se desincroniza, causando pérdida de alta dis
 
 **Probabilidad:** Media (2)  
 **Impacto:** Medio (2)  
-**Nivel de Riesgo:** 🟡 **4 (Medio)**
+**Nivel de Riesgo:** **4 (Medio)**
 
 **Amenazas:**
 - Pérdida de alta disponibilidad
@@ -395,9 +345,6 @@ docker exec postgres-master pg_dump -U postgres municipalidad_db > backup_$(date
 - Alertas en Grafana para lag de replicación
 - Procedimiento documentado de failover manual
 
-**Responsable:** DBA / Administradores de Sistemas  
-**Frecuencia de Revisión:** Mensual
-
 ---
 
 ### Riesgo 7: Compromiso de Contenedor Docker
@@ -407,7 +354,7 @@ Atacante explota vulnerabilidad en contenedor y obtiene acceso al sistema host o
 
 **Probabilidad:** Baja (1)  
 **Impacto:** Alto (3)  
-**Nivel de Riesgo:** 🟡 **3 (Medio)**
+**Nivel de Riesgo:** **3 (Medio)**
 
 **Amenazas:**
 - Escape de contenedor hacia host
@@ -450,12 +397,7 @@ tmpfs:
 docker scout cves <image>
 ```
 
-**Controles Adicionales:**
-- AppArmor/SELinux profiles (producción)
-- Seccomp profiles personalizados
 
-**Responsable:** DevOps / Administradores de Sistemas  
-**Frecuencia de Revisión:** Mensual
 
 ---
 
@@ -466,7 +408,7 @@ Logs críticos se pierden por falta de rotación, fallos de disco o eliminación
 
 **Probabilidad:** Baja (1)  
 **Impacto:** Medio (2)  
-**Nivel de Riesgo:** 🟢 **2 (Bajo)**
+**Nivel de Riesgo:** **2 (Bajo)**
 
 **Amenazas:**
 - Imposibilidad de investigar incidentes
@@ -509,13 +451,6 @@ docker exec postgres-master pg_dump --schema=audit > audit_backup.sql
 - Logs de BD: 90 días
 - Logs de auditoría: 1 año
 
-**Controles Adicionales:**
-- Exportación a SIEM (Splunk, ELK)
-- Backup remoto de logs críticos
-
-**Responsable:** Administradores de Sistemas  
-**Frecuencia de Revisión:** Trimestral
-
 ---
 
 ### Riesgo 9: Escalación de Privilegios
@@ -525,7 +460,7 @@ Usuario con privilegios limitados obtiene acceso administrativo explotando confi
 
 **Probabilidad:** Baja (1)  
 **Impacto:** Alto (3)  
-**Nivel de Riesgo:** 🟡 **3 (Medio)**
+**Nivel de Riesgo:** **3 (Medio)**
 
 **Amenazas:**
 - Usuario normal obtiene rol de admin
@@ -572,10 +507,6 @@ log_line_prefix = '%m [%p] %u@%d %h '
 - Revisión mensual de permisos de usuarios
 - Alertas para cambios de rol
 
-**Responsable:** Equipo de Desarrollo / Seguridad  
-**Frecuencia de Revisión:** Mensual
-
----
 
 ### Riesgo 10: Exposición de Datos Personales (GDPR/Ley 19.628)
 
@@ -584,7 +515,7 @@ Datos personales de ciudadanos (RUT, nombres, direcciones) expuestos por falta d
 
 **Probabilidad:** Media (2)  
 **Impacto:** Alto (3)  
-**Nivel de Riesgo:** 🔴 **6 (Alto)**
+**Nivel de Riesgo:** **6 (Alto)**
 
 **Amenazas:**
 - Multas por incumplimiento de Ley 19.628
@@ -615,10 +546,10 @@ CREATE TABLE usuarios (
 **Logs sin datos sensibles**
 ```javascript
 // NO registrar:
-logger.info(`Login failed for RUT: ${rut}`);  // ❌
+logger.info(`Login failed for RUT: ${rut}`);  // [INCORRECTO]
 
 // SÍ registrar:
-logger.info(`Login failed for user ID: ${userId}`);  // ✅
+logger.info(`Login failed for user ID: ${userId}`);  // [CORRECTO]
 ```
 
 **Acceso restringido**
@@ -631,73 +562,6 @@ logger.info(`Login failed for user ID: ${userId}`);  // ✅
 log_connections = on
 log_disconnections = on
 ```
-
-**Controles Adicionales:**
-- Implementar política de retención de datos (GDPR Art. 5)
-- Función de "derecho al olvido" (eliminación de datos)
-- Consentimiento explícito para tratamiento de datos
-
-**Responsable:** Equipo de Seguridad / Legal  
-**Frecuencia de Revisión:** Trimestral
-
----
-
-## 4. Plan de Acción
-
-### 4.1 Riesgos Críticos (Nivel 6-9)
-
-| Riesgo | Acción Inmediata | Responsable | Fecha Límite |
-|--------|------------------|-------------|--------------|
-| Inyección SQL | Mitigado (parametrización) | Desarrollo | Completado |
-| Exposición de credenciales |  Mitigado (.env, .gitignore) | DevOps | Completado |
-| Vulnerabilidades npm |  Monitoreo continuo | Desarrollo | Semanal |
-| Exposición de datos personales |  Mitigado (encriptación, acceso restringido) | Seguridad | Completado |
-
-### 4.2 Riesgos Medios (Nivel 3-4)
-
-| Riesgo | Acción | Responsable | Fecha Límite |
-|--------|--------|-------------|--------------|
-| DoS | ⏳ Implementar WAF | DevOps | Q1 2026 |
-| Fallo de replicación |  Monitoreo configurado | DBA | Completado |
-| Acceso no autorizado a BD |  Red aislada | DevOps | Completado |
-| Compromiso de contenedor |  Hardening aplicado | DevOps | Completado |
-| Escalación de privilegios |  Roles validados | Desarrollo | Completado |
-
-### 4.3 Riesgos Bajos (Nivel 1-2)
-
-| Riesgo | Acción | Responsable | Frecuencia |
-|--------|--------|-------------|------------|
-| Pérdida de logs | Rotación configurada | DevOps | Revisión trimestral |
-
----
-
-## 5. Métricas de Seguimiento
-
-### 5.1 Indicadores Clave (KPIs)
-
-| Métrica | Valor Actual | Objetivo | Frecuencia |
-|---------|--------------|----------|------------|
-| Vulnerabilidades críticas abiertas | 0 | 0 | Semanal |
-| Vulnerabilidades altas abiertas | 7 (no corregibles) | <10 | Mensual |
-| Tiempo de aplicación de parches críticos | <48h | <24h | Por incidente |
-| Intentos de autenticación fallidos | <5/día | <10/día | Diaria |
-| Uptime del sistema | >99% | >99.5% | Mensual |
-| Backups exitosos | 100% | 100% | Diaria |
-
-### 5.2 Revisiones Programadas
-
-- **Semanal:** Escaneo npm audit, revisión de logs de error
-- **Mensual:** Escaneo Docker Scout, revisión de permisos, auditoría de accesos
-- **Trimestral:** Revisión completa de matriz de riesgos, actualización de mitigaciones
-- **Anual:** Auditoría de seguridad externa, pentesting
-
----
-
-## 6. Responsables y Contactos
-
----
-
-## 7. Historial de Revisiones
 
 
 

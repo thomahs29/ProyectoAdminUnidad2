@@ -1,19 +1,7 @@
-# Hardening de Base de Datos PostgreSQL
-
-## Fecha de Implementación
-26 de noviembre de 2025
-
-## Resumen Ejecutivo
-
-Este documento detalla las medidas de hardening implementadas en la base de datos PostgreSQL del proyecto, cumpliendo con los requisitos de seguridad para el entorno de producción.
-
-**Estado de Cumplimiento:** ✅ **100% COMPLETO**
-
-Todas las 6 medidas de hardening de base de datos han sido implementadas y verificadas.
 
 ---
 
-## 1. Autenticación Segura ✅
+## 1. Autenticación Segura 
 
 ### Implementación
 - **Método:** SCRAM-SHA-256 (Salted Challenge Response Authentication Mechanism)
@@ -35,11 +23,11 @@ host    replication     replicator      0.0.0.0/0               scram-sha-256
 ```
 
 ### Ventajas de SCRAM-SHA-256
-- ✅ Reemplaza MD5 (obsoleto y vulnerable)
-- ✅ Protección contra ataques de diccionario
-- ✅ Salt único por cada contraseña
-- ✅ Derivación de claves (PBKDF2)
-- ✅ No transmite contraseñas en texto plano
+-  Reemplaza MD5 (obsoleto y vulnerable)
+- Protección contra ataques de diccionario
+-  Salt único por cada contraseña
+- Derivación de claves (PBKDF2)
+- No transmite contraseñas en texto plano
 
 ### Verificación
 ```bash
@@ -50,7 +38,7 @@ docker exec postgres-master psql -U admin -d municipalidad_db -c "SHOW password_
 
 ---
 
-## 2. Usuario de Aplicación con Privilegios Mínimos ✅
+## 2. Usuario de Aplicación con Privilegios Mínimos 
 
 ### Implementación
 - **Script:** `infrastructure/database/initdb/02-app-user.sh`
@@ -87,11 +75,17 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
 
 ### Separación de Responsabilidades
 
-| Usuario | Propósito | Privilegios |
-|---------|-----------|-------------|
-| `admin` (DB_ROOT_USER) | Administración, migraciones, replicación | SUPERUSER, CREATEDB, CREATEROLE |
-| `app_user` (DB_USER) | Aplicación backend/ai-service | SELECT, INSERT, UPDATE, DELETE en tablas específicas |
-| `replicator` | Replicación maestro-réplica | REPLICATION |
+**Usuario `admin` (DB_ROOT_USER):**
+- **Propósito:** Administración, migraciones, replicación
+- **Privilegios:** SUPERUSER, CREATEDB, CREATEROLE
+
+**Usuario `app_user` (DB_USER):**
+- **Propósito:** Aplicación backend/ai-service
+- **Privilegios:** SELECT, INSERT, UPDATE, DELETE en tablas específicas
+
+**Usuario `replicator`:**
+- **Propósito:** Replicación maestro-réplica
+- **Privilegios:** REPLICATION
 
 ### Verificación
 ```bash
@@ -101,7 +95,7 @@ docker exec postgres-master psql -U admin -d municipalidad_db -c "\du app_user"
 
 ---
 
-## 3. Gestión de Credenciales ✅
+## 3. Gestión de Credenciales 
 
 ### Implementación
 - **Método:** Variables de entorno con archivo `.env`
@@ -148,7 +142,7 @@ CREATE TABLE usuarios (
   id SERIAL PRIMARY KEY,
   username VARCHAR(100) UNIQUE NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,  -- Almacena hash bcrypt
+  password_hash VARCHAR(255) NOT NULL,  
   role_id INTEGER NOT NULL REFERENCES roles(id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -162,9 +156,9 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   database: process.env.DB_NAME,
-  user: process.env.DB_USER,        // app_user con privilegios mínimos
+  user: process.env.DB_USER,      
   password: process.env.DB_PASSWORD,
-  // ... configuración adicional
+  
 });
 ```
 
@@ -180,7 +174,7 @@ docker exec postgres-master psql -U admin -d municipalidad_db -c "\dx pgcrypto"
 
 ---
 
-## 4. Aislamiento de Red ✅
+## 4. Aislamiento de Red
 
 ### Implementación
 - **Red interna:** `database-network` (aislada)
@@ -202,7 +196,7 @@ services:
     networks:
       - database-network  # Red principal de BD
       - backend-network   # Solo para backend/ai-service
-    # NO tiene 'ports:' mapeados → No accesible desde host
+    # NO tiene 'ports:' mapeados  No accesible desde host
     
   postgres-replica:
     networks:
@@ -222,11 +216,11 @@ services:
 ### Seguridad de Red
 
 **Ventajas del aislamiento:**
-- ✅ Base de datos NO accesible desde host (localhost:5432)
-- ✅ Solo servicios autorizados (backend, ai-service) pueden conectarse
-- ✅ Red separada para replicación
-- ✅ Sin exposición a Internet directa
-- ✅ Comunicación interna cifrada con SCRAM-SHA-256
+- Base de datos NO accesible desde host (localhost:5432)
+- Solo servicios autorizados (backend, ai-service) pueden conectarse
+- Red separada para replicación
+- Sin exposición a Internet directa
+- Comunicación interna cifrada con SCRAM-SHA-256
 
 **Diagrama de acceso:**
 ```
@@ -269,7 +263,7 @@ psql -h localhost -p 5432 -U app_user -d municipalidad_db
 
 ---
 
-## 5. Logging y Auditoría ✅
+## 5. Logging y Auditoría 
 
 ### Implementación
 - **Ubicación:** `infrastructure/database/master.conf`
@@ -307,12 +301,21 @@ log_min_duration_statement = 1000
 
 ### Tipos de Eventos Auditados
 
-| Evento | Descripción | Uso |
-|--------|-------------|-----|
-| **Conexiones** | Registro de cada conexión nueva | Detectar intentos de acceso no autorizado |
-| **Desconexiones** | Registro de desconexiones | Identificar sesiones anormales |
-| **Queries lentas** | Queries >1 segundo | Optimización de rendimiento |
-| **Errores** | Fallos de autenticación, queries inválidas | Seguridad y debugging |
+**Conexiones:**
+- Descripción: Registro de cada conexión nueva
+- Uso: Detectar intentos de acceso no autorizado
+
+**Desconexiones:**
+- Descripción: Registro de desconexiones
+- Uso: Identificar sesiones anormales
+
+**Queries lentas:**
+- Descripción: Queries que tardan más de 1 segundo
+- Uso: Optimización de rendimiento
+
+**Errores:**
+- Descripción: Fallos de autenticación, queries inválidas
+- Uso: Seguridad y debugging
 
 ### Acceso a Logs
 
@@ -343,7 +346,7 @@ docker exec postgres-master psql -U admin -d municipalidad_db -c "SHOW log_line_
 
 ---
 
-## 6. Seguridad de Red en Configuración ✅
+## 6. Seguridad de Red en Configuración 
 
 ### Implementación
 - **Listen Address:** `*` (solo dentro de redes Docker)
@@ -367,13 +370,25 @@ host    replication     replicator      0.0.0.0/0               scram-sha-256
 
 ### Capas de Seguridad de Red
 
-| Capa | Mecanismo | Protección |
-|------|-----------|------------|
-| **1. Docker Network** | Aislamiento de red `database-network` | Solo contenedores autorizados |
-| **2. No Port Mapping** | Sin `ports:` en docker-compose.yml | No accesible desde host |
-| **3. pg_hba.conf** | Control de acceso basado en host | Autenticación SCRAM obligatoria |
-| **4. SCRAM-SHA-256** | Encriptación de contraseñas | No texto plano en la red |
-| **5. Roles y Privilegios** | Usuario app con privilegios mínimos | Acceso limitado incluso si comprometen credenciales |
+**Capa 1 - Docker Network:**
+- Mecanismo: Aislamiento de red `database-network`
+- Protección: Solo contenedores autorizados
+
+**Capa 2 - No Port Mapping:**
+- Mecanismo: Sin `ports:` en docker-compose.yml
+- Protección: No accesible desde host
+
+**Capa 3 - pg_hba.conf:**
+- Mecanismo: Control de acceso basado en host
+- Protección: Autenticación SCRAM obligatoria
+
+**Capa 4 - SCRAM-SHA-256:**
+- Mecanismo: Encriptación de contraseñas
+- Protección: No texto plano en la red
+
+**Capa 5 - Roles y Privilegios:**
+- Mecanismo: Usuario app con privilegios mínimos
+- Protección: Acceso limitado incluso si comprometen credenciales
 
 ### Configuración de Replicación Segura
 
@@ -401,152 +416,3 @@ docker exec postgres-master psql -U admin -d municipalidad_db -c "SELECT * FROM 
 # Verificar método de autenticación
 docker exec postgres-master psql -U admin -d municipalidad_db -c "SHOW password_encryption;"
 ```
-
----
-
-## Resumen de Cumplimiento
-
-| # | Requisito | Estado | Implementación |
-|---|-----------|--------|----------------|
-| 1 | **Autenticación Segura** | ✅ COMPLETO | SCRAM-SHA-256 en master.conf y pg_hba.conf |
-| 2 | **Usuario con Privilegios Mínimos** | ✅ COMPLETO | 02-app-user.sh con NOSUPERUSER, NOCREATEDB |
-| 3 | **Gestión de Credenciales** | ✅ COMPLETO | Variables .env + pgcrypto bcrypt |
-| 4 | **Aislamiento de Red** | ✅ COMPLETO | database-network sin mapeo de puertos |
-| 5 | **Logging y Auditoría** | ✅ COMPLETO | log_connections, log_disconnections, queries lentas |
-| 6 | **Seguridad de Red** | ✅ COMPLETO | pg_hba.conf con SCRAM + aislamiento Docker |
-
-### Puntuación Final
-**6/6 requisitos cumplidos = 100%** ✅
-
----
-
-## Archivos de Configuración
-
-### Estructura de Archivos
-
-```
-infrastructure/database/
-├── master.conf                    # Configuración principal de PostgreSQL
-├── pg_hba.conf                    # Reglas de autenticación
-└── initdb/
-    ├── 01-replication.sh          # Configuración de replicación
-    ├── 02-app-user.sh             # Creación de usuario de aplicación
-    └── init.sql                   # Esquema de base de datos con pgcrypto
-```
-
-### Referencias de Configuración
-
-| Archivo | Propósito | Medidas de Seguridad |
-|---------|-----------|----------------------|
-| `master.conf` | Configuración PostgreSQL | password_encryption=scram-sha-256, logging habilitado |
-| `pg_hba.conf` | Control de acceso | Solo SCRAM-SHA-256, sin MD5/trust |
-| `02-app-user.sh` | Usuario de aplicación | NOSUPERUSER, privilegios mínimos |
-| `init.sql` | Esquema inicial | pgcrypto para bcrypt, roles definidos |
-| `docker-compose.yml` | Orquestación | Redes aisladas, sin mapeo de puertos |
-| `.env` | Credenciales | Contraseñas seguras, excluido de Git |
-
----
-
-## Monitoreo Continuo
-
-### Herramientas Implementadas
-
-**Prometheus PostgreSQL Exporter:**
-```yaml
-postgres-exporter:
-  image: prometheuscommunity/postgres-exporter:latest
-  environment:
-    DATA_SOURCE_NAME: "postgresql://admin:${DB_ROOT_PASSWORD}@postgres-master:5432/municipalidad_db?sslmode=disable"
-  networks:
-    - database-network
-    - monitoring-network
-```
-
-**Métricas Monitoreadas:**
-- Conexiones activas
-- Queries por segundo
-- Errores de autenticación
-- Uso de replicación
-- Tamaño de base de datos
-
-**Grafana Dashboard:**
-- Ubicación: `infrastructure/monitoring/grafana/dashboards/10-postgres.json`
-- Panel de conexiones
-- Panel de queries lentas
-- Alertas de seguridad
-
-### Verificación de Seguridad Continua
-
-```bash
-# Verificar intentos de autenticación fallidos
-docker logs postgres-master 2>&1 | grep "authentication failed"
-
-# Verificar conexiones activas
-docker exec postgres-master psql -U admin -d municipalidad_db -c "SELECT * FROM pg_stat_activity;"
-
-# Verificar privilegios de usuario app
-docker exec postgres-master psql -U admin -d municipalidad_db -c "SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE grantee = 'app_user';"
-```
-
----
-
-## Recomendaciones Adicionales
-
-### Mejoras Futuras (Opcionales)
-
-1. **SSL/TLS Obligatorio:**
-   ```properties
-   ssl = on
-   ssl_cert_file = '/path/to/server.crt'
-   ssl_key_file = '/path/to/server.key'
-   ```
-
-2. **Rotación de Credenciales:**
-   - Implementar script de rotación automática cada 90 días
-   - Usar secretos de Docker/Kubernetes en entornos más avanzados
-
-3. **Auditoría Avanzada:**
-   - Extensión `pgAudit` para auditoría detallada de queries
-   - Centralización de logs en sistema SIEM
-
-4. **Backups Cifrados:**
-   - Cifrar backups con GPG antes de almacenar
-   - Verificar integridad con checksums
-
-### Mantenimiento
-
-**Verificaciones mensuales:**
-- [ ] Revisar logs de autenticación fallida
-- [ ] Verificar privilegios de usuarios
-- [ ] Actualizar contraseñas (cada 90 días)
-- [ ] Revisar queries lentas (optimización)
-- [ ] Verificar estado de replicación
-
-**Actualizaciones:**
-- [ ] Mantener PostgreSQL actualizado (actualmente 16-alpine)
-- [ ] Revisar CVEs de PostgreSQL mensualmente
-- [ ] Aplicar parches de seguridad críticos en <48h
-
----
-
-## Conclusión
-
-El sistema de base de datos PostgreSQL ha sido configurado con todas las medidas de hardening requeridas, implementando autenticación segura (SCRAM-SHA-256), gestión de privilegios mínimos, aislamiento de red, logging completo y protección de credenciales.
-
-**Estado Final:** ✅ **TODOS los requisitos de hardening de base de datos CUMPLIDOS (6/6)**
-
----
-
-## Referencias
-
-- [PostgreSQL 16 Security Documentation](https://www.postgresql.org/docs/16/security.html)
-- [SCRAM-SHA-256 Authentication](https://www.postgresql.org/docs/16/sasl-authentication.html)
-- [PostgreSQL pg_hba.conf Configuration](https://www.postgresql.org/docs/16/auth-pg-hba-conf.html)
-- [Docker Network Security Best Practices](https://docs.docker.com/network/drivers/)
-- [OWASP Database Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html)
-
----
-
-**Documento generado:** 26 de noviembre de 2025  
-**Versión:** 1.0  
-**Autor:** Equipo de Seguridad - ProyectoAdminUnidad2

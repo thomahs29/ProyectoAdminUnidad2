@@ -1,46 +1,22 @@
-# Política de Seguridad del Sistema
-
-## Fecha de Vigencia
-27 de noviembre de 2025
-
-## Versión
-1.0
-
----
-
-## 1. Objetivos de Seguridad
-
-### 1.1 Objetivo General
-Garantizar la confidencialidad, integridad y disponibilidad de los datos y servicios del sistema de gestión municipal, protegiendo la información de ciudadanos y funcionarios mediante la implementación de controles de seguridad basados en estándares internacionales.
-
-
-- **Protección de Datos Personales:** Cumplir con la Ley N° 19.628 de Protección de Datos Personales, garantizando el tratamiento seguro de información sensible de ciudadanos y funcionarios.
-
-- **Disponibilidad del Servicio:** Mantener el sistema operativo con un SLA mínimo del 99.5%, implementando alta disponibilidad mediante replicación de base de datos y monitoreo continuo.
-
-- **Prevención de Vulnerabilidades:** Eliminar todas las vulnerabilidades corregibles mediante actualizaciones regulares, hardening de contenedores y escaneo automatizado con Docker Scout.
-
-- **Seguridad en Profundidad (Defense in Depth):** Implementar múltiples capas de seguridad a nivel de red, aplicación, base de datos y contenedores.
-
-- **Trazabilidad y Auditoría:** Registrar todas las operaciones críticas mediante logging centralizado en Prometheus/Grafana para análisis forense y detección de anomalías.
-
----
-
-## 2. Responsabilidades del Equipo
-
-
-
-## 3. Política de Contraseñas
 
 ### 3.1 Requisitos Mínimos
 
 Todas las contraseñas del sistema deben cumplir:
 
-| Tipo de Usuario | Longitud Mínima | Complejidad | Rotación |
-|-----------------|-----------------|-------------|----------|
-| **Usuarios Finales** (ciudadanos/funcionarios) | 12 caracteres | Mayúsculas, minúsculas, números, caracteres especiales | 90 días |
-| **Administradores** (DB_ROOT_USER, Grafana Admin) | 16 caracteres | Mayúsculas, minúsculas, números, caracteres especiales | 60 días |
-| **Servicios** (Redis, JWT_SECRET, API Keys) | 32 caracteres | Alfanumérico + símbolos | 90 días |
+**Usuarios Finales (ciudadanos/funcionarios):**
+- Longitud Mínima: 12 caracteres
+- Complejidad: Mayúsculas, minúsculas, números, caracteres especiales
+- Rotación: 90 días
+
+**Administradores (DB_ROOT_USER, Grafana Admin):**
+- Longitud Mínima: 16 caracteres
+- Complejidad: Mayúsculas, minúsculas, números, caracteres especiales
+- Rotación: 60 días
+
+**Servicios (Redis, JWT_SECRET, API Keys):**
+- Longitud Mínima: 32 caracteres
+- Complejidad: Alfanumérico + símbolos
+- Rotación: 90 días
 
 ### 3.2 Implementación Técnica
 
@@ -83,13 +59,30 @@ VALUES (crypt('password_usuario', gen_salt('bf', 10)));
 
 ### 4.1 Frecuencia de Actualizaciones
 
-| Componente | Frecuencia | Responsable | Herramienta |
-|------------|------------|-------------|-------------|
-| **Dependencias npm** | Semanal | Desarrollo | `npm audit fix` |
-| **Imágenes Docker Base** | Mensual | DevOps | `docker pull <image>:latest` |
-| **PostgreSQL** | Trimestral (minor), Inmediato (security) | DBA | Docker image update |
-| **Sistema Operativo (Alpine)** | Mensual | DevOps | Rebuild de imágenes |
-| **Nginx** | Mensual | DevOps | Rebuild con Alpine actualizado |
+**Dependencias npm:**
+- Frecuencia: Semanal
+- Responsable: Desarrollo
+- Herramienta: `npm audit fix`
+
+**Imágenes Docker Base:**
+- Frecuencia: Mensual
+- Responsable: DevOps
+- Herramienta: `docker pull <image>:latest`
+
+**PostgreSQL:**
+- Frecuencia: Trimestral (minor), Inmediato (security)
+- Responsable: DBA
+- Herramienta: Docker image update
+
+**Sistema Operativo (Alpine):**
+- Frecuencia: Mensual
+- Responsable: DevOps
+- Herramienta: Rebuild de imágenes
+
+**Nginx:**
+- Frecuencia: Mensual
+- Responsable: DevOps
+- Herramienta: Rebuild con Alpine actualizado
 
 ### 4.2 Proceso de Actualización
 
@@ -161,11 +154,20 @@ docker compose exec -T postgres-master psql -U admin municipalidad_db < backup_p
 
 **Usuarios de Base de Datos:**
 
-| Usuario | Tipo | Privilegios | Uso |
-|---------|------|-------------|-----|
-| `postgres` (DB_ROOT_USER) | Superusuario | SUPERUSER, CREATEDB, CREATEROLE | Administración, migraciones, replicación |
-| `proyadmin_user` (DB_USER) | Aplicación | SELECT, INSERT, UPDATE, DELETE en tablas específicas | Backend y AI Service |
-| `replicator` | Replicación | REPLICATION | Sincronización maestro-réplica |
+**Usuario `postgres` (DB_ROOT_USER):**
+- Tipo: Superusuario
+- Privilegios: SUPERUSER, CREATEDB, CREATEROLE
+- Uso: Administración, migraciones, replicación
+
+**Usuario `proyadmin_user` (DB_USER):**
+- Tipo: Aplicación
+- Privilegios: SELECT, INSERT, UPDATE, DELETE en tablas específicas
+- Uso: Backend y AI Service
+
+**Usuario `replicator`:**
+- Tipo: Replicación
+- Privilegios: REPLICATION
+- Uso: Sincronización maestro-réplica
 
 **Implementación:**
 ```bash
@@ -189,13 +191,30 @@ FROM node:20-alpine3.21
 USER node  # UID 1000, no root
 ```
 
-| Servicio | Usuario | UID | Justificación |
-|----------|---------|-----|---------------|
-| Frontend | `node` | 1000 | Usuario no privilegiado de Node.js |
-| Backend | `node` | 1000 | Usuario no privilegiado de Node.js |
-| AI Service | `node` | 1000 | Usuario no privilegiado de Node.js |
-| Nginx | `nginx` | 101 | Usuario no privilegiado de Nginx |
-| Backup | `node` | 1000 | Usuario no privilegiado de Node.js |
+**Frontend:**
+- Usuario: `node`
+- UID: 1000
+- Justificación: Usuario no privilegiado de Node.js
+
+**Backend:**
+- Usuario: `node`
+- UID: 1000
+- Justificación: Usuario no privilegiado de Node.js
+
+**AI Service:**
+- Usuario: `node`
+- UID: 1000
+- Justificación: Usuario no privilegiado de Node.js
+
+**Nginx:**
+- Usuario: `nginx`
+- UID: 101
+- Justificación: Usuario no privilegiado de Nginx
+
+**Backup:**
+- Usuario: `node`
+- UID: 1000
+- Justificación: Usuario no privilegiado de Node.js
 
 ### 5.3 Aislamiento de Red
 
@@ -259,13 +278,30 @@ docker exec postgres-master psql -U postgres -d municipalidad_db -c "SELECT * FR
 
 ### 6.1 Política de Retención
 
-| Tipo de Log | Retención | Ubicación | Rotación |
-|-------------|-----------|-----------|----------|
-| **Logs de Aplicación** (Backend, Frontend, AI) | 30 días | Docker logs | 10 MB / 3 archivos |
-| **Logs de Base de Datos** (PostgreSQL) | 90 días | `/var/lib/postgresql/data/log/` | Diaria |
-| **Logs de Nginx** (Acceso, Errores) | 60 días | Docker logs | 10 MB / 3 archivos |
-| **Métricas de Prometheus** | 15 días | Prometheus TSDB | Automática |
-| **Logs de Auditoría** (Autenticación, Cambios de permisos) | 1 año | PostgreSQL + exportación | Mensual |
+**Logs de Aplicación (Backend, Frontend, AI):**
+- Retención: 30 días
+- Ubicación: Docker logs
+- Rotación: 10 MB / 3 archivos
+
+**Logs de Base de Datos (PostgreSQL):**
+- Retención: 90 días
+- Ubicación: `/var/lib/postgresql/data/log/`
+- Rotación: Diaria
+
+**Logs de Nginx (Acceso, Errores):**
+- Retención: 60 días
+- Ubicación: Docker logs
+- Rotación: 10 MB / 3 archivos
+
+**Métricas de Prometheus:**
+- Retención: 15 días
+- Ubicación: Prometheus TSDB
+- Rotación: Automática
+
+**Logs de Auditoría (Autenticación, Cambios de permisos):**
+- Retención: 1 año
+- Ubicación: PostgreSQL + exportación
+- Rotación: Mensual
 
 ### 6.2 Configuración de Rotación
 

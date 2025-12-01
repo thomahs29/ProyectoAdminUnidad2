@@ -5,9 +5,6 @@
 ## Medidas Aplicadas en Dockerfiles
 
 ### 1. Usuarios No Privilegiados
-
-**Objetivo:** Evitar que los contenedores se ejecuten como usuario `root`, minimizando el impacto de posibles vulnerabilidades.
-
 #### Frontend (Nginx)
 ```dockerfile
 # Crear usuario no privilegiado para nginx
@@ -68,13 +65,15 @@ USER aiuser
 ### 2. Versiones Específicas de Imágenes Base
 
 
-| Servicio | Imagen Base Anterior | Imagen Base Actualizada |
-|----------|---------------------|-------------------------|
-| Frontend (Build) | `node:18-alpine` | `node:18.20.5-alpine3.20` |
-| Frontend (Runtime) | `nginx:alpine` | `nginx:1.27.2-alpine3.20` |
-| Backend | `node:18-alpine` | `node:18.20.5-alpine3.20` |
-| AI Service | `node:18-alpine` | `node:18.20.5-alpine3.20` |
-| Backup | `alpine:3.20` | `alpine:3.20.3` |
+**Frontend (Build):** Actualizado de `node:18-alpine` a `node:18.20.5-alpine3.20`
+
+**Frontend (Runtime):** Actualizado de `nginx:alpine` a `nginx:1.27.2-alpine3.20`
+
+**Backend:** Actualizado de `node:18-alpine` a `node:18.20.5-alpine3.20`
+
+**AI Service:** Actualizado de `node:18-alpine` a `node:18.20.5-alpine3.20`
+
+**Backup:** Actualizado de `alpine:3.20` a `alpine:3.20.3`
 
 **Beneficios:**
 - Reproducibilidad garantizada
@@ -255,19 +254,6 @@ deploy:
 - Garantiza recursos mínimos disponibles
 -  Mejora estabilidad del sistema
 
-**Distribución de recursos:**
-
-| Servicio | CPU Limit | Memory Limit | CPU Reservation | Memory Reservation |
-|----------|-----------|--------------|-----------------|-------------------|
-| Frontend | 0.3 | 256M | 0.1 | 128M |
-| Backend  | 0.5 | 512M | 0.25 | 256M |
-| AI Service | 0.5 | 512M | 0.25 | 256M |
-| Prometheus | 0.5 | 512M | - | - |
-| Grafana | 0.5 | 512M | - | - |
-
-**Referencia:** CIS Docker Benchmark 6.6, 6.7
-
----
 
 ### 5. Logging con Rotación
 
@@ -332,8 +318,6 @@ networks:
 **Principio de mínimo privilegio:** Cada servicio solo accede a las redes que necesita.
 
 ---
-
-## Justificaciones Técnicas
 
 ### ¿Por qué el servicio de backup se ejecuta como root?
 
@@ -429,6 +413,4 @@ Ver archivo `docs/vulnerability-scan-report.md` para el reporte completo de Triv
 - [OWASP Docker Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html)
 - [NIST Application Container Security Guide](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-190.pdf)
 - [Linux Capabilities Man Page](https://man7.org/linux/man-pages/man7/capabilities.7.html)
-
----
 

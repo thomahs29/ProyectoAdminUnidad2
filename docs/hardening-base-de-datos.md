@@ -1,18 +1,6 @@
 # Hardening de la Base de Datos PostgreSQL
 
-## 1. Objetivo
-
-El objetivo de este hardening es asegurar que la base de datos PostgreSQL utilizada por el sistema de reservas de licencias:
-
-- No sea accesible directamente desde el host ni desde Internet.
-- Utilice autenticación fuerte y cifrado moderno de contraseñas.
-- Separe claramente las credenciales de administración y de aplicación.
-- Limite los privilegios de los usuarios al mínimo necesario.
-- Registre eventos relevantes para auditoría y análisis de seguridad.
-
----
-
-## 2. Arquitectura y despliegue
+## 1. Arquitectura y despliegue
 
 La base de datos se despliega en dos contenedores:
 
@@ -351,24 +339,3 @@ Para validar el hardening se realizaron las siguientes pruebas:
 5. **Revisión de logs**
 
    - `docker logs postgres-master` muestra conexiones, desconexiones e intentos fallidos, validando la configuración de logging.
-
----
-
-## 12. Conclusión
-
-El hardening realizado sobre la base de datos PostgreSQL cumple con los principios de:
-
-- **Separación de roles**  
-  Usuario de administración y usuario de aplicación claramente diferenciados.
-
-- **Principio de mínimo privilegio**  
-  El usuario de aplicación solo tiene permisos para operar datos, no para administrar el sistema.
-
-- **Autenticación robusta**  
-  Contraseñas cifradas con `scram-sha-256` y acceso restringido a redes internas.
-
-- **Aislamiento de red**  
-  Sin exposición de puertos al host y uso de redes internas de Docker marcadas como `internal`.
-
-- **Auditoría y monitoreo**  
-  Logging de conexiones y consultas lentas, junto con exporters de métricas integrados en el stack de monitoreo.
