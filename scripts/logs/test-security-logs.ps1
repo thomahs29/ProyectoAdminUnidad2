@@ -139,11 +139,11 @@ Write-Host "[6/10] Acceso a endpoint sensible - Reportes" -ForegroundColor Yello
 if ($adminToken) {
     try {
         Invoke-WebRequest `
-            -Uri "$baseUrl/api/reportes" `
+            -Uri "$baseUrl/api/reportes/reservas" `
             -Headers @{"Authorization" = "Bearer $adminToken" } `
             -ErrorAction Stop | Out-Null
         
-        Write-Host "      ✓ Log generado: sensitive_access (/api/reportes)" -ForegroundColor Green
+        Write-Host "      ✓ Log generado: sensitive_access (/api/reportes/reservas)" -ForegroundColor Green
         $testsPassed++
     }
     catch {
@@ -189,7 +189,7 @@ Write-Host "[8/10] Acceso a endpoint sensible - Municipales" -ForegroundColor Ye
 if ($adminToken) {
     try {
         Invoke-WebRequest `
-            -Uri "$baseUrl/api/municipales" `
+            -Uri "$baseUrl/api/municipales/consultar?rut=11111111-1" `
             -Headers @{"Authorization" = "Bearer $adminToken" } `
             -ErrorAction Stop | Out-Null
         
@@ -210,9 +210,33 @@ Start-Sleep -Milliseconds 500
 # ============================================
 # TEST 9: Login como Ciudadano (para test 403)
 # ============================================
-# ============================================
-# TEST 10: Acceso Denegado 403 (Sin Permisos)
-# ============================================
+Write-Host "[9/10] Login como ciudadano" -ForegroundColor Yellow
+try {
+    $response = Invoke-WebRequest `
+        -Uri "$baseUrl/api/users/login" `
+        -Method POST `
+        -Headers @{"Content-Type" = "application/json" } `
+        -Body '{"rut":"11111111-1","password":"12345678"}' `
+        -ErrorAction Stop
+    
+    $data = $response.Content | ConvertFrom-Json
+    $citizenToken = $data.token
+    
+    if ($citizenToken) {
+        Write-Host "      ✓ Log generado: auth_success (ciudadano)" -ForegroundColor Green
+        Write-Host "      ✓ Token ciudadano obtenido" -ForegroundColor Green
+        $testsPassed++
+    }
+    else {
+        Write-Host "      ✗ No se obtuvo token" -ForegroundColor Red
+        $testsFailed++
+    }
+}
+catch {
+    Write-Host "      ✗ Error al hacer login de ciudadano" -ForegroundColor Red
+    $testsFailed++
+    $citizenToken = $null
+}
 Write-Host "[10/10] Acceso denegado 403 - Sin permisos" -ForegroundColor Yellow
 if ($citizenToken) {
     $result = Invoke-TestRequest `
