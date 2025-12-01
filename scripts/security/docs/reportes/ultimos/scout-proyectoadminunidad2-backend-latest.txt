@@ -5,13 +5,13 @@
                     │                    Analyzed Image                      
 ────────────────────┼────────────────────────────────────────────────────────
   Target            │  proyectoadminunidad2-backend:latest                   
-    digest          │  90987c40febd                                          
+    digest          │  c4d4c05e021b                                          
     platform        │ linux/amd64                                            
     provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
-                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/4004ce2430a7f9a8af91e50fb2ef754f9f632bfa              
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/e7ed3d5d093a77bf545ee53b3d2f402c0d220d7f              
     vulnerabilities │    1C     4H     0M     0L                             
-    size            │ 91 MB                                                  
-    packages        │ 541                                                    
+    size            │ 82 MB                                                  
+    packages        │ 534                                                    
 
 
 ## Packages and Vulnerabilities
@@ -25,13 +25,18 @@ pkg:apk/alpine/harfbuzz@9.0.0-r1?os_name=alpine&os_version=3.21
       Fixed version  : not fixed   
     
 
-   0C     1H     0M     0L  musl 1.2.5-r8
-pkg:apk/alpine/musl@1.2.5-r8?os_name=alpine&os_version=3.21
+   0C     2H     0M     0L  libpng 1.6.47-r0
+pkg:apk/alpine/libpng@1.6.47-r0?os_name=alpine&os_version=3.21
 
-    ✗ HIGH CVE-2025-26519
-      https://scout.docker.com/v/CVE-2025-26519?s=alpine&n=musl&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C1.2.5-r9
-      Affected range : <1.2.5-r9  
-      Fixed version  : 1.2.5-r9   
+    ✗ HIGH CVE-2025-65018
+      https://scout.docker.com/v/CVE-2025-65018?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C%3D1.6.47-r0
+      Affected range : <=1.6.47-r0  
+      Fixed version  : not fixed    
+    
+    ✗ HIGH CVE-2025-64720
+      https://scout.docker.com/v/CVE-2025-64720?s=alpine&n=libpng&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C%3D1.6.47-r0
+      Affected range : <=1.6.47-r0  
+      Fixed version  : not fixed    
     
 
    0C     1H     0M     0L  glob 10.4.2
@@ -44,15 +49,6 @@ pkg:npm/glob@10.4.2
       Fixed version  : 11.1.0                                        
       CVSS Score     : 7.5                                           
       CVSS Vector    : CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H  
-    
-
-   0C     1H     0M     0L  openssl 3.3.2-r4
-pkg:apk/alpine/openssl@3.3.2-r4?os_name=alpine&os_version=3.21
-
-    ✗ HIGH CVE-2025-9230
-      https://scout.docker.com/v/CVE-2025-9230?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.21&vr=%3C3.3.5-r0
-      Affected range : <3.3.5-r0  
-      Fixed version  : 3.3.5-r0   
     
 
    0C     1H     0M     0L  cross-spawn 7.0.3
@@ -68,7 +64,7 @@ pkg:npm/cross-spawn@7.0.3
     
 
 
-5 vulnerabilities found in 5 packages
+5 vulnerabilities found in 4 packages
   CRITICAL  1  
   HIGH      4  
   MEDIUM    0  

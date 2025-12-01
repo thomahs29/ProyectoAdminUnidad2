@@ -64,30 +64,6 @@ pkg:golang/stdlib@1.22.4
       Fixed version  : 1.22.7   
     
 
-   1C     3H     0M     0L  curl 8.9.0-r0
-pkg:apk/alpine/curl@8.9.0-r0?os_name=alpine&os_version=3.19
-
-    ✗ CRITICAL CVE-2025-0665
-      https://scout.docker.com/v/CVE-2025-0665?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C8.12.0-r0
-      Affected range : <8.12.0-r0  
-      Fixed version  : 8.12.0-r0   
-    
-    ✗ HIGH CVE-2025-9086
-      https://scout.docker.com/v/CVE-2025-9086?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C8.14.1-r2
-      Affected range : <8.14.1-r2  
-      Fixed version  : 8.14.1-r2   
-    
-    ✗ HIGH CVE-2025-5399
-      https://scout.docker.com/v/CVE-2025-5399?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C8.14.1-r0
-      Affected range : <8.14.1-r0  
-      Fixed version  : 8.14.1-r0   
-    
-    ✗ HIGH CVE-2025-0725
-      https://scout.docker.com/v/CVE-2025-0725?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C8.12.0-r0
-      Affected range : <8.12.0-r0  
-      Fixed version  : 8.12.0-r0   
-    
-
    1C     3H     0M     0L  openssl 3.1.4-r5
 pkg:apk/alpine/openssl@3.1.4-r5?os_name=alpine&os_version=3.19
 
@@ -110,6 +86,30 @@ pkg:apk/alpine/openssl@3.1.4-r5?os_name=alpine&os_version=3.19
       https://scout.docker.com/v/CVE-2024-4741?s=alpine&n=openssl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C3.1.6-r0
       Affected range : <3.1.6-r0  
       Fixed version  : 3.1.6-r0   
+    
+
+   1C     3H     0M     0L  curl 8.9.0-r0
+pkg:apk/alpine/curl@8.9.0-r0?os_name=alpine&os_version=3.19
+
+    ✗ CRITICAL CVE-2025-0665
+      https://scout.docker.com/v/CVE-2025-0665?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C8.12.0-r0
+      Affected range : <8.12.0-r0  
+      Fixed version  : 8.12.0-r0   
+    
+    ✗ HIGH CVE-2025-9086
+      https://scout.docker.com/v/CVE-2025-9086?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C8.14.1-r2
+      Affected range : <8.14.1-r2  
+      Fixed version  : 8.14.1-r2   
+    
+    ✗ HIGH CVE-2025-5399
+      https://scout.docker.com/v/CVE-2025-5399?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C8.14.1-r0
+      Affected range : <8.14.1-r0  
+      Fixed version  : 8.14.1-r0   
+    
+    ✗ HIGH CVE-2025-0725
+      https://scout.docker.com/v/CVE-2025-0725?s=alpine&n=curl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C8.12.0-r0
+      Affected range : <8.12.0-r0  
+      Fixed version  : 8.12.0-r0   
     
 
    1C     2H     0M     0L  golang.org/x/crypto 0.26.0
@@ -144,35 +144,13 @@ pkg:golang/github.com/grafana/grafana-plugin-sdk-go@0.241.0
       CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:N/VA:N/SC:H/SI:H/SA:H/AU:Y/R:U/RE:L  
     
 
-   0C     1H     0M     0L  github.com/getkin/kin-openapi 0.125.0
-pkg:golang/github.com/getkin/kin-openapi@0.125.0
+   0C     1H     0M     0L  filippo.io/age 1.1.1
+pkg:golang/filippo.io/age@1.1.1
 
-    ✗ HIGH CVE-2025-30153 [Improper Handling of Highly Compressed Data (Data Amplification)]
-      https://scout.docker.com/v/CVE-2025-30153?s=github&n=kin-openapi&ns=github.com%2Fgetkin&t=golang&vr=%3C0.131.0
-      Affected range : <0.131.0                                      
-      Fixed version  : 0.131.0                                       
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
-   0C     1H     0M     0L  musl 1.2.4_git20230717-r4
-pkg:apk/alpine/musl@1.2.4_git20230717-r4?os_name=alpine&os_version=3.19
-
-    ✗ HIGH CVE-2025-26519
-      https://scout.docker.com/v/CVE-2025-26519?s=alpine&n=musl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C1.2.4_git20230717-r5
-      Affected range : <1.2.4_git20230717-r5  
-      Fixed version  : 1.2.4_git20230717-r5   
-    
-
-   0C     1H     0M     0L  golang.org/x/oauth2 0.21.0
-pkg:golang/golang.org/x/oauth2@0.21.0
-
-    ✗ HIGH CVE-2025-22868 [Improper Validation of Syntactic Correctness of Input]
-      https://scout.docker.com/v/CVE-2025-22868?s=github&n=oauth2&ns=golang.org%2Fx&t=golang&vr=%3C0.27.0
-      Affected range : <0.27.0                                       
-      Fixed version  : 0.27.0                                        
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    ✗ HIGH CVE-2024-56327
+      https://scout.docker.com/v/CVE-2024-56327?s=golang&n=age&ns=filippo.io&t=golang&vr=%3C1.2.1
+      Affected range : <1.2.1  
+      Fixed version  : 1.2.1   
     
 
    0C     1H     0M     0L  github.com/golang-jwt/jwt/v4 4.5.0
@@ -186,15 +164,6 @@ pkg:golang/github.com/golang-jwt/jwt@4.5.0#v4
       CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N  
     
 
-   0C     1H     0M     0L  filippo.io/age 1.1.1
-pkg:golang/filippo.io/age@1.1.1
-
-    ✗ HIGH CVE-2024-56327
-      https://scout.docker.com/v/CVE-2024-56327?s=golang&n=age&ns=filippo.io&t=golang&vr=%3C1.2.1
-      Affected range : <1.2.1  
-      Fixed version  : 1.2.1   
-    
-
    0C     1H     0M     0L  github.com/golang-jwt/jwt/v5 5.2.1
 pkg:golang/github.com/golang-jwt/jwt@5.2.1#v5
 
@@ -205,6 +174,37 @@ pkg:golang/github.com/golang-jwt/jwt@5.2.1#v5
       Fixed version  : 5.2.2                                                            
       CVSS Score     : 8.7                                                              
       CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N  
+    
+
+   0C     1H     0M     0L  github.com/getkin/kin-openapi 0.125.0
+pkg:golang/github.com/getkin/kin-openapi@0.125.0
+
+    ✗ HIGH CVE-2025-30153 [Improper Handling of Highly Compressed Data (Data Amplification)]
+      https://scout.docker.com/v/CVE-2025-30153?s=github&n=kin-openapi&ns=github.com%2Fgetkin&t=golang&vr=%3C0.131.0
+      Affected range : <0.131.0                                      
+      Fixed version  : 0.131.0                                       
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  golang.org/x/oauth2 0.21.0
+pkg:golang/golang.org/x/oauth2@0.21.0
+
+    ✗ HIGH CVE-2025-22868 [Improper Validation of Syntactic Correctness of Input]
+      https://scout.docker.com/v/CVE-2025-22868?s=github&n=oauth2&ns=golang.org%2Fx&t=golang&vr=%3C0.27.0
+      Affected range : <0.27.0                                       
+      Fixed version  : 0.27.0                                        
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
+    
+
+   0C     1H     0M     0L  musl 1.2.4_git20230717-r4
+pkg:apk/alpine/musl@1.2.4_git20230717-r4?os_name=alpine&os_version=3.19
+
+    ✗ HIGH CVE-2025-26519
+      https://scout.docker.com/v/CVE-2025-26519?s=alpine&n=musl&ns=alpine&t=apk&osn=alpine&osv=3.19&vr=%3C1.2.4_git20230717-r5
+      Affected range : <1.2.4_git20230717-r5  
+      Fixed version  : 1.2.4_git20230717-r5   
     
 
 
