@@ -281,7 +281,7 @@ Todos los logs se emiten en formato JSON estructurado:
 
 ### Desde Grafana
 
-1. Acceder a Grafana: `https://localhost/grafana` (usuario: admin, contraseña: admin)
+1. Acceder a Grafana: `https://localhost/grafana`
 2. Ir a "Explore" en el menú lateral
 3. Seleccionar datasource "Loki"
 4. Usar queries LogQL 
