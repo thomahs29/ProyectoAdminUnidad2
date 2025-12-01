@@ -1,21 +1,3 @@
-# Cumplimiento Normativo y Legal
-
-## Información del Documento
-
-**Fecha de Creación:** 30 de noviembre de 2025  
-**Versión:** 1.0  
-**Alcance:** Sistema de Gestión Municipal - ProyectoAdminUnidad2  
-**Responsable:** Equipo de Seguridad y Legal
-
----
-
-## 1. Introducción
-
-### 1.1 Objetivo del Documento
-
-Este documento establece cómo el Sistema de Gestión Municipal cumple con las normativas legales chilenas aplicables en materia de protección de datos personales, ciberseguridad y gobierno digital.
-
-### 1.2 Marco Normativo Aplicable
 
 **Normativas Principales:**
 
@@ -401,35 +383,6 @@ const transferToPublicEntity = async (req, res) => {
 
 Aunque no es obligatorio por Ley 19.628, se mantiene un registro de actividades de tratamiento como buena práctica.
 
-**Registro Implementado:**
-
-**Actividad 1 - Gestión de Usuarios:**
-- Responsable: Municipalidad [Nombre]
-- Finalidad: Autenticación y autorización
-- Categorías de datos: RUT, nombre, apellido, email, contraseña (hasheada)
-- Categorías de interesados: Ciudadanos y empleados municipales
-- Destinatarios: Solo personal autorizado de la municipalidad
-- Plazo de conservación: 5 años tras última actividad
-- Medidas de seguridad: Cifrado, control de acceso, auditoría
-
-**Actividad 2 - Gestión de Trámites:**
-- Responsable: Municipalidad [Nombre]
-- Finalidad: Procesamiento de solicitudes municipales
-- Categorías de datos: RUT, nombre, tipo de trámite, documentos adjuntos
-- Categorías de interesados: Ciudadanos solicitantes
-- Destinatarios: Funcionarios municipales autorizados
-- Plazo de conservación: 5 años (obligación legal de transparencia)
-- Medidas de seguridad: Cifrado de documentos, trazabilidad completa
-
-**Actividad 3 - Gestión de Reservas:**
-- Responsable: Municipalidad [Nombre]
-- Finalidad: Administración de espacios públicos
-- Categorías de datos: RUT, nombre, email, fecha/hora de reserva
-- Categorías de interesados: Ciudadanos usuarios de espacios públicos
-- Destinatarios: Personal de administración de espacios municipales
-- Plazo de conservación: 1 año tras finalización de reserva
-- Medidas de seguridad: Acceso restringido, logs de auditoría
-
 ---
 
 ## 3. Ley N° 21.459 - Marco de Ciberseguridad
@@ -533,10 +486,6 @@ Los organismos del Estado deben notificar incidentes de ciberseguridad significa
 5. Seguimiento con informes de actualización cada 72 horas hasta resolución
 ```
 
-**Contacto ANCI:**
-- Email: incidentes@anci.gob.cl
-- Teléfono: +56 2 XXXX XXXX
-- Plataforma web: https://www.anci.gob.cl/notificaciones
 
 ### 3.4 Auditoría y Supervisión (Artículo 13)
 
@@ -1093,31 +1042,26 @@ Documento: `docs/politica-seguridad.md` - Sección 3
 **Dependencias npm (Backend, AI Service, Frontend):**
 - Revisión: Semanal con `npm audit`
 - Aplicación: Inmediata para vulnerabilidades críticas/altas
-- Responsable: Equipo de Desarrollo
 - Herramienta: `npm audit fix`, Dependabot
 
 **Imágenes Docker Base:**
 - Revisión: Mensual
 - Aplicación: Actualización a versiones LTS más recientes
-- Responsable: DevOps
 - Herramienta: Docker Scout, renovate
 
 **PostgreSQL:**
 - Revisión: Trimestral
 - Aplicación: Minor updates cada trimestre, major updates planificados
-- Responsable: DBA
 - Proceso: Actualización en réplica, pruebas, promoción
 
 **Alpine Linux (base de contenedores):**
 - Revisión: Mensual
 - Aplicación: Actualización a última versión de Alpine 3.x
-- Responsable: DevOps
 - Proceso: Rebuild de imágenes con `--no-cache`
 
 **Nginx:**
 - Revisión: Trimestral
 - Aplicación: Actualización a última stable
-- Responsable: DevOps
 - Proceso: Actualización en entorno de prueba, luego producción
 
 **Verificación de Actualizaciones:**
@@ -1218,9 +1162,6 @@ await logAuditEvent('USER_DATA_ACCESS', req.user.id, {
 
 **Plan de Mitigación:**
 - Acción: Contratar auditoría de accesibilidad externa
-- Responsable: Jefe de Proyecto
-- Plazo: 6 meses
-- Costo estimado: $500.000 - $1.000.000
 
 **Brecha 2 - Autenticación Multifactor (MFA):**
 
@@ -1230,8 +1171,6 @@ await logAuditEvent('USER_DATA_ACCESS', req.user.id, {
 
 **Plan de Mitigación:**
 - Acción: Implementar MFA con TOTP (Google Authenticator, Authy)
-- Responsable: Equipo de Desarrollo
-- Plazo: 3 meses
 - Prioridad: Alta (para administradores), Media (para usuarios finales)
 
 **Brecha 3 - Cifrado en Reposo:**
@@ -1254,7 +1193,6 @@ await logAuditEvent('USER_DATA_ACCESS', req.user.id, {
 
 **Plan de Mitigación:**
 - Acción: Documentar y probar plan de recuperación completo
-- Responsable: DevOps + DBA
 - Plazo: 2 meses
 - Incluye: RTO (Recovery Time Objective), RPO (Recovery Point Objective)
 
@@ -1282,63 +1220,12 @@ Crear sección pública con:
 **Plazo:** 2 meses  
 **Responsable:** Desarrollo + Legal
 
-**Mejora 3 - Capacitación del Personal:**
-
-Programa de capacitación en:
-- Protección de datos personales (Ley 19.628)
-- Ciberseguridad (Ley 21.459)
-- Respuesta a incidentes
-- Derechos de los ciudadanos
-
-**Frecuencia:** Anual  
-**Responsable:** RRHH + Seguridad
 
 ---
 
 ## 8. Auditoría de Cumplimiento
 
-### 8.1 Checklist de Cumplimiento
-
-**Ley 19.628 - Protección de Datos:**
-- [X] Datos procesados solo para finalidades legítimas
-- [X] Principio de proporcionalidad implementado
-- [X] Medidas de seguridad técnicas implementadas
-- [X] Información a titulares antes de recopilación
-- [X] Derecho de acceso implementado
-- [X] Derecho de rectificación implementado
-- [X] Derecho de cancelación implementado (con limitaciones legales)
-- [X] No hay transferencias a terceros privados
-- [ ] Cifrado en reposo (PENDIENTE)
-
-**Ley 21.459 - Ciberseguridad:**
-- [X] Política de seguridad documentada
-- [X] Gestión de riesgos implementada
-- [X] Plan de respuesta a incidentes definido
-- [X] Hardening de sistemas implementado
-- [X] Procedimiento de notificación a ANCI definido
-- [X] Logs de auditoría con retención adecuada
-- [ ] Simulacro de incidente realizado (PENDIENTE)
-
-**Ley 21.180 - Transformación Digital:**
-- [X] API REST para interoperabilidad
-- [X] Seguridad digital implementada (HTTPS, autenticación)
-- [X] Datos abiertos disponibles (estadísticas sin datos personales)
-- [~] Accesibilidad digital (PARCIAL - falta certificación)
-
-**Decreto 83 - Norma Técnica:**
-- [X] Clasificación de información definida
-- [X] Control de acceso basado en roles
-- [X] Backups automáticos diarios
-- [X] Procedimiento de reporte de incidentes
-- [ ] Plan de disaster recovery completo (PENDIENTE)
-
-**Instructivo Presidencial 8:**
-- [X] Política de contraseñas diferenciada
-- [X] Política de actualizaciones definida
-- [X] Registro de eventos de seguridad
-- [ ] Autenticación multifactor (PENDIENTE)
-
-### 8.2 Evidencias de Cumplimiento
+### 8.1 Evidencias de Cumplimiento
 
 **Documentación Disponible:**
 
@@ -1386,49 +1273,3 @@ echo "" >> compliance_report.txt
 echo "Reporte generado exitosamente"
 ```
 
-### 8.3 Contacto de Cumplimiento
-
-**Delegado de Protección de Datos:**
-- Nombre: [Responsable Legal/Privacidad]
-- Email: privacidad@municipalidad.cl
-- Teléfono: +56 2 XXXX XXXX
-- Función: Atender consultas y solicitudes ARCO
-
-**Oficial de Seguridad de la Información:**
-- Nombre: [Responsable Seguridad]
-- Email: seguridad@municipalidad.cl
-- Teléfono: +56 9 XXXX XXXX
-- Función: Supervisar cumplimiento de normativas de ciberseguridad
-
-**Coordinador de Cumplimiento Normativo:**
-- Nombre: [Responsable Cumplimiento]
-- Email: cumplimiento@municipalidad.cl
-- Teléfono: +56 2 XXXX XXXX
-- Función: Coordinar auditorías y actualización de políticas
-
----
-
-## 9. Control de Versiones del Documento
-
-**Versión 1.0 - 30 de noviembre de 2025:**
-- Creación inicial del documento de cumplimiento normativo
-- Análisis de Ley 19.628 (Protección de Datos)
-- Análisis de Ley 21.459 (Ciberseguridad)
-- Análisis de Ley 21.180 (Transformación Digital)
-- Análisis de Decreto 83 (Norma Técnica)
-- Análisis de Instructivo Presidencial 8
-- Identificación de brechas y plan de mejora
-- Checklist de cumplimiento
-
-**Próximas Revisiones Programadas:**
-- Marzo 2026 (revisión trimestral)
-- Después de cambios legislativos
-- Después de auditorías externas
-
-**Responsable de Mantenimiento:** Equipo Legal + Seguridad
-
----
-
-**Documento aprobado por:**  
-Responsable de Cumplimiento Normativo - ProyectoAdminUnidad2  
-Fecha: 30 de noviembre de 2025
