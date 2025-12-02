@@ -21,7 +21,7 @@ Referencia rápida de comandos y queries para consultar logs de seguridad.
 {container_name="proyecto-backend"} |= "event_type" [6h]
 ```
 
-{container_name="proyecto-backend"} | json | event_type!=""
+# VER TODOS LOS LOGS EN FORMATO JSON {container_name="proyecto-backend"} | json | event_type!=""
 
 
 ### Filtrar por Nivel de Severidad
