@@ -2,14 +2,16 @@
 
 ## Overview
 
-                    │       Analyzed Image         
-────────────────────┼──────────────────────────────
-  Target            │  proyecto-ai-service:1.0.0   
-    digest          │  eab6c848fff1                
-    platform        │ linux/amd64                  
-    vulnerabilities │    0C     2H     0M     0L   
-    size            │ 52 MB                        
-    packages        │ 350                          
+                    │                    Analyzed Image                      
+────────────────────┼────────────────────────────────────────────────────────
+  Target            │  proyecto-ai-service:1.0.0                             
+    digest          │  71ac473f0747                                          
+    platform        │ linux/amd64                                            
+    provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/2e57547232832be446b39ede726d044410598e3b              
+    vulnerabilities │    0C     2H     0M     0L                             
+    size            │ 52 MB                                                  
+    packages        │ 350                                                    
 
 
 ## Packages and Vulnerabilities

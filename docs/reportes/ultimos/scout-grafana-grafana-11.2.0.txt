@@ -144,6 +144,15 @@ pkg:golang/github.com/grafana/grafana-plugin-sdk-go@0.241.0
       CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:N/VA:N/SC:H/SI:H/SA:H/AU:Y/R:U/RE:L  
     
 
+   0C     1H     0M     0L  filippo.io/age 1.1.1
+pkg:golang/filippo.io/age@1.1.1
+
+    ✗ HIGH CVE-2024-56327
+      https://scout.docker.com/v/CVE-2024-56327?s=golang&n=age&ns=filippo.io&t=golang&vr=%3C1.2.1
+      Affected range : <1.2.1  
+      Fixed version  : 1.2.1   
+    
+
    0C     1H     0M     0L  golang.org/x/oauth2 0.21.0
 pkg:golang/golang.org/x/oauth2@0.21.0
 
@@ -178,17 +187,6 @@ pkg:golang/github.com/golang-jwt/jwt@5.2.1#v5
       CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N  
     
 
-   0C     1H     0M     0L  github.com/getkin/kin-openapi 0.125.0
-pkg:golang/github.com/getkin/kin-openapi@0.125.0
-
-    ✗ HIGH CVE-2025-30153 [Improper Handling of Highly Compressed Data (Data Amplification)]
-      https://scout.docker.com/v/CVE-2025-30153?s=github&n=kin-openapi&ns=github.com%2Fgetkin&t=golang&vr=%3C0.131.0
-      Affected range : <0.131.0                                      
-      Fixed version  : 0.131.0                                       
-      CVSS Score     : 7.5                                           
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
-    
-
    0C     1H     0M     0L  musl 1.2.4_git20230717-r4
 pkg:apk/alpine/musl@1.2.4_git20230717-r4?os_name=alpine&os_version=3.19
 
@@ -198,13 +196,15 @@ pkg:apk/alpine/musl@1.2.4_git20230717-r4?os_name=alpine&os_version=3.19
       Fixed version  : 1.2.4_git20230717-r5   
     
 
-   0C     1H     0M     0L  filippo.io/age 1.1.1
-pkg:golang/filippo.io/age@1.1.1
+   0C     1H     0M     0L  github.com/getkin/kin-openapi 0.125.0
+pkg:golang/github.com/getkin/kin-openapi@0.125.0
 
-    ✗ HIGH CVE-2024-56327
-      https://scout.docker.com/v/CVE-2024-56327?s=golang&n=age&ns=filippo.io&t=golang&vr=%3C1.2.1
-      Affected range : <1.2.1  
-      Fixed version  : 1.2.1   
+    ✗ HIGH CVE-2025-30153 [Improper Handling of Highly Compressed Data (Data Amplification)]
+      https://scout.docker.com/v/CVE-2025-30153?s=github&n=kin-openapi&ns=github.com%2Fgetkin&t=golang&vr=%3C0.131.0
+      Affected range : <0.131.0                                      
+      Fixed version  : 0.131.0                                       
+      CVSS Score     : 7.5                                           
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  
     
 
 

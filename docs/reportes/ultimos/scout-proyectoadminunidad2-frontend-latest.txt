@@ -5,10 +5,10 @@
                     │                    Analyzed Image                      
 ────────────────────┼────────────────────────────────────────────────────────
   Target            │  proyectoadminunidad2-frontend:latest                  
-    digest          │  dced7f2f182d                                          
+    digest          │  4d47fa8e3e1c                                          
     platform        │ linux/amd64                                            
     provenance      │ https://github.com/thomahs29/ProyectoAdminUnidad2.git  
-                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/f0aa4564ec14e1d8a0596049d66c383851fb4dd9              
+                    │  https://github.com/thomahs29/ProyectoAdminUnidad2/blob/2e57547232832be446b39ede726d044410598e3b              
     vulnerabilities │    0C     2H     0M     0L                             
     size            │ 25 MB                                                  
     packages        │ 83                                                     
